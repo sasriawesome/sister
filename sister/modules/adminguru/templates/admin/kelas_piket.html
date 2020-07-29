@@ -1,0 +1,47 @@
+{% extends 'admin/kelas_detail.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ instance|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+    {% for piket in instance.piket.all %}
+    <h2 class="subhead">{{ piket.get_hari_display }}</h2>
+    <table class="model">
+      <thead>
+        <th>Nama Siswa</th>
+        <th width="120">NIS</th>
+        <th width="120">NISN</th>
+        <th>Jenis Kelamin</th>
+        <th width="70"></th>
+      </thead>
+      <tbody>
+        {% if piket.siswa_piket.count %}
+          {% for item in piket.siswa_piket.all %}
+            <tr>
+              <td><a href=""><strong>{{ item.siswa_kelas.siswa }}</strong></a></td>
+              <td>{{ item.siswa_kelas.siswa.nis }}</td>
+              <td>{{ item.siswa_kelas.siswa.nisn }}</td>
+              <td>{{ item.siswa_kelas.siswa.person.get_gender_display }}</td>
+              <td><a href="">Ubah &rsaquo;</a></td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+              <td colspan="5">Tidak ada siswa piket pada hari {{ jadwal.get_hari_display }}.</td>
+          </tr>
+        {% endif %}
+       </tbody>
+    </table>
+    <br/>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

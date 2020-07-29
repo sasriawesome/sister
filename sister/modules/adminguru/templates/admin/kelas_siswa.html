@@ -1,0 +1,49 @@
+{% extends 'admin/kelas_detail.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ instance|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+    <!-- Module Kelas untuk Wali Kelas -->
+    <div class="module">
+        <h2 class="subhead">Siswa Kelas</h2>
+        {% if instance.siswa.count %}
+        <table class="model">
+            <thead>
+            <tr>
+            <th>Nama</th>
+            <th width="120">NIS</th>
+            <th width="120">NISN</th>
+            <th>Jenis Kelamin</th>
+            <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in instance.siswa.all %}
+            <tr>
+                <td><a href="{% url 'admin:guruadmin_siswa_kelas' object_id=item.id %}"><strong>{{ item.siswa.person.full_name }}</strong></a></td>
+                <td>{{ item.siswa.nis }}</td>
+                <td>{{ item.siswa.nisn }}</td>
+                <td>{{ item.siswa.person.get_gender_display }}</td>
+                <td>{{ item.get_status_display }}</td>
+            </tr>
+            {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <table>
+            <tr>
+                <td colspan="5">Anda tidak memiliki kelas yang diampu, mungkin ada bukan guru kelas.</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>
+{% endblock %}

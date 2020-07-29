@@ -1,0 +1,49 @@
+{% extends 'admin/kelas_detail.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ instance|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+    <h2 class="subhead">Rentang Nilai {{ instance }}</h2>
+    <table class="model">
+      <thead>
+      <tr>
+        <th width="60">Huruf</th>
+        <th>Nilai Minimum</th>
+        <th>Nilai Maximum</th>
+        <th>Predikat</th>
+        <th>Tindakan</th>
+        <th width="70"></th>
+      </tr>
+      </thead>
+      <tbody>
+        {% if instance.rentang_nilai.count %}
+        {% for item in instance.rentang_nilai.all %}
+        <tr>
+            <td>{{ item.predikat }}</td>
+            <td>{{ item.nilai_minimum }}</td>
+            <td>{{ item.nilai_maximum }}</td>
+            <td>{{ item.get_predikat_display | capfirst }}</td>
+            <td>{{ item.get_aksi_display | capfirst }}</td>
+            <td><a href="">Ubah &rsaquo;</a></td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="5">Kelas {{ instance }} belum memiliki rentang nilai.</td>
+        </tr>
+        {% endif %}
+       </tbody>
+    </table>
+
+  </div>
+</div>
+{% endblock %}

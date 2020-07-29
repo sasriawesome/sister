@@ -1,0 +1,92 @@
+{% extends 'admin/inspect.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ instance|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+    
+    {% if instance.nilai_siswa.count %}
+      {% for item in instance.nilai_siswa.all %}
+        <h2 class="subhead">{{ item }}</h2>
+        <table>
+          <tr>
+            <th colspan="4">A. Penilaian Spiritual</th>
+          </tr>
+          <tr>
+            <td width="80">{{ item.nilai_spiritual }}</td>
+            <td colspan="3">{{ item.deskripsi_spiritual }}</td>
+          </tr>
+          <tr>
+            <th colspan="4">B. Penilaian Sosial</th>
+          </tr>
+          <tr>
+            <td width="80">{{ item.nilai_sosial }}</td>
+            <td colspan="3">{{ item.deskripsi_sosial }}</td>
+          </tr>
+          <tr>
+            <th colspan="2">C. Penilaian Pengetahuan</th>
+            <th colspan="2">D. Penilaian Keterampilan</th>
+          </tr>
+          {% for item_mapel in item.nilai_mata_pelajaran.all %}
+          <tr>
+            <th colspan="4">{{ item_mapel.mata_pelajaran }}</th>
+          </tr>
+          <tr>
+            <td width="80">{{ item_mapel.nilai_pengetahuan }}</td>
+            <td>{{ item_mapel.deskripsi_pengetahuan }}</td>
+            <td width="80">{{ item_mapel.nilai_keterampilan }}</td>
+            <td>{{ item_mapel.deskripsi_keterampilan }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+
+      {% endfor %}
+    {% else %}
+      <tr>
+          <td colspan="5">{{ instance.siswa }} belum memiliki hasil belajar / penilaian.</td>
+      </tr>
+    {% endif %}
+    
+  </div>
+
+</div>
+{% endblock %}
+
+
+{% block sidebar %}
+<div id="content-related" class="sidebar">
+
+    <div class="module">
+        <div class="module__widget">
+          <a class="button" href="{% url 'admin:guruadmin_siswa' object_id=instance.siswa.id %}">Profil Siswa</a>
+          <a class="button" href="{% url 'admin:guruadmin_kelas_siswa' object_id=instance.kelas.id %}">Kelas {{ instance.kelas }}</a>
+          <a class="button" href="">Riwayat Kehadiran</a>
+        </div>
+    </div>
+
+    <div class="module">
+        <div class="module__widget">
+            <table class="model">
+                <tbody>
+                    <tr>
+                        <td width="90px"><strong>Nama Kelas</strong></td>
+                        <td>{{ instance.nama_kelas }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

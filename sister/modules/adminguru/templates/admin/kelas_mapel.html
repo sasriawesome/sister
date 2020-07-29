@@ -1,0 +1,54 @@
+{% extends 'admin/kelas_detail.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ instance|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+    <h2 class="subhead">Mata Pelajaran & Bobot Penilaian</h2>
+    
+    <table class="model">
+      <thead>
+      <tr>
+        <th>Nama</th>
+        <th>Guru</th>
+        <th>KKM</th>
+        <th>Tugas</th>
+        <th>PH</th>
+        <th>PTS</th>
+        <th>PAS</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% if instance.mata_pelajaran_kelas.count %}
+        {% for item in instance.mata_pelajaran_kelas.all %}
+        <tr>
+          <td><a href="">
+            <strong>{{ item.mata_pelajaran.nama }}</strong>
+           </a>
+          </td>
+          <td>{{ item.guru }}</td>
+          <td>{{ item.kkm }}</td>
+          <td>{{ item.tugas }}</td>
+          <td>{{ item.ph }}</td>
+          <td>{{ item.pts }}</td>
+          <td>{{ item.pas }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="5">Kelas {{ instance }} belum memiliki rentang nilai.</td>
+        </tr>
+        {% endif %}
+       </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

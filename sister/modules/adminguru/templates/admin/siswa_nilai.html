@@ -1,0 +1,79 @@
+{% extends 'admin/inspect.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ instance|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+    <h2 class="subhead">Kelas</h2>
+    
+    <table class="model">
+      <thead>
+      <tr>
+        <th>Nama Kelas</th>
+        <th>Guru Kelas</th>
+        <th>Tahun Ajaran</th>
+        <th>Status</th>
+        <th width="80"></th>
+      </tr>
+      </thead>
+      <tbody>
+        {% if instance.kelas.count %}
+          {% for item in instance.kelas.all %}
+          <tr>
+              <td><strong>{{ item.kelas }}</strong></a></td>
+              <td>{{ item.kelas.guru_kelas }}</td>
+              <td>{{ item.kelas.tahun_ajaran }}</td>
+              <td>{{ item.kelas.get_status_display }}</td>
+              <td><a href="">Rincian &rsaquo;</a></td>
+          </tr>
+          {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="5">Kelas {{ instance }} tidak ada jadwal ekstra kurikuler hari ini.</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
+
+
+{% block sidebar %}
+<div id="content-related" class="sidebar">
+
+    <div class="module">
+        <div class="module__widget">
+          <a class="button" href="{% url 'admin:guruadmin_siswa' object_id=instance.siswa.id %}">Profil Siswa</a>
+          <a class="button" href="{% url 'admin:guruadmin_kelas_siswa' object_id=instance.kelas.id %}">Kelas {{ instance.kelas }}</a>
+          <a class="button" href="">Riwayat Kehadiran</a>
+        </div>
+    </div>
+
+    <div class="module">
+        <div class="module__widget">
+            <table class="model">
+                <tbody>
+                    <tr>
+                        <td width="90px"><strong>Nama Kelas</strong></td>
+                        <td>{{ instance.nama_kelas }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

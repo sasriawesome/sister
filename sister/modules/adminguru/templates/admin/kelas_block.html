@@ -1,0 +1,7 @@
+<div class="block-{{ name }}">
+    <ul>
+        {% for kelas in kelas_list %}
+            <li><a href="{% url 'admin:guruadmin_kelas' object_id=kelas.id %}">{{ kelas }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
