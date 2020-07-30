@@ -31,8 +31,8 @@
               <td>{{ item.jam_mulai }}</td>
               <td>{{ item.jam_berakhir }}</td>
               <td>
-                <a class="changelink" href="" title="Ubah"></a>
-                <a class="deletelink" href="" title="Hapus"></a>
+                <a class="changelink" href="{% url 'admin:guruadmin_kelas_jadwal_update' object_id=item.id %}" title="Ubah"></a>
+                <a class="deletelink" href="{% url 'admin:guruadmin_kelas_jadwal_delete' object_id=item.id %}" title="Hapus"></a>
               </td>
             </tr>
           {% endfor %}

@@ -351,6 +351,10 @@ class ItemJadwalPelajaran(BaseModel):
     def __str__(self):
         return "%s" % self.mata_pelajaran
 
+    def clean(self):
+        if self.jadwal_kelas.kelas != self.mata_pelajaran.kelas:
+            raise ValidationError({'mata_pelajaran':'Pilih mata pelajaran sesuai kelas.'})
+
 
 class ItemJadwalEkstraKurikuler(BaseModel):
     class Meta:
@@ -414,7 +418,7 @@ class PresensiKelas(BaseModel):
         return self.presensi_siswa.filter(status='S').count()
 
     @cached_property
-    def sakit(self):
+    def izin(self):
         return self.presensi_siswa.filter(status='I').count()
 
     @cached_property

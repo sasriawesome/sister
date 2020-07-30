@@ -1,9 +1,9 @@
+from django.urls import path
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import reverse
 from django.template.response import TemplateResponse
-from django.urls import path
 
 from admin_numeric_filter.admin import NumericFilterModelAdmin
 

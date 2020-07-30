@@ -4,7 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 from sister.core import hooks
 from sister.admin.sites import tenant_admin
 from sister.admin.admin import ModelAdmin, ModelMenuGroup
-from sister.admin.views import AdminBaseView
 from sister.modules.ruang.models import Ruang
 
 

@@ -69,3 +69,15 @@ class RentangNilaiForm(forms.ModelForm):
     nilai_maximum = forms.IntegerField(
         required=True,
         widget=forms.NumberInput())
+
+
+class PresensiKelasForm(forms.ModelForm):
+    class Meta:
+        model = PresensiKelas
+        fields = ['kelas', 'semester', 'tanggal']
+
+    kelas = forms.ModelChoiceField(
+        queryset = Kelas.objects.all(),
+        widget=forms.HiddenInput(attrs={'readonly':True})
+    )
+    tanggal = forms.DateField(widget=AdminDateWidget())

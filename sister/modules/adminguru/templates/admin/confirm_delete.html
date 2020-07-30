@@ -24,7 +24,7 @@
       {% csrf_token %}
       <div class="submit-row">
         <input type="submit" value="Hapus" class="default" name="_addanother">
-        <a class="button default" href="{% url 'admin:guruadmin_kelas_piket' object_id=view.object.piket_kelas.kelas.id %}">BATAL</a>
+        <a class="button default" href="{{ view.get_success_url }}">BATAL</a>
         </div>
     </form>
   </div>

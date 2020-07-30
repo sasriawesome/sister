@@ -8,7 +8,7 @@ from sister.modules.pembelajaran.models import Kelas
 class GuruMenuItem(MenuItem):
 
     def is_shown(self, request):
-        return request.user.is_superuser
+        return True
 
 
 class KelasBlockItem(AdminBlockItem):
