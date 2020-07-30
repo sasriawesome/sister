@@ -199,10 +199,36 @@ class Guru(BaseModel):
             ).filter(**filters)
 
 
+class Siswa(BaseModel):
+    class Meta:
+        verbose_name = 'Siswa'
+        verbose_name_plural = 'Siswa'
+
+    person = models.OneToOneField(
+        Person,
+        null=True, blank=True,
+        on_delete=models.CASCADE)
+    nis = models.CharField(max_length=25, null=True, blank=False)
+    nisn = models.CharField(max_length=25, null=True, blank=False)
+    status = models.IntegerField(
+        choices=(
+            (1, 'Aktif'),
+            (2, 'Alumni'),
+            (3, 'Drop Out'),
+            (99, 'Lainnya'),
+        ),
+        default=1
+    )
+    status_lain = models.CharField(max_length=56, null=True, blank=True)
+
+    def __str__(self):
+        return "%s" % self.person
+
 class Wali(BaseModel):
     class Meta:
         verbose_name = 'Wali'
         verbose_name_plural = 'Wali'
+        unique_together = ('siswa', 'status')
 
     STATUS = (
         (1, 'Ayah'),
@@ -214,41 +240,16 @@ class Wali(BaseModel):
         (99, 'Lainnya'),
     )
 
-    person = models.OneToOneField(
+    siswa = models.ForeignKey(
+        Siswa,
+        on_delete=models.CASCADE,
+        related_name='wali')
+    person = models.ForeignKey(
         Person,
-        null=True, blank=True,
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        related_name='wali')
     status = models.IntegerField(
         choices=STATUS,
-        default=1
-    )
-    status_lain = models.CharField(max_length=56, null=True, blank=True)
-
-    def __str__(self):
-        return "%s" % self.person
-
-
-class Siswa(BaseModel):
-    class Meta:
-        verbose_name = 'Siswa'
-        verbose_name_plural = 'Siswa'
-
-    person = models.OneToOneField(
-        Person,
-        null=True, blank=True,
-        on_delete=models.CASCADE)
-    wali = models.ForeignKey(
-        Wali,
-        on_delete=models.CASCADE)
-    nis = models.CharField(max_length=25, null=True, blank=False)
-    nisn = models.CharField(max_length=25, null=True, blank=False)
-    status = models.IntegerField(
-        choices=(
-            (1, 'Aktif'),
-            (2, 'Alumni'),
-            (3, 'Drop Out'),
-            (99, 'Lainnya'),
-        ),
         default=1
     )
     status_lain = models.CharField(max_length=56, null=True, blank=True)

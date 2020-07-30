@@ -29,17 +29,15 @@ class GuruAdmin(ModelAdmin):
         return obj.person.full_name
 
 
-class WaliAdmin(ModelAdmin):
-    list_display = ['full_name']
-    list_select_related = ['person']
-
-    def full_name(self, obj):
-        return obj.person.full_name
+class WaliInline(admin.TabularInline):
+    extra = 0
+    model = Wali
 
 
 class SiswaAdmin(ModelAdmin):
     list_display = ['nis', 'full_name', 'nisn']
     list_select_related = ['person']
+    inlines = [WaliInline]
 
     def full_name(self, obj):
         return obj.person.full_name
@@ -47,5 +45,4 @@ class SiswaAdmin(ModelAdmin):
 
 tenant_admin.register(Person, PersonAdmin)
 tenant_admin.register(Guru, GuruAdmin)
-tenant_admin.register(Wali, WaliAdmin)
 tenant_admin.register(Siswa, SiswaAdmin)

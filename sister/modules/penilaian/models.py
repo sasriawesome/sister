@@ -20,9 +20,6 @@ from .managers import PenilaianPembelajaranManager
 
 
 __all__ = [
-    'KompetensiInti',
-    'KompetensiDasar',
-    'Tema',
     'Penilaian',
     'PenilaianPembelajaran',
     'ItemPenilaianTugas',
@@ -31,79 +28,6 @@ __all__ = [
     'ItemPenilaianAkhirSemester',
     'PenilaianEkstraKurikuler'
 ]
-
-
-class Tema(BaseModel):
-    class Meta:
-        verbose_name = 'Tema'
-        verbose_name_plural = 'Tema'
-
-    nomor = models.IntegerField()
-    judul = models.CharField(max_length=225)
-    deskripsi = models.TextField(null=True, blank=True)
-    mata_pelajaran_kurikulum = models.ForeignKey(
-        MataPelajaranKurikulum,
-        on_delete=models.CASCADE
-    )
-
-    def __str__(self):
-        return "%s Tema %s" % (self.mata_pelajaran_kurikulum, self.nomor)
-
-
-class KompetensiInti(BaseModel):
-    class Meta:
-        verbose_name = 'Kompetensi Inti'
-        verbose_name_plural = 'Kompetensi Inti'
-
-    nomor = models.IntegerField()
-    deskripsi = models.CharField(max_length=225, null=True, blank=True)
-
-    def __str__(self):
-        return "%s. %s" % (self.nomor, self.deskripsi)
-
-
-class KompetensiDasar(BaseModel):
-    class Meta:
-        verbose_name = 'Kompetensi Dasar'
-        verbose_name_plural = 'Kompetensi Dasar'
-        unique_together = (
-            'mata_pelajaran_kurikulum',
-            'kompetensi_inti',
-            'nomor'
-        )
-
-    mata_pelajaran_kurikulum = models.ForeignKey(
-        MataPelajaranKurikulum,
-        on_delete=models.CASCADE)
-    kompetensi_inti = models.ForeignKey(
-        KompetensiInti,
-        on_delete=models.CASCADE
-    )
-    nomor = models.IntegerField()
-    semester = models.IntegerField(
-        choices=((1, 1), (2, 2),),
-        default=1
-    )
-    keyword = models.CharField(
-        max_length=255,
-        verbose_name=_('Kata kunci')
-        )
-    deskripsi = models.TextField(
-        verbose_name=_('Kata kunci')
-        )
-    ph = models.BooleanField(default=True)
-    pts = models.BooleanField(default=False)
-    pas = models.BooleanField(default=True)
-
-    @property
-    def kode(self):
-        return "%s.%s" % (self.kompetensi_inti.nomor, self.nomor)
-
-    def __str__(self):
-        return "%s KD %s" % (
-            self.mata_pelajaran_kurikulum,
-            self.kode
-        )
 
 
 class Penilaian(PolymorphicModel, BaseModel):

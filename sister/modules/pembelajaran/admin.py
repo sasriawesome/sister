@@ -3,6 +3,7 @@ from django.shortcuts import reverse
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import format_html
 
 from sister.core import hooks
 from sister.admin.sites import tenant_admin
@@ -10,15 +11,18 @@ from sister.admin.admin import ModelAdmin, ModelMenuGroup
 
 from .models import *
 
+class TahunAjaranAdmin(ModelAdmin):
+    pass
+
 
 class MataPelajaranKelasInline(admin.TabularInline):
-    extra = 1
+    extra = 0
     exclude = ['kkm', 'tugas', 'ph', 'pts', 'pas']
     model = MataPelajaranKelas
 
 
 class ItemJadwalPelajaranInline(admin.TabularInline):
-    extra = 1
+    extra = 0
     model = ItemJadwalPelajaran
 
 
@@ -35,7 +39,7 @@ class JadwalKelasAdmin(ModelAdmin):
 
 
 class ItemPiketKelasInline(admin.TabularInline):
-    extra = 1
+    extra = 0
     model = ItemPiketKelas
 
 
@@ -44,131 +48,26 @@ class PiketKelasAdmin(ModelAdmin):
 
 
 class SiswaKelasInline(admin.TabularInline):
-    extra = 1
+    extra = 0
     model = SiswaKelas
 
 
 class KelasAdmin(ModelAdmin):
+    search_fields = ['nama_kelas', 'guru_kelas__nip', 'guru_kelas__person__full_name']
+    list_display = ['nama_kelas', 'guru_kelas', 'tahun_ajaran', 'kurikulum']
+    list_select_related = ['guru_kelas', 'tahun_ajaran', 'kurikulum']
     inlines = [MataPelajaranKelasInline, SiswaKelasInline]
 
-    def get_urls(self):
-        from django.urls import path
-        urls = super().get_urls()
-        custom_urls = []
+    def get_list_display(self, request):
+        list_display = super().get_list_display(request)
+        return [ *list_display, 'view_link']
 
-        # Need Validation
-        custom_urls.append(
-            path('<path:object_id>/rentang_nilai/',
-                self.admin_site.admin_view(self.rentang_view),
-                name='%s_%s_rentang_view' % (self.opts.app_label, self.opts.model_name)
-            )
-        )
+    def view_link(self, obj):
+        template = "<a class='viewlink' href='%s' title='%s'></a>"
+        url = reverse('admin:guruadmin_kelas_detail', args=(obj.id,))
+        return format_html(template % (url, _('inspect').title()))
 
-        # Need Validation
-        custom_urls.append(
-            path('<path:object_id>/mata_pelajaran/',
-                self.admin_site.admin_view(self.mapel_view),
-                name='%s_%s_mapel_view' % (self.opts.app_label, self.opts.model_name)
-            )
-        )
-
-        # Need Validation
-        custom_urls.append(
-            path('<path:object_id>/jadwal/',
-                self.admin_site.admin_view(self.jadwal_view),
-                name='%s_%s_jadwal_view' % (self.opts.app_label, self.opts.model_name)
-            )
-        )
-
-        # Need Validation
-        custom_urls.append(
-            path('<path:object_id>/piket/',
-                self.admin_site.admin_view(self.piket_view),
-                name='%s_%s_piket_view' % (self.opts.app_label, self.opts.model_name)
-            )
-        )
-
-        # Need Validation
-        custom_urls.append(
-            path('<path:object_id>/presensi/',
-                self.admin_site.admin_view(self.presensi_view),
-                name='%s_%s_presensi_view' % (self.opts.app_label, self.opts.model_name)
-            )
-        )
-
-        # Need Validation
-        custom_urls.append(
-            path('<path:object_id>/siswa_kelas/',
-                self.admin_site.admin_view(self.siswa_kelas_view),
-                name='%s_%s_siswakelas_view' % (self.opts.app_label, self.opts.model_name)
-            )
-        )
-
-        return custom_urls + urls
-
-    def get_inspect_context(self, obj, request, extra_context=None):
-        context = {
-            **self.admin_site.each_context(request),
-            'self': self,
-            'opts': self.opts,
-            'instance': obj,
-            **(extra_context or {})
-        }
-        return context
-
-    def siswa_kelas_view(self, request, object_id, extra_context=None):
-        template = 'admin/%s/%s/siswa_kelas.html' % (self.opts.app_label, self.opts.model_name)
-        obj = self.get_object(request, object_id)
-        context = self.get_inspect_context(obj, request)
-        # if not self.has_view_or_change_permission(request, obj):
-        #     return PermissionError("You don't have any permissions")
-        context = self.get_inspect_context(obj, request, extra_context)
-        return TemplateResponse(request, template, context)
-
-    def rentang_view(self, request, object_id, extra_context=None):
-        template = 'admin/%s/%s/rentang_nilai.html' % (self.opts.app_label, self.opts.model_name)
-        obj = self.get_object(request, object_id)
-        context = self.get_inspect_context(obj, request)
-        # if not self.has_view_or_change_permission(request, obj):
-        #     return PermissionError("You don't have any permissions")
-        context = self.get_inspect_context(obj, request, extra_context)
-        return TemplateResponse(request, template, context)
-
-    def mapel_view(self, request, object_id, extra_context=None):
-        template = 'admin/%s/%s/mata_pelajaran.html' % (self.opts.app_label, self.opts.model_name)
-        obj = self.get_object(request, object_id)
-        context = self.get_inspect_context(obj, request)
-        # if not self.has_view_or_change_permission(request, obj):
-        #     return PermissionError("You don't have any permissions")
-        context = self.get_inspect_context(obj, request, extra_context)
-        return TemplateResponse(request, template, context)
-
-    def jadwal_view(self, request, object_id, extra_context=None):
-        template = 'admin/%s/%s/jadwal.html' % (self.opts.app_label, self.opts.model_name)
-        obj = self.get_object(request, object_id)
-        context = self.get_inspect_context(obj, request)
-        # if not self.has_view_or_change_permission(request, obj):
-        #     return PermissionError("You don't have any permissions")
-        context = self.get_inspect_context(obj, request, extra_context)
-        return TemplateResponse(request, template, context)
-
-    def piket_view(self, request, object_id, extra_context=None):
-        template = 'admin/%s/%s/piket.html' % (self.opts.app_label, self.opts.model_name)
-        obj = self.get_object(request, object_id)
-        context = self.get_inspect_context(obj, request)
-        # if not self.has_view_or_change_permission(request, obj):
-        #     return PermissionError("You don't have any permissions")
-        context = self.get_inspect_context(obj, request, extra_context)
-        return TemplateResponse(request, template, context)
-
-    def presensi_view(self, request, object_id, extra_context=None):
-        template = 'admin/%s/%s/presensi.html' % (self.opts.app_label, self.opts.model_name)
-        obj = self.get_object(request, object_id)
-        context = self.get_inspect_context(obj, request)
-        # if not self.has_view_or_change_permission(request, obj):
-        #     return PermissionError("You don't have any permissions")
-        context = self.get_inspect_context(obj, request, extra_context)
-        return TemplateResponse(request, template, context)
+    view_link.short_description=''
 
 
 class RentangNilaiAdmin(ModelAdmin):
@@ -176,7 +75,7 @@ class RentangNilaiAdmin(ModelAdmin):
 
 
 class NilaiMataPelajaranK13Inline(admin.StackedInline):
-    extra = 1
+    extra = 0
     model = NilaiMataPelajaranK13
 
 
@@ -206,7 +105,7 @@ class NilaiSiswaK13Admin(ModelAdmin):
 
 
 class PresensiSiswa(admin.TabularInline):
-    extra = 1
+    extra = 0
     model = PresensiSiswa
 
 
@@ -219,12 +118,12 @@ class PresensiKelasAdmin(ModelAdmin):
             return self.inlines
         return []
 
-
+tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
 tenant_admin.register(Kelas, KelasAdmin)
 tenant_admin.register(JadwalKelas, JadwalKelasAdmin)
 tenant_admin.register(PiketKelas, PiketKelasAdmin)
-tenant_admin.register(NilaiSiswa, NilaiSiswaAdmin)
-tenant_admin.register(RentangNilai, RentangNilaiAdmin)
+# tenant_admin.register(NilaiSiswa, NilaiSiswaAdmin)
+# tenant_admin.register(RentangNilai, RentangNilaiAdmin)
 tenant_admin.register(PresensiKelas, PresensiKelasAdmin)
 
 

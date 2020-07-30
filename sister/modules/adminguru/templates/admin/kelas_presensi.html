@@ -10,6 +10,17 @@
 
 {% block content %}
 <div id="content-main">
+
+  {% block object_tools %}
+  <ul class="object-tools">
+    <li>
+      <a href="" class="mdi mdi-calendar">
+        Tambah Presensi 
+      </a>
+    </li>
+  </ul>
+  {% endblock %}
+
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
     <h2 class="subhead">Presensi Kelas Per Tanggal</h2>
@@ -46,7 +57,8 @@
       {% else %}
     <table>
       <tr>
-          <td colspan="5">Kelas {{ instance }} belum memiliki rentang nilai.</td>
+          <td colspan="5">Kelas {{ instance }} belum memiliki presensi.
+          <a href=""> &rarr; <strong>Tambah Presensi</strong></a></td>
       </tr>
       {% endif %}
     </table>

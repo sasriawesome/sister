@@ -1,0 +1,89 @@
+{% extends 'admin/inspect.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; Daftar Kelas
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    .kelas-card {
+        display: block;
+        border-radius: 5px;
+        padding: 15px;
+        border: 1px solid #f8f8f8;
+        background: #fbfbfb;
+        margin-bottom: 8px;
+    }
+    .kelas-card:active,
+    .kelas__card:focus {
+      text-decoration: none;
+    }
+    .kelas-card:hover {
+      background-color: #f8f8f8;
+    }
+    h2.kelas-card__title {
+      font-weight: bold;
+      font-size: 1.2em;
+      padding: 0;
+      margin-bottom: .3em;
+      background: none;
+      color: inherit;
+    }
+    .kelas-card__meta span {
+      display: inline-block;
+      width: 33.33%;
+    }
+    ul.object-tools {
+        margin-left:0;
+        padding: 0;
+    }
+  </style>
+{% endblock %}
+
+{% block coltype %}{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+
+  {% block object_tools %}
+  <ul class="object-tools">
+    <li>
+      <a href="" class="mdi mdi-filter">
+        Filter Kelas
+      </a>
+    </li>
+  </ul>
+  {% endblock %}
+  
+  {% if object_list.count %}
+    {% for obj in object_list %}
+      <div>
+        <a  class="kelas-card" href="{% url 'admin:guruadmin_kelas_detail' object_id=obj.id %}">
+          <div id="kelas-{{ obj.id}}">
+            <h2 class="kelas-card__title">{{ obj }}</h2>
+            <div class="kelas-card__meta"><span>{{ obj.guru_kelas | upper }}</span><span>{{ obj.kurikulum }}</span><span>{{ obj.status }}</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>'Tidak ada kelas untuk di tampilkan'</p>
+  {% endif %}
+  </div>
+
+  <!-- Pagination -->
+
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

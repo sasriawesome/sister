@@ -103,7 +103,7 @@ class ModelAdmin(NumericFilterModelAdmin, ModelAdminMenuMixin, admin.ModelAdmin)
     """ Add Inspect view feature to ModelAdmin """
 
     inspect_template = None
-    inspect_enabled = True
+    inspect_enabled = False
 
     def has_any_permission(self, request, obj=None):
         return (

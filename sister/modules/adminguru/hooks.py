@@ -27,9 +27,9 @@ class KelasBlockItem(AdminBlockItem):
         return True if hasattr(request.user.profile, 'guru') else False
 
 
-# @hooks.register('admin_menu_item')
-# def register_guru_kelas_menu(request):
-#     return GuruMenuItem('Kelas', reverse('admin:adminguru_kelas'))
+@hooks.register('admin_menu_item')
+def register_guru_kelas_menu(request):
+    return GuruMenuItem('Kelas', reverse('admin:guruadmin_kelas_index'), icon='teach' )
 
 
 @hooks.register('admin_homepage_block_item')

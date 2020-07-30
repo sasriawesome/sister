@@ -7,17 +7,6 @@ from sister.admin.admin import ModelAdmin, ModelMenuGroup
 
 from .models import *
 
-class KompetensiIntiAdmin(ModelAdmin):
-    pass
-
-
-class KompetensiDasarAdmin(ModelAdmin):
-    pass
-
-
-class TemaAdmin(ModelAdmin):
-    pass
-
 
 class MataPelajaranKelasAdmin(ModelAdmin):
     list_display = ['kelas', 'mata_pelajaran', 'guru']
@@ -85,8 +74,5 @@ class PenilaianEkstraKurikulerAdmin(ModelAdmin):
         ]
 
 
-tenant_admin.register(KompetensiInti, KompetensiIntiAdmin)
-tenant_admin.register(KompetensiDasar, KompetensiDasarAdmin)
-tenant_admin.register(Tema, TemaAdmin)
 tenant_admin.register(PenilaianPembelajaran, PenilaianPembelajaranAdmin)
 tenant_admin.register(PenilaianEkstraKurikuler, PenilaianEkstraKurikulerAdmin)

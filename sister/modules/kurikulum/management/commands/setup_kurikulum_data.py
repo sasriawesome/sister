@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
             # Create tahun ajaran
             print('Creating tahun ajaran ..')
-            ta_model = apps.get_model('sister_kurikulum.tahunajaran', require_ready=True)
+            ta_model = apps.get_model('sister_pembelajaran.tahunajaran', require_ready=True)
             ta1 = ta_model(
                 tahun_mulai = 2020,
                 tahun_akhir = 2021

@@ -1,0 +1,57 @@
+{% extends 'admin/kelas_detail.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{{ media }}
+<link href="{% static 'admin/css/forms.css' %}" type="text/css" rel="stylesheet">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; Piket {{ view.parent | truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+    {% if form.non_field_errors %}
+      <p class="errornote">
+        {% if form.non_field_errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+      </p>
+      {{ form.non_field_errors }}
+    {% endif %}
+    <form action="" method="POST">
+      {{ form.media }}
+      {% csrf_token %}
+      <fieldset class="module aligned">
+        {% for field in form %}
+            <div class="{% if not field.is_hidden %}form-row{% endif %} field-{{ field.name}}">
+            {{ field.errors }}
+            {% if field.is_checkbox %}
+                {{ field }}{{ field.label_tag }}
+            {% else %}
+                {% if not field.is_hidden %}
+                  {{ field.label_tag }}
+                {% endif %}
+                {{ field }}
+            {% endif %}
+            {% if field.field.help_text %}
+                <div class="help">{{ field.field.help_text|safe }}</div>
+            {% endif %}
+            </div>
+        {% endfor %} 
+      </fieldset>
+      <div class="submit-row">
+        <input type="submit" value="Simpan" class="default" name="_addanother">
+        <a class="button default" href="{{ view.cancel_url }}">BATAL</a>
+        </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}{% endblock %}

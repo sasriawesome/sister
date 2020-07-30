@@ -15,10 +15,11 @@ from sister.core.models import BaseModel
 from sister.modules.ruang.models import Ruang
 from sister.modules.personal.models import Guru, Siswa
 from sister.modules.kurikulum.models import (
-    TahunAjaran, Kurikulum, MataPelajaran, MataPelajaranKurikulum, EkstraKurikuler
+    Kurikulum, MataPelajaran, MataPelajaranKurikulum, EkstraKurikuler
     )
 
 __all__ = [
+    'TahunAjaran',
     'Kelas',
     'SiswaKelas',
     'MataPelajaranKelas',
@@ -37,6 +38,39 @@ __all__ = [
 ]
 
 _ = translation.ugettext_lazy
+
+
+class TahunAjaran(BaseModel):
+    class Meta:
+        verbose_name = 'Tahun Ajaran'
+        verbose_name_plural = 'Tahun Ajaran'
+
+    kode = models.CharField(
+        max_length=10,
+        editable=False, unique=True
+    )
+    tahun_mulai = models.IntegerField(
+        validators=[
+            MinValueValidator(2000),
+            MaxValueValidator(3000),
+        ]
+    )
+    tahun_akhir = models.IntegerField(
+        validators=[
+            MinValueValidator(2000),
+            MaxValueValidator(3000),
+        ]
+    )
+
+    def __str__(self):
+        return self.kode
+
+    def generate_kode(self):
+        return "%s/%s" % (self.tahun_mulai, self.tahun_akhir)
+
+    def save(self, *args, **kwargs):
+        self.kode = self.generate_kode()
+        super().save(*args, **kwargs)
 
 
 class Kelas(BaseModel):
@@ -291,13 +325,14 @@ class JadwalKelas(BaseModel):
         )
 
     def __str__(self):
-        return "%s %s" % (self.kelas, self.hari)
+        return "%s %s" % (self.kelas, self.get_hari_display())
 
 
 class ItemJadwalPelajaran(BaseModel):
     class Meta:
         verbose_name = 'Jadwal Pelajaran'
         verbose_name_plural = 'Jadwal Pelajaran'
+        unique_together = ('jadwal_kelas', 'mata_pelajaran')
 
     jadwal_kelas = models.ForeignKey(
         JadwalKelas,

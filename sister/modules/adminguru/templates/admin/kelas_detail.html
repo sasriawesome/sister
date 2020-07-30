@@ -4,7 +4,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
   <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-  &rsaquo; {{ instance|truncatewords:"18" }}
+  &rsaquo; {{ instance | truncatewords:"18" }}
 </div>
 {% endblock %}
 
@@ -19,6 +19,43 @@
         <li>Kelas belum memiliki rentang nilai, buat rentang nila dari A s.d E.</li>  
     </ul>
     {% endif %}
+
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+    <h2 class="subhead">Rentang Nilai {{ instance }}</h2>
+    <table class="model">
+      <thead>
+      <tr>
+        <th width="60">Huruf</th>
+        <th>Nilai Minimum</th>
+        <th>Nilai Maximum</th>
+        <th>Predikat</th>
+        <th>Tindakan</th>
+        <th width="20"></th>
+      </tr>
+      </thead>
+      <tbody>
+        {% if instance.rentang_nilai.count %}
+        {% for item in instance.rentang_nilai.all %}
+        <tr>
+            <td>{{ item.predikat }}</td>
+            <td>{{ item.nilai_minimum }}</td>
+            <td>{{ item.nilai_maximum }}</td>
+            <td>{{ item.get_predikat_display | capfirst }}</td>
+            <td>{{ item.get_aksi_display | capfirst }}</td>
+            <td>
+              <a class="changelink" href="{% url 'admin:guruadmin_kelas_rentang_update' object_id=item.id %}" title="Ubah"></a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="5">Kelas {{ instance }} belum memiliki rentang nilai.</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
 
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
@@ -38,10 +75,7 @@
             {% if instance.get_jadwal_pelajaran.count %}
                 {% for item in instance.get_jadwal_pelajaran %}
                 <tr>
-                    <td><a href="">
-                    <strong>{{ item.mata_pelajaran.mata_pelajaran.nama }}</strong>
-                    </a>
-                    </td>
+                    <td><strong>{{ item.mata_pelajaran.mata_pelajaran.nama }}</strong></td>
                     <td>{{ item.mata_pelajaran.mata_pelajaran.kode }}</td>
                     <td>{{ item.mata_pelajaran.guru }}</td>
                     <td>{{ item.jam_mulai }}</td>
@@ -73,7 +107,7 @@
         {% if instance.get_jadwal_ekskul.count %}
         {% for item in instance.get_jadwal_ekskul %}
         <tr>
-            <td><a href=""><strong>{{ item.ekstra_kurikuler }}</strong></a></td>
+            <td><strong>{{ item.ekstra_kurikuler }}</strong></td>
             <td>{{ item.jam_mulai }}</td>
             <td>{{ item.jam_berakhir }}</td>
         </tr>
@@ -95,13 +129,12 @@
 
     <div class="module">
         <div class="module__widget">
-        <a class="button" href="{% url 'admin:guruadmin_kelas' object_id=instance.id %}">Depan Kelas</a>
+        <a class="button" href="{% url 'admin:guruadmin_kelas_detail' object_id=instance.id %}">Depan Kelas</a>
         <a class="button" href="{% url 'admin:guruadmin_kelas_siswa' object_id=instance.id %}">Siswa Kelas</a>
         <a class="button" href="{% url 'admin:guruadmin_kelas_presensi' object_id=instance.id %}">Presensi Siswa</a>
         <a class="button" href="{% url 'admin:guruadmin_kelas_mapel' object_id=instance.id %}">Mata Pelajaran</a>
         <a class="button" href="{% url 'admin:guruadmin_kelas_jadwal' object_id=instance.id %}">Jadwal Kelas</a>
         <a class="button" href="{% url 'admin:guruadmin_kelas_piket' object_id=instance.id %}">Piket Kelas</a>
-        <a class="button" href="{% url 'admin:guruadmin_kelas_rentang' object_id=instance.id %}">Rentang Nilai</a>
         </div>
     </div>
 

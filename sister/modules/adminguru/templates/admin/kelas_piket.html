@@ -20,24 +20,31 @@
         <th width="120">NIS</th>
         <th width="120">NISN</th>
         <th>Jenis Kelamin</th>
-        <th width="70"></th>
+        <th width="20"></th>
       </thead>
       <tbody>
         {% if piket.siswa_piket.count %}
           {% for item in piket.siswa_piket.all %}
             <tr>
-              <td><a href=""><strong>{{ item.siswa_kelas.siswa }}</strong></a></td>
+              <td><strong>{{ item.siswa_kelas.siswa }}</strong></td>
               <td>{{ item.siswa_kelas.siswa.nis }}</td>
               <td>{{ item.siswa_kelas.siswa.nisn }}</td>
               <td>{{ item.siswa_kelas.siswa.person.get_gender_display }}</td>
-              <td><a href="">Ubah &rsaquo;</a></td>
+              <td>
+                <a class="deletelink" href="{% url 'admin:guruadmin_kelas_piket_delete' object_id=item.id %}" title="Hapus"></a>
+              </td>
             </tr>
           {% endfor %}
         {% else %}
           <tr>
-              <td colspan="5">Tidak ada siswa piket pada hari {{ jadwal.get_hari_display }}.</td>
+              <td colspan="5">Tidak ada siswa piket pada hari {{ piket.get_hari_display }}. </td>
           </tr>
         {% endif %}
+        <tr>
+          <td colspan="5">
+            <a class="addlink" href="{% url 'admin:guruadmin_kelas_piket_add' piket_id=piket.id %}" title="Tambah Siswa Piket">Tambah Siswa Piket</a>
+          </td>
+        </tr>
        </tbody>
     </table>
     <br/>
