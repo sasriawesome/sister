@@ -77,6 +77,7 @@ class Kelas(BaseModel):
     class Meta:
         verbose_name = 'Kelas'
         verbose_name_plural = 'Kelas'
+        ordering = ['kelas', 'tahun_ajaran__tahun_mulai']
 
     nama_kelas = models.CharField(max_length=225)
     kelas = models.IntegerField(
@@ -145,15 +146,23 @@ class SiswaKelas(BaseModel):
     class Meta:
         verbose_name = 'Siswa Kelas'
         verbose_name_plural = 'Siswa Kelas'
+        ordering = ['no_urut']
         unique_together = ('siswa', 'kelas')
 
+    kelas = models.ForeignKey(
+        Kelas, related_name='siswa',
+        on_delete=models.CASCADE
+        )
+    no_urut = models.IntegerField(
+        default=1,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(100)
+        ]
+    )
     siswa = models.ForeignKey(
         Siswa,
         related_name='kelas',
-        on_delete=models.CASCADE
-        )
-    kelas = models.ForeignKey(
-        Kelas, related_name='siswa',
         on_delete=models.CASCADE
         )
     status = models.IntegerField(
@@ -383,6 +392,7 @@ class PresensiKelas(BaseModel):
     class Meta:
         verbose_name = 'Presensi Kelas'
         verbose_name_plural = 'Presensi Kelas'
+        ordering = ['-tanggal']
         unique_together = ('kelas', 'tanggal')
 
     HARI = (
@@ -447,7 +457,8 @@ class PresensiSiswa(BaseModel):
     siswa_kelas = models.ForeignKey(
         SiswaKelas,
         on_delete=models.CASCADE,
-        related_name='presensi')
+        related_name='presensi'
+    )
     status = models.CharField(
         max_length=3,
         choices=(
@@ -530,6 +541,7 @@ class NilaiSiswa(BaseModel):
             MaxValueValidator(100)
         ]
     )
+    predikat_spiritual = models.CharField(max_length=1, null=True, blank=True)
     deskripsi_spiritual = models.TextField(null=True, blank=True)
     nilai_sosial = models.IntegerField(
         default=0,
@@ -538,6 +550,7 @@ class NilaiSiswa(BaseModel):
             MaxValueValidator(100)
         ]
     )
+    predikat_sosial = models.CharField(max_length=1, null=True, blank=True)
     deskripsi_sosial = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -549,7 +562,14 @@ class NilaiMataPelajaran(PolymorphicModel, BaseModel):
         verbose_name = 'Nilai Mata Pelajaran'
         verbose_name_plural = 'Nilai Pelajaran'
         unique_together = ('nilai_siswa', 'mata_pelajaran')
-
+    
+    no_urut = models.IntegerField(
+        default=1,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(100)
+        ]
+    )
     nilai_siswa = models.ForeignKey(
         NilaiSiswa, 
         on_delete=models.CASCADE,
@@ -560,7 +580,13 @@ class NilaiMataPelajaran(PolymorphicModel, BaseModel):
         on_delete=models.CASCADE,
         related_name='nilai_siswa'
     )
-
+    kkm = models.IntegerField(
+        default=65,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(100)
+        ]
+    )
 
 class NilaiMataPelajaranKTSP(NilaiMataPelajaran):
     class Meta:
@@ -581,7 +607,6 @@ class NilaiMataPelajaranK13(NilaiMataPelajaran):
     class Meta:
         verbose_name = 'Nilai Mata Pelajaran K13'
         verbose_name_plural = 'Nilai Mata Pelajaran K13'
-
     nilai_pengetahuan = models.IntegerField(
         default=0,
         validators=[
@@ -589,15 +614,16 @@ class NilaiMataPelajaranK13(NilaiMataPelajaran):
             MaxValueValidator(100)
         ]
     )
+    predikat_pengetahuan = models.CharField(max_length=1, null=True, blank=True)
     deskripsi_pengetahuan = models.TextField(null=True, blank=True)
-
+    
     nilai_keterampilan = models.IntegerField(
         default=0,
         validators=[
             MinValueValidator(0),
             MaxValueValidator(100)
-        ]
-    )
+        ])
+    predikat_keterampilan = models.CharField(max_length=1, null=True, blank=True)
     deskripsi_keterampilan = models.TextField(null=True, blank=True)
 
 

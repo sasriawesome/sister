@@ -17,48 +17,34 @@
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
     
-    {% if instance.nilai_siswa.count %}
-      {% for item in instance.nilai_siswa.all %}
-        <h2 class="subhead">{{ item }}</h2>
-        <table>
-          <tr>
-            <th colspan="4">A. Penilaian Spiritual</th>
-          </tr>
-          <tr>
-            <td width="80">{{ item.nilai_spiritual }}</td>
-            <td colspan="3">{{ item.deskripsi_spiritual }}</td>
-          </tr>
-          <tr>
-            <th colspan="4">B. Penilaian Sosial</th>
-          </tr>
-          <tr>
-            <td width="80">{{ item.nilai_sosial }}</td>
-            <td colspan="3">{{ item.deskripsi_sosial }}</td>
-          </tr>
-          <tr>
-            <th colspan="2">C. Penilaian Pengetahuan</th>
-            <th colspan="2">D. Penilaian Keterampilan</th>
-          </tr>
-          {% for item_mapel in item.nilai_mata_pelajaran.all %}
-          <tr>
-            <th colspan="4">{{ item_mapel.mata_pelajaran }}</th>
-          </tr>
-          <tr>
-            <td width="80">{{ item_mapel.nilai_pengetahuan }}</td>
-            <td>{{ item_mapel.deskripsi_pengetahuan }}</td>
-            <td width="80">{{ item_mapel.nilai_keterampilan }}</td>
-            <td>{{ item_mapel.deskripsi_keterampilan }}</td>
-          </tr>
-          {% endfor %}
-        </table>
-
-      {% endfor %}
-    {% else %}
-      <tr>
-          <td colspan="5">{{ instance.siswa }} belum memiliki hasil belajar / penilaian.</td>
-      </tr>
-    {% endif %}
     
+      <h2>Lapor Siswa</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Kelas</th>
+            <th>Tahun Ajaran</th>
+            <th>Guru Kelas</th>
+            <th>Semester</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if instance.nilai_siswa.count %}
+            {% for item in instance.nilai_siswa.all %}
+            <tr>
+              <td>{{ item.siswa.kelas }}</td>
+              <td>{{ item.siswa.kelas.tahun_ajaran }}</td>
+              <td>{{ item.siswa.kelas.guru_kelas }}</td>
+              <td>{{ item.semester }}</td>
+            </tr>
+            {% endfor %}
+          {% else %}
+          <tr>
+              <td colspan="5">{{ instance.siswa }} belum memiliki hasil belajar / penilaian.</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
   </div>
 
 </div>

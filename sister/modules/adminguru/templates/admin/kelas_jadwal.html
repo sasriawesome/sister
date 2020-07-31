@@ -10,6 +10,17 @@
 
 {% block content %}
 <div id="content-main">
+
+  {% block object_tools %}
+  <ul class="object-tools">
+    <li>
+      <a href="" class="mdi mdi-calendar">
+        Cetak Jadwal Kelas 
+      </a>
+    </li>
+  </ul>
+  {% endblock %}
+
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
     {% for jadwal in instance.jadwal_kelas.all %}

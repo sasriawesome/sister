@@ -1,0 +1,140 @@
+{% extends 'admin/inspect.html' %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; {{ instance|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+
+  <!-- Module Kelas untuk Wali Kelas -->
+  <div class="module">
+    
+    <h1 class="subhead">{{ instance }}</h1>
+        
+        <h2>A. Penilaian Sikap Spiritual ( KI - 1 )</h2>
+        <table>
+          <thead>
+            <tr>
+              <th width="40px">Nilai</th>
+              <th width="40px">Predikat</th>
+              <th>Deskripsi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ instance.nilai_spiritual }}</td>
+              <td>{{ instance.predikat_spiritual }}</td>
+              <td>{{ instance.deskripsi_spiritual }}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <h2>B. Penilaian Sikap Sosial ( KI - 2 )</h2>
+        <table>
+          <thead>
+            <tr>
+              <th width="40px">Nilai</th>
+              <th width="40px">Predikat</th>
+              <th>Deskripsi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ instance.nilai_sosial }}</td>
+              <td>{{ instance.predikat_sosial }}</td>
+              <td>{{ instance.deskripsi_sosial }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>C. Penilaian Pengetahuan ( KI - 3 )</h2>
+        <table>
+          <thead>
+            <tr>
+              <th width="20px">No</th>
+              <th width="120px">Kompetensi</th>
+              <th width="40px">KKM</th>
+              <th width="40px">Angka</th>
+              <th width="40px">Predikat</th>
+              <th>Deskripsi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for instance_mapel in instance.nilai_mata_pelajaran.all %}
+            <tr>
+              <td>{{ instance_mapel.no_urut }}</td>
+              <td>Mengingat dan memahami pengetahuan faktual dan konsep <strong>{{ instance_mapel.mata_pelajaran.nama }}</strong></td>
+              <td>{{ instance_mapel.kkm }}</td>
+              <td>{{ instance_mapel.nilai_pengetahuan }}</td>
+              <td>{{ instance_mapel.predikat_pengetahuan }}</td>
+              <td>{{ instance_mapel.deskripsi_pengetahuan }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <h2>D. Penilaian Keterampilan ( KI - 4 )</h2>
+        <table>
+          <thead>
+            <tr>
+              <th width="20px">No</th>
+              <th width="120px">Kompetensi</th>
+              <th width="40px">KKM</th>
+              <th width="40px">Angka</th>
+              <th width="40px">Predikat</th>
+              <th>Deskripsi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for instance_mapel in instance.nilai_mata_pelajaran.all %}
+            <tr>
+              <td>{{ instance_mapel.no_urut }}</td>
+              <td>Mengingat dan memahami pengetahuan faktual dan konsep <strong>{{ instance_mapel.mata_pelajaran.nama }}</strong></td>
+              <td>{{ instance_mapel.kkm }}</td>
+              <td>{{ instance_mapel.nilai_keterampilan }}</td>
+              <td>{{ instance_mapel.predikat_keterampilan }}</td>
+              <td>{{ instance_mapel.deskripsi_keterampilan }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    
+  </div>
+
+</div>
+{% endblock %}
+
+
+{% block sidebar %}
+<div id="content-related" class="sidebar">
+
+    <div class="module">
+        <div class="module__widget">
+          <a class="button" href="{% url 'admin:guruadmin_siswa' object_id=instance.siswa.id %}">Profil Siswa</a>
+          <a class="button" href="{% url 'admin:guruadmin_kelas_siswa' object_id=instance.kelas.id %}">Kelas {{ instance.kelas }}</a>
+          <a class="button" href="">Riwayat Kehadiran</a>
+        </div>
+    </div>
+
+    <div class="module">
+        <div class="module__widget">
+            <table class="model">
+                <tbody>
+                    <tr>
+                        <td width="90px"><strong>Nama Kelas</strong></td>
+                        <td>{{ instance.nama_kelas }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

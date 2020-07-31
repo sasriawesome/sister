@@ -43,6 +43,6 @@ class SiswaAdmin(ModelAdmin):
         return obj.person.full_name
 
 
-tenant_admin.register(Person, PersonAdmin)
-tenant_admin.register(Guru, GuruAdmin)
-tenant_admin.register(Siswa, SiswaAdmin)
+# tenant_admin.register(Person, PersonAdmin)
+# tenant_admin.register(Guru, GuruAdmin)
+# tenant_admin.register(Siswa, SiswaAdmin)

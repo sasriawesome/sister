@@ -11,6 +11,16 @@
 {% block content %}
 <div id="content-main">
 
+    {% block object_tools %}
+    <ul class="object-tools">
+      <li>
+        <a href="" class="mdi mdi-calendar">
+          Cetak Daftar Siswa 
+        </a>
+      </li>
+    </ul>
+    {% endblock %}
+
     <!-- Module Kelas untuk Wali Kelas -->
     <div class="module">
         <h2 class="subhead">Siswa Kelas</h2>
@@ -18,16 +28,18 @@
         <table class="model">
             <thead>
             <tr>
-            <th>Nama</th>
-            <th width="120">NIS</th>
-            <th width="120">NISN</th>
-            <th>Jenis Kelamin</th>
-            <th>Status</th>
+                <th>No</th>
+                <th>Nama</th>
+                <th width="120">NIS</th>
+                <th width="120">NISN</th>
+                <th>Jenis Kelamin</th>
+                <th>Status</th>
             </tr>
             </thead>
             <tbody>
             {% for item in instance.siswa.all %}
             <tr>
+                <td>{{ item.no_urut }}</td>
                 <td><a href="{% url 'admin:guruadmin_siswa_kelas' object_id=item.id %}"><strong>{{ item.siswa.person.full_name }}</strong></a></td>
                 <td>{{ item.siswa.nis }}</td>
                 <td>{{ item.siswa.nisn }}</td>

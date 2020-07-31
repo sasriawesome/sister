@@ -118,13 +118,13 @@ class PresensiKelasAdmin(ModelAdmin):
             return self.inlines
         return []
 
-tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
-tenant_admin.register(Kelas, KelasAdmin)
-tenant_admin.register(JadwalKelas, JadwalKelasAdmin)
-tenant_admin.register(PiketKelas, PiketKelasAdmin)
+# tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
+# tenant_admin.register(Kelas, KelasAdmin)
+# tenant_admin.register(JadwalKelas, JadwalKelasAdmin)
+# tenant_admin.register(PiketKelas, PiketKelasAdmin)
 # tenant_admin.register(NilaiSiswa, NilaiSiswaAdmin)
 # tenant_admin.register(RentangNilai, RentangNilaiAdmin)
-tenant_admin.register(PresensiKelas, PresensiKelasAdmin)
+# tenant_admin.register(PresensiKelas, PresensiKelasAdmin)
 
 
 # class PersonalModelMenuGroup(ModelMenuGroup):

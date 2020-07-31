@@ -14,11 +14,15 @@
 
 <div id="content-main">
 
-    {% if not instance.rentang_nilai.count %}
-    <ul class="errorlist">
-        <li>Kelas belum memiliki rentang nilai, buat rentang nila dari A s.d E.</li>  
-    </ul>
-    {% endif %}
+  {% block object_tools %}
+  <ul class="object-tools">
+    <li>
+      <a href="" class="mdi mdi-calendar">
+        Cetak Buku Kelas
+      </a>
+    </li>
+  </ul>
+  {% endblock %}
 
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">

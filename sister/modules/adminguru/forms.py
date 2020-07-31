@@ -1,6 +1,19 @@
 from django import forms
-from sister.modules.pembelajaran.models import *
+from django.utils.html import mark_safe
+from django.forms.models import inlineformset_factory
 from django.contrib.admin.widgets import AdminDateWidget, AdminTimeWidget
+
+from sister.modules.pembelajaran.models import *
+
+
+class PlainTextWidget(forms.Widget):
+    def render(self, name, value, attrs, renderer=None):
+        if hasattr(self, 'initial'):
+            value = self.initial
+        return mark_safe(
+            (str(value) if value is not None else '-' ) +
+            f"<input type='hidden' name='{name}' value='{value}'>"
+        )
 
 
 class SiswaPiketForm(forms.ModelForm):
@@ -24,6 +37,7 @@ class SiswaPiketForm(forms.ModelForm):
         queryset = PiketKelas.objects.all(),
         widget=forms.HiddenInput(attrs={'readonly':True})
     )
+
 
 class ItemJadwalPelajaranForm(forms.ModelForm):
     class Meta:
@@ -81,3 +95,24 @@ class PresensiKelasForm(forms.ModelForm):
         widget=forms.HiddenInput(attrs={'readonly':True})
     )
     tanggal = forms.DateField(widget=AdminDateWidget())
+
+
+class PresensiSiswaForm(forms.ModelForm):
+    class Meta:
+        model = PresensiSiswa
+        fields = ['presensi_kelas', 'siswa_kelas', 'status']
+
+    siswa_kelas = forms.ModelChoiceField(
+        disabled = True,
+        queryset=SiswaKelas.objects.all(),
+        widget=forms.Select(attrs={'readonly':True})
+    )
+
+PresensiSiswaFormSet = inlineformset_factory(
+    PresensiKelas,
+    PresensiSiswa, 
+    PresensiSiswaForm,
+    fields=['siswa_kelas', 'status'],
+    extra=0,
+    can_delete=False
+)

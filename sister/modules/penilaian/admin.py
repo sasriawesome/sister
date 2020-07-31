@@ -74,5 +74,5 @@ class PenilaianEkstraKurikulerAdmin(ModelAdmin):
         ]
 
 
-tenant_admin.register(PenilaianPembelajaran, PenilaianPembelajaranAdmin)
-tenant_admin.register(PenilaianEkstraKurikuler, PenilaianEkstraKurikulerAdmin)
+# tenant_admin.register(PenilaianPembelajaran, PenilaianPembelajaranAdmin)
+# tenant_admin.register(PenilaianEkstraKurikuler, PenilaianEkstraKurikulerAdmin)

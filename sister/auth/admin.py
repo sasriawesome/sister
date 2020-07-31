@@ -27,4 +27,4 @@ class UserAdmin(UserAdminBase):
     search_fields = ('username', 'email')
 
 
-tenant_admin.register(get_user_model(), UserAdmin)
+# tenant_admin.register(get_user_model(), UserAdmin)

@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404, reverse, redirect
 from sister.admin.sites import tenant_admin
 from sister.admin.views import (
@@ -11,7 +12,13 @@ from sister.admin.views import (
 from sister.modules.personal.models import Siswa
 from sister.modules.pembelajaran.models import *
 
-from .forms import SiswaPiketForm, RentangNilaiForm, ItemJadwalPelajaranForm, PresensiKelasForm
+from .forms import (
+    SiswaPiketForm,
+    RentangNilaiForm,
+    ItemJadwalPelajaranForm,
+    PresensiKelasForm,
+    PresensiSiswaFormSet
+)
 
 
 class KelasDetailBase(AdminDetailView):
@@ -65,7 +72,7 @@ class KelasDetailSiswa(KelasDetailBase):
     template_name = 'admin/kelas_siswa.html'
 
     def get_page_title(self):
-        return "Siswa Kelas %s" % str(self.object)
+        return "Siswa Kelas: %s" % str(self.object)
 
 
 @tenant_admin.register_view
@@ -76,7 +83,7 @@ class KelasDetailPresensi(KelasDetailBase):
     template_name = 'admin/kelas_presensi.html'
 
     def get_page_title(self):
-        return "Presensi Kelas %s" % str(self.object)
+        return "Presensi Kelas: %s" % str(self.object)
 
 
 @tenant_admin.register_view
@@ -86,9 +93,11 @@ class KelasPresensiAdd(AdminCreateView):
     form_class = PresensiKelasForm
     url_name = 'guruadmin_kelas_presensi_add'
     url_path = 'presensi_kelas/<str:object_id>/add/'
-    template_name = 'admin/base_form.html'
+    template_name = 'admin/kelas_presensi_form.html'
 
     def get_success_url(self):
+        if self.object and '_save_and_update' in self.request.POST:
+            return reverse('admin:guruadmin_kelas_presensi_update', args=(self.object.id,)) 
         return reverse('admin:guruadmin_kelas_presensi', args=(self.parent.id,))
 
     def get_initial(self):
@@ -103,6 +112,68 @@ class KelasPresensiAdd(AdminCreateView):
 
 
 @tenant_admin.register_view
+class KelasPresensiUpdate(AdminUpdateView):
+
+    model = PresensiKelas
+    form_class = PresensiKelasForm
+    url_name = 'guruadmin_kelas_presensi_update'
+    url_path = 'presensi_kelas/<str:object_id>/update/'
+    template_name = 'admin/kelas_presensi_form.html'
+
+    def get_page_title(self):
+        return "Presensi Kelas %s" % str(self.object)
+
+    def get_success_url(self):
+        if '_save_and_update' in self.request.POST:
+            return reverse('admin:guruadmin_kelas_presensi_update', args=(self.object.id,))    
+        return reverse('admin:guruadmin_kelas_presensi', args=(self.object.kelas.id,))
+    
+    def get_initial(self):
+        return {'kelas': self.object.kelas}
+
+    def get_extra_context(self):
+        extra_context = super().get_extra_context()
+        if self.request.POST:
+            extra_context.update({
+                'inlineform': PresensiSiswaFormSet(
+                    self.request.POST or None,
+                    instance=self.object)
+            })
+        else:
+            extra_context.update({
+                'inlineform': PresensiSiswaFormSet(instance=self.object)
+            })
+        return extra_context
+
+    def form_valid(self, form=None):
+        context = self.get_context_data()
+        inlineform = context['inlineform']
+        with transaction.atomic():
+            self.object = form.save()
+            if inlineform.is_valid():
+                inlineform.save()
+            return super().form_valid(form)
+
+    def dispatch(self, request, object_id, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+@tenant_admin.register_view
+class KelasPresensiDelete(AdminDeleteView):
+
+    model = PresensiKelas
+    url_name = 'guruadmin_kelas_presensi_delete'
+    url_path = 'presensi_kelas/<str:object_id>/delete/'
+    template_name = 'admin/confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse('admin:guruadmin_kelas_presensi', args=(self.object.kelas.id,))
+
+    def get_page_title(self):
+        return "Hapus Mata Pelajaran dari Jadwal  ?"
+
+
+@tenant_admin.register_view
 class KelasDetailMapel(KelasDetailBase):
 
     url_name = 'guruadmin_kelas_mapel'
@@ -110,7 +181,7 @@ class KelasDetailMapel(KelasDetailBase):
     template_name = 'admin/kelas_mapel.html'
 
     def get_page_title(self):
-        return "Mata Pelajaran Kelas %s" % str(self.object)
+        return "Mata Pelajaran Kelas: %s" % str(self.object)
 
 
 @tenant_admin.register_view
@@ -121,7 +192,7 @@ class KelasDetailJadwal(KelasDetailBase):
     template_name = 'admin/kelas_jadwal.html'
 
     def get_page_title(self):
-        return "Jadwal Kelas %s" % str(self.object)
+        return "Jadwal Kelas: %s" % str(self.object)
 
 
 @tenant_admin.register_view
@@ -140,7 +211,7 @@ class KelasJadwalAdd(AdminCreateView):
         return {'jadwal_kelas': self.parent}
 
     def get_page_title(self):
-        return "Jadwal Kelas %s" % str(self.parent)
+        return "Tambah Jadwal: %s" % str(self.parent)
 
     def dispatch(self, request, object_id, *args, **kwargs):
         self.parent = get_object_or_404(JadwalKelas, pk=object_id)
@@ -160,7 +231,7 @@ class KelasJadwalUpdate(AdminUpdateView):
         return {'jadwal_kelas': self.object.jadwal_kelas}
 
     def get_page_title(self):
-        return "Update Jadwal %s" % self.object
+        return "Update Jadwal: %s" % self.object
 
     def get_success_url(self):
         return reverse('admin:guruadmin_kelas_jadwal', args=(self.object.jadwal_kelas.kelas.id,))
@@ -189,7 +260,7 @@ class KelasDetailPiket(KelasDetailBase):
     template_name = 'admin/kelas_piket.html'
 
     def get_page_title(self):
-        return "Piket Kelas %s" % str(self.object)
+        return "Piket Kelas: %s" % str(self.object)
 
 
 @tenant_admin.register_view
@@ -208,7 +279,7 @@ class KelasPiketAdd(AdminCreateView):
         return reverse('admin:guruadmin_kelas_piket', args=(self.parent.kelas.id,))
 
     def get_page_title(self):
-        return "Piket Kelas %s" % str(self.parent)
+        return "Tambah Siswa Piket: %s" % str(self.parent)
 
     def dispatch(self, request, object_id, *args, **kwargs):
         self.parent = get_object_or_404(PiketKelas, pk=object_id)
@@ -242,7 +313,7 @@ class SiswaDetail(SiswaDetailBase):
     template_name = 'admin/siswa_detail.html'
 
     def get_page_title(self):
-        return "Siswa %s" % str(self.object)
+        return "Profil Siswa: %s" % str(self.object)
 
 
 @tenant_admin.register_view
@@ -254,7 +325,7 @@ class SiswaKelasDetail(SiswaDetailBase):
     template_name = 'admin/siswa_kelas.html'
 
     def get_page_title(self):
-        return "Siswa %s" % str(self.object)
+        return "Siswa Kelas: %s" % str(self.object)
 
 
 @tenant_admin.register_view
@@ -266,4 +337,4 @@ class SiswaKelasPenilaian(SiswaDetailBase):
     template_name = 'admin/siswa_nilai.html'
 
     def get_page_title(self):
-        return "Siswa %s" % str(self.object)
+        return "Siswa: %s" % str(self.object)

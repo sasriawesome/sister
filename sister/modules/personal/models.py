@@ -224,6 +224,7 @@ class Siswa(BaseModel):
     def __str__(self):
         return "%s" % self.person
 
+
 class Wali(BaseModel):
     class Meta:
         verbose_name = 'Wali'

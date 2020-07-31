@@ -14,6 +14,11 @@
   {% block object_tools %}
   <ul class="object-tools">
     <li>
+      <a href="" class="mdi mdi-calendar">
+        Buat Laporan Presensi
+      </a>
+    </li>
+    <li>
       <a href="{% url 'admin:guruadmin_kelas_presensi_add' object_id=instance.id  %}" class="mdi mdi-calendar">
         Tambah Presensi 
       </a>
@@ -35,21 +40,23 @@
         <th>Izin</th>
         <th>TK</th>
         <th>Total</th>
+        <th width="40"></th>
       </tr>
       </thead>
       <tbody>
         {% for item in instance.presensi.all %}
         <tr>
-          <td><a href="">
-            <strong>{{ item.tanggal }}</strong>
-          </a>
-          </td>
+          <td><strong>{{ item.tanggal }}</strong></td>
           <td>{{ item.hari }}</td>
           <td>{{ item.hadir }}</td>
           <td>{{ item.sakit }}</td>
           <td>{{ item.izin }}</td>
           <td>{{ item.tanpa_keterangan }}</td>
           <td>{{ item.total }}</td>
+          <td>
+            <a class="changelink" href="{% url 'admin:guruadmin_kelas_presensi_update' object_id=item.id %}" title="Ubah"></a>
+            <a class="deletelink" href="{% url 'admin:guruadmin_kelas_presensi_delete' object_id=item.id %}" title="Hapus"></a>
+          </td>
         </tr>
         {% endfor %}
        </tbody>

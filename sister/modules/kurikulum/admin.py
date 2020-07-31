@@ -41,9 +41,9 @@ class TemaAdmin(ModelAdmin):
 
 
 # tenant_admin.register(Sekolah, SekolahAdmin)
-tenant_admin.register(EkstraKurikuler, EkstraKurikulerAdmin)
-tenant_admin.register(Kurikulum, KurikulumAdmin)
-tenant_admin.register(MataPelajaran, MataPelajaranAdmin)
-tenant_admin.register(KompetensiInti, KompetensiIntiAdmin)
-tenant_admin.register(KompetensiDasar, KompetensiDasarAdmin)
-tenant_admin.register(Tema, TemaAdmin)
+# tenant_admin.register(EkstraKurikuler, EkstraKurikulerAdmin)
+# tenant_admin.register(Kurikulum, KurikulumAdmin)
+# tenant_admin.register(MataPelajaran, MataPelajaranAdmin)
+# tenant_admin.register(KompetensiInti, KompetensiIntiAdmin)
+# tenant_admin.register(KompetensiDasar, KompetensiDasarAdmin)
+# tenant_admin.register(Tema, TemaAdmin)
