@@ -121,25 +121,29 @@ class FormMixin(AdminContextMixin):
         return super().get_context_data(**kwargs)
     
 
-class AdminView(TemplateResponseMixin, View):
+class AdminViewMixin:
 
     admin_site = None
     cacheable = True
     url_path = NotImplemented
     url_name = NotImplemented
-    template_name = 'admin/base_site.html'
-    
+
     def __init__(self, admin_site, *args, **kwargs):
         self.admin_site = admin_site
         super().__init__(*args, **kwargs)
+    
+    def has_permission(self, request):
+        return True
     
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permission(request):
             raise PermissionError("You don’t have permission to view or edit this page")
         return super().dispatch(request, *args, **kwargs)
 
-    def has_permission(self, request):
-        return True
+
+class AdminView(AdminViewMixin, TemplateResponseMixin, View):
+
+    template_name = 'admin/base_site.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
@@ -312,6 +316,89 @@ class AdminDeleteView(AdminSingleObjectMixin, AdminView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         return self.delete(request, *args, **kwargs)
+
+
+class PDFViewMixin:
+    title = None    
+    filename = None
+    show_content_in_browser = True
+
+    template_name = 'admin/print/content.html'
+    cover_template = 'admin/print/cover.html'
+    header_template = 'admin/print/header.html'
+    footer_template = 'admin/print/footer_with_page_number.html'
+
+    cmd_options = {
+        'orientation': 'portrait',
+        'margin-top': 40,
+        'margin-left': 25,
+        'margin-right': 25,
+        'margin-bottom': 25,
+    }
+
+    def get_settings(self, request):
+        return None 
+
+    def apply_settings(self, request):
+        pass # use default settings
+
+    def get_title(self):
+        return self.title
+
+    def get_extra_context(self):
+        return {}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            **self.get_extra_context(),
+            'title': self.get_title()
+        })
+        return context
+
+    def get_filename(self):
+        return self.__class__.__name__ if not self.filename else self.filename
+
+    def get_cmd_options(self):
+        return self.cmd_options
+
+
+class ModelPDFTemplateView(PDFViewMixin, PDFTemplateView):
+    model = None
+
+    @property
+    def opts(self):
+        return self.model._meta
+
+    def get_title(self):
+        return self.title or self.opts.verbose_name
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'opts': self.opts,
+        })
+        return context
+
+    def get_filename(self):
+        if not self.filename:
+            filename = '%s_%s_%s' % (
+                self.opts.app_label,
+                self.opts.model_name,
+                timezone.now().strftime('%d%m%Y')
+            )
+            return filename
+        return self.filename + '_' + timezone.now().strftime('%d%m%Y')
+
+    def get(self, request, *args, **kwargs):
+        """ Render PDF Response """ 
+        self.apply_settings(request)
+        return super().get(request, *args, **kwargs)
+
+
+
+class AdminPDFTemplateView(AdminViewMixin, ModelPDFTemplateView):
+    pass
 
 
 

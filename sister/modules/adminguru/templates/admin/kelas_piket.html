@@ -1,5 +1,5 @@
 {% extends 'admin/kelas_detail.html' %}
-{% load i18n static admin_urls admin_modify %}
+{% load i18n static admin_urls admin_modify sister_core_tags %}
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
@@ -14,8 +14,13 @@
   {% block object_tools %}
   <ul class="object-tools">
     <li>
-      <a href="" class="mdi mdi-calendar">
+      <a href="{% url 'admin:guruadmin_kelas_piket_print' object_id=instance.id %}" class="mdi mdi-calendar">
         Cetak Daftar Piket
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'admin:guruadmin_kelas_piket_add' object_id=instance.id  %}" class="mdi mdi-plus">
+        Tambah Jadwal Piket 
       </a>
     </li>
   </ul>
@@ -23,43 +28,38 @@
 
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
-    {% for piket in instance.piket.all %}
-    <h2 class="subhead">{{ piket.get_hari_display }}</h2>
-    <table class="model">
-      <thead>
-        <th>Nama Siswa</th>
-        <th width="120">NIS</th>
-        <th width="120">NISN</th>
-        <th>Jenis Kelamin</th>
-        <th width="20"></th>
-      </thead>
-      <tbody>
-        {% if piket.siswa_piket.count %}
-          {% for item in piket.siswa_piket.all %}
-            <tr>
-              <td><strong>{{ item.siswa_kelas.siswa }}</strong></td>
-              <td>{{ item.siswa_kelas.siswa.nis }}</td>
-              <td>{{ item.siswa_kelas.siswa.nisn }}</td>
-              <td>{{ item.siswa_kelas.siswa.person.get_gender_display }}</td>
-              <td>
-                <a class="deletelink" href="{% url 'admin:guruadmin_kelas_piket_delete' object_id=item.id %}" title="Hapus"></a>
-              </td>
-            </tr>
-          {% endfor %}
-        {% else %}
-          <tr>
-              <td colspan="5">Tidak ada siswa piket pada hari {{ piket.get_hari_display }}. </td>
-          </tr>
-        {% endif %}
-        <tr>
-          <td colspan="5">
-            <a class="addlink" href="{% url 'admin:guruadmin_kelas_piket_add' object_id=piket.id %}" title="Tambah Siswa Piket">Tambah Siswa Piket</a>
-          </td>
-        </tr>
-       </tbody>
-    </table>
-    <br/>
-    {% endfor %}
+    {% regroup instance.piket.all by hari as piket_list %}
+
+    {% if piket_list %}
+      {% for piket in piket_list %}
+      <h2 class="subhead">{{ piket.grouper | weekday }}</h2>
+      <table class="model">
+        <thead>
+          <th>Nama Siswa</th>
+          <th width="100">NIS</th>
+          <th width="100">NISN</th>
+          <th width="100">Jenis Kelamin</th>
+          <th width="20"></th>
+        </thead>
+        <tbody>
+            {% for item in piket.list %}
+              <tr>
+                <td><strong>{{ item.siswa_kelas.siswa }}</strong></td>
+                <td>{{ item.siswa_kelas.siswa.nis }}</td>
+                <td>{{ item.siswa_kelas.siswa.nisn }}</td>
+                <td>{{ item.siswa_kelas.siswa.person.get_gender_display }}</td>
+                <td>
+                  <a class="deletelink" href="{% url 'admin:guruadmin_kelas_piket_delete' object_id=item.id %}" title="Hapus"></a>
+                </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      <br/>
+      {% endfor %}
+    {% else %}
+      <p>Kelas {{ instance }} tidak ada siswa piket</p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

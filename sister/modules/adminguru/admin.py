@@ -6,19 +6,14 @@ from sister.admin.views import (
     AdminUpdateView,
     AdminDetailView,
     AdminCreateView,
-    AdminDeleteView
+    AdminDeleteView,
+    AdminPDFTemplateView
     )
 
 from sister.modules.personal.models import Siswa
 from sister.modules.pembelajaran.models import *
 
-from .forms import (
-    SiswaPiketForm,
-    RentangNilaiForm,
-    ItemJadwalPelajaranForm,
-    PresensiKelasForm,
-    PresensiSiswaFormSet
-)
+from .forms import *
 
 
 class KelasDetailBase(AdminDetailView):
@@ -73,6 +68,34 @@ class KelasDetailSiswa(KelasDetailBase):
 
     def get_page_title(self):
         return "Siswa Kelas: %s" % str(self.object)
+
+
+@tenant_admin.register_view
+class KelasDetailSiswaPrint(AdminPDFTemplateView):
+    
+    url_name = 'guruadmin_kelas_siswa_print'
+    url_path = 'kelas/<str:object_id>/print_siswa'
+    template_name = 'admin/prints/kelas_detail_siswa.html'
+    header_template = 'admin/print/header_landscape.html'
+    cmd_options = {
+        'orientation': 'landscape',
+        'margin-top': 35,
+        'margin-left': 15,
+        'margin-right': 15,
+        'margin-bottom': 15,
+    }
+
+    model = Kelas
+
+    def get_object(self):
+        obj_id = self.kwargs.get('object_id')
+        obj = get_object_or_404(self.model, pk=obj_id)
+        return obj
+
+    def get_extra_context(self):
+        return {
+            'instance': self.get_object()
+        }
 
 
 @tenant_admin.register_view
@@ -185,7 +208,7 @@ class KelasDetailMapel(KelasDetailBase):
 
 
 @tenant_admin.register_view
-class KelasDetailJadwal(KelasDetailBase):
+class KelasJadwalPelajaran(KelasDetailBase):
 
     url_name = 'guruadmin_kelas_jadwal'
     url_path = 'kelas/<str:object_id>/jadwal/'
@@ -196,64 +219,92 @@ class KelasDetailJadwal(KelasDetailBase):
 
 
 @tenant_admin.register_view
-class KelasJadwalAdd(AdminCreateView):
+class KelasJadwalPelajaranAdd(AdminCreateView):
 
-    model = ItemJadwalPelajaran
-    form_class = ItemJadwalPelajaranForm
+    model = JadwalPelajaran
+    form_class = JadwalPelajaranForm
     url_name = 'guruadmin_kelas_jadwal_add'
     url_path = 'jadwal_kelas/<str:object_id>/add/'
     template_name = 'admin/base_form.html'
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_jadwal', args=(self.parent.kelas.id,))
+        return reverse('admin:guruadmin_kelas_jadwal', args=(self.parent.id,))
 
     def get_initial(self):
-        return {'jadwal_kelas': self.parent}
+        return {'kelas': self.parent}
 
     def get_page_title(self):
         return "Tambah Jadwal: %s" % str(self.parent)
 
     def dispatch(self, request, object_id, *args, **kwargs):
-        self.parent = get_object_or_404(JadwalKelas, pk=object_id)
+        self.parent = get_object_or_404(Kelas, pk=object_id)
         return super().dispatch(request, *args, **kwargs)
 
 
 @tenant_admin.register_view
-class KelasJadwalUpdate(AdminUpdateView):
+class KelasJadwalPelajaranUpdate(AdminUpdateView):
 
-    model = ItemJadwalPelajaran
-    form_class = ItemJadwalPelajaranForm
+    model = JadwalPelajaran
+    form_class = JadwalPelajaranForm
     url_name = 'guruadmin_kelas_jadwal_update'
     url_path = 'jadwal_kelas/<str:object_id>/update/'
     template_name = 'admin/base_form.html'
 
     def get_initial(self):
-        return {'jadwal_kelas': self.object.jadwal_kelas}
+        return {'kelas': self.object.kelas}
 
     def get_page_title(self):
         return "Update Jadwal: %s" % self.object
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_jadwal', args=(self.object.jadwal_kelas.kelas.id,))
+        return reverse('admin:guruadmin_kelas_jadwal', args=(self.object.kelas.id,))
 
 
 @tenant_admin.register_view
-class KelasJadwalDelete(AdminDeleteView):
+class KelasJadwalPelajaranPrint(AdminPDFTemplateView):
+    
+    url_name = 'guruadmin_kelas_jadwal_print'
+    url_path = 'kelas/<str:object_id>/print_jadwal'
+    template_name = 'admin/prints/kelas_detail_jadwal.html'
+    header_template = 'admin/print/header.html'
+    cmd_options = {
+        'orientation': 'portrait',
+        'margin-top': 35,
+        'margin-left': 25,
+        'margin-right': 25,
+        'margin-bottom': 25,
+    }
 
-    model = ItemJadwalPelajaran
+    model = Kelas
+
+    def get_object(self):
+        obj_id = self.kwargs.get('object_id')
+        obj = get_object_or_404(self.model, pk=obj_id)
+        return obj
+
+    def get_extra_context(self):
+        return {
+            'instance': self.get_object()
+        }
+
+
+@tenant_admin.register_view
+class KelasJadwalPelajaranDelete(AdminDeleteView):
+
+    model = JadwalPelajaran
     url_name = 'guruadmin_kelas_jadwal_delete'
     url_path = 'jadwal_kelas/<str:object_id>/delete/'
     template_name = 'admin/confirm_delete.html'
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_jadwal', args=(self.object.jadwal_kelas.kelas.id,))
+        return reverse('admin:guruadmin_kelas_jadwal', args=(self.object.kelas.id,))
 
     def get_page_title(self):
         return "Hapus Mata Pelajaran dari Jadwal  ?"
 
 
 @tenant_admin.register_view
-class KelasDetailPiket(KelasDetailBase):
+class KelasPiketSiswa(KelasDetailBase):
 
     url_name = 'guruadmin_kelas_piket'
     url_path = 'kelas/<str:object_id>/piket/'
@@ -264,41 +315,69 @@ class KelasDetailPiket(KelasDetailBase):
 
 
 @tenant_admin.register_view
-class KelasPiketAdd(AdminCreateView):
+class KelasPiketSiswaAdd(AdminCreateView):
 
-    model = ItemPiketKelas
-    form_class = SiswaPiketForm
+    model = JadwalPiketSiswa
+    form_class = JadwalPiketSiswaForm
     url_name = 'guruadmin_kelas_piket_add'
     url_path = 'piket_kelas/<str:object_id>/add/'
     template_name = 'admin/base_form.html'
 
     def get_initial(self):
-        return {'piket_kelas': self.parent}
+        return {'kelas': self.parent}
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_piket', args=(self.parent.kelas.id,))
+        return reverse('admin:guruadmin_kelas_piket', args=(self.parent.id,))
 
     def get_page_title(self):
         return "Tambah Siswa Piket: %s" % str(self.parent)
 
     def dispatch(self, request, object_id, *args, **kwargs):
-        self.parent = get_object_or_404(PiketKelas, pk=object_id)
+        self.parent = get_object_or_404(Kelas, pk=object_id)
         return super().dispatch(request, *args, **kwargs)
 
 
 @tenant_admin.register_view
-class KelasPiketDelete(AdminDeleteView):
+class KelasPiketSiswaDelete(AdminDeleteView):
 
-    model = ItemPiketKelas
+    model = JadwalPiketSiswa
     url_name = 'guruadmin_kelas_piket_delete'
     url_path = 'piket_kelas/<str:object_id>/delete/'
     template_name = 'admin/confirm_delete.html'
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_piket', args=(self.object.piket_kelas.kelas.id,))
+        return reverse('admin:guruadmin_kelas_piket', args=(self.object.kelas.id,))
 
     def get_page_title(self):
         return "Hapus Siswa Piket ?"
+
+
+@tenant_admin.register_view
+class KelasPiketPrint(AdminPDFTemplateView):
+    
+    url_name = 'guruadmin_kelas_piket_print'
+    url_path = 'kelas/<str:object_id>/print_piket'
+    template_name = 'admin/prints/kelas_detail_piket.html'
+    header_template = 'admin/print/header.html'
+    cmd_options = {
+        'orientation': 'portrait',
+        'margin-top': 35,
+        'margin-left': 25,
+        'margin-right': 25,
+        'margin-bottom': 25,
+    }
+
+    model = Kelas
+
+    def get_object(self):
+        obj_id = self.kwargs.get('object_id')
+        obj = get_object_or_404(self.model, pk=obj_id)
+        return obj
+
+    def get_extra_context(self):
+        return {
+            'instance': self.get_object()
+        }
 
 
 class SiswaDetailBase(AdminDetailView):

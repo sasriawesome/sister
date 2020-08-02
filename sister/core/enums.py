@@ -11,6 +11,26 @@ class MaxLength(enum.Enum):
     RICHTEXT = 10000
 
 
+class Weekday(enum.Enum):
+    
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURSDAY = 3
+    FREEDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
+    
+    CHOICES = (
+        (0, _('Monday')),
+        (1, _('Tuesday')),
+        (2, _('Wednesday')),
+        (3, _('Thursday')),
+        (4, _('Freeday')),
+        (5, _('Saturday')),
+        (6, _('Sunday')),
+    )
+
 class ActiveStatus(enum.Enum):
     ACTIVE = 'ACT'
     INACTIVE = 'INC'

@@ -3,8 +3,18 @@ from django.utils.html import mark_safe
 from django.forms.models import inlineformset_factory
 from django.contrib.admin.widgets import AdminDateWidget, AdminTimeWidget
 
+from sister.core.enums import Weekday
 from sister.modules.pembelajaran.models import *
 
+
+__all__ = [
+    'JadwalPiketSiswaForm',
+    'JadwalPelajaranForm',
+    'RentangNilaiForm',
+    'PresensiKelasForm',
+    'PresensiSiswaForm',
+    'PresensiSiswaFormSet'
+]
 
 class PlainTextWidget(forms.Widget):
     def render(self, name, value, attrs, renderer=None):
@@ -16,51 +26,61 @@ class PlainTextWidget(forms.Widget):
         )
 
 
-class SiswaPiketForm(forms.ModelForm):
+class JadwalPiketSiswaForm(forms.ModelForm):
     class Meta:
-        model = ItemPiketKelas
-        fields = ['piket_kelas', 'siswa_kelas']
+        model = JadwalPiketSiswa
+        fields = ['kelas', 'hari', 'siswa_kelas']
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.get('initial')
-        piket_kelas = initial.get('piket_kelas')
+        kelas = initial.get('kelas')
         initial.update({
-            'piket_kelas': piket_kelas.id
+            'kelas': kelas.id
         })
         super().__init__(*args, **kwargs)
         self.fields['siswa_kelas'] = forms.ModelChoiceField(
-            queryset = SiswaKelas.objects.filter(**{'kelas_id': piket_kelas.kelas.id }),
-            limit_choices_to={'kelas_id': piket_kelas.kelas.id }
+            queryset = SiswaKelas.objects.filter(**{'kelas_id': kelas.id }),
+            limit_choices_to={'kelas_id': kelas.id }
         )
     
-    piket_kelas = forms.ModelChoiceField(
-        queryset = PiketKelas.objects.all(),
+    kelas = forms.ModelChoiceField(
+        queryset = Kelas.objects.all(),
         widget=forms.HiddenInput(attrs={'readonly':True})
+    )
+    hari = forms.ChoiceField(
+        required=True,
+        choices=Weekday.CHOICES.value,
+        widget=forms.Select()
     )
 
 
-class ItemJadwalPelajaranForm(forms.ModelForm):
+class JadwalPelajaranForm(forms.ModelForm):
     class Meta:
-        model = ItemJadwalPelajaran
-        fields = ['jadwal_kelas', 'mata_pelajaran', 'jam_mulai', 'jam_berakhir', 'deskripsi']
+        model = JadwalPelajaran
+        fields = ['kelas', 'hari', 'mata_pelajaran', 'jam_mulai', 'jam_berakhir', 'deskripsi']
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.get('initial')
-        jadwal_kelas = initial.get('jadwal_kelas')
+        kelas = initial.get('kelas')
         initial.update({
-            'jadwal_kelas': jadwal_kelas.id
+            'kelas': kelas.id
         })
         super().__init__(*args, **kwargs)
         self.fields['mata_pelajaran'] = forms.ModelChoiceField(
             required=True,
-            queryset = MataPelajaranKelas.objects.filter(**{'kelas_id': jadwal_kelas.kelas.id }),
-            limit_choices_to={'kelas_id': jadwal_kelas.kelas.id }
+            queryset = MataPelajaranKelas.objects.filter(**{'kelas_id': kelas.id }),
+            limit_choices_to={'kelas_id': kelas.id }
         )
     
-    jadwal_kelas = forms.ModelChoiceField(
+    kelas = forms.ModelChoiceField(
         required=True,
-        queryset = JadwalKelas.objects.all(),
+        queryset = Kelas.objects.all(),
         widget=forms.HiddenInput(attrs={'readonly':True})
+    )
+    hari = forms.ChoiceField(
+        required=True,
+        choices=Weekday.CHOICES.value,
+        widget=forms.Select()
     )
     jam_mulai = forms.TimeField( required=True, widget=AdminTimeWidget())
     jam_berakhir = forms.TimeField(required=True, widget=AdminTimeWidget())
@@ -88,7 +108,7 @@ class RentangNilaiForm(forms.ModelForm):
 class PresensiKelasForm(forms.ModelForm):
     class Meta:
         model = PresensiKelas
-        fields = ['kelas', 'semester', 'tanggal']
+        fields = ['kelas', 'semester', 'tanggal', 'libur', 'keterangan']
 
     kelas = forms.ModelChoiceField(
         queryset = Kelas.objects.all(),

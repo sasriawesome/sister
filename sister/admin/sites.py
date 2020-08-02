@@ -8,7 +8,7 @@ site_title = getattr(settings, 'PROJECT_TITLE', 'Sister')
 site_sub_title = getattr(settings, 'PROJECT_SUBTITLE', 'Sistem Informasi Pelayanan Laboratorium')
 site_description = getattr(settings, 'PROJECT_DESCRIPTION', 'Sistem Informasi Sekolah Terpadu')
 
-from .views import AdminView
+from .views import AdminViewMixin
 
 class CustomAdminSite(AdminSite):
     """ 
@@ -41,11 +41,11 @@ class CustomAdminSite(AdminSite):
         Register the given view class.
         The view class(s) subclass of sister AdminBaseView.
         """
-        if issubclass(view_class_or_iterable, AdminView):
+        if issubclass(view_class_or_iterable, AdminViewMixin):
             view_class_or_iterable = [view_class_or_iterable]
 
         for view in view_class_or_iterable:
-            if not issubclass(view, AdminView):
+            if not issubclass(view, AdminViewMixin):
                 raise ImproperlyConfigured(
                 'The view class %s should be subclass of sister.admin.views.AdminBaseView' % view_class.__name__)
             

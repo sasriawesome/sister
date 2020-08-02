@@ -1,5 +1,5 @@
 {% extends 'admin/kelas_detail.html' %}
-{% load i18n static admin_urls admin_modify %}
+{% load i18n static admin_urls admin_modify sister_core_tags %}
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
@@ -14,8 +14,13 @@
   {% block object_tools %}
   <ul class="object-tools">
     <li>
-      <a href="" class="mdi mdi-calendar">
+      <a href="{% url 'admin:guruadmin_kelas_jadwal_print' object_id=instance.id %}" class="mdi mdi-calendar">
         Cetak Jadwal Kelas 
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'admin:guruadmin_kelas_jadwal_add' object_id=instance.id  %}" class="mdi mdi-plus">
+        Tambah Jadwal Pelajaran 
       </a>
     </li>
   </ul>
@@ -23,56 +28,43 @@
 
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
-    {% for jadwal in instance.jadwal_kelas.all %}
-    <h2 class="subhead">{{ jadwal.get_hari_display }}</h2>
-    <table class="model">
-      <thead>
-        <th>Nama</th>
-        <th>Guru</th>
-        <th width="80">Mulai</th>
-        <th width="80">Berakhir</th>
-        <th width="40"></th>
-      </thead>
-      <tbody>
-        {% if jadwal.mata_pelajaran.count %}
-          {% for item in jadwal.mata_pelajaran.all %}
-            <tr>
-              <td><strong>{{ item.mata_pelajaran.mata_pelajaran.nama }}</strong></td>
-              <td>{{ item.mata_pelajaran.guru }}</td>
-              <td>{{ item.jam_mulai }}</td>
-              <td>{{ item.jam_berakhir }}</td>
-              <td>
-                <a class="changelink" href="{% url 'admin:guruadmin_kelas_jadwal_update' object_id=item.id %}" title="Ubah"></a>
-                <a class="deletelink" href="{% url 'admin:guruadmin_kelas_jadwal_delete' object_id=item.id %}" title="Hapus"></a>
-              </td>
-            </tr>
-          {% endfor %}
-        {% else %}
-          <tr>
-              <td colspan="5">
-                Kelas {{ instance }} tidak memilik jadwal pada hari {{ jadwal.get_hari_display }}.
-              </td>
-          </tr>
-        {% endif %}
-        <tr>
-          <td colspan="5">
-            <a class="addlink" href="{% url 'admin:guruadmin_kelas_jadwal_add' object_id=jadwal.id %}" title="Tambah Jadwal Pelajaran">Tambah Jadwal Pelajaran</a>
-          </td>
-        </tr>
-        {% if jadwal.ekskul.count %}
-          {% for item in jadwal.ekskul.all %}
-            <tr>
-              <td colspan="2">Ekstra Kurikuler {{ item }}</td>
-              <td>{{ item.jam_mulai }}</td>
-              <td>{{ item.jam_berakhir }}</td>
-              <td><a href="">Ubah &rsaquo;</a></td>
-            </tr>
-          {% endfor %}
-        {% endif %}
-       </tbody>
-    </table>
-    <br/>
-    {% endfor %}
+    {% regroup instance.jadwal_pelajaran.all by hari as jadwal_list %}
+    
+    {% if jadwal_list %}
+      {% for jadwal in jadwal_list %}
+      <h2 class="subhead">{{ jadwal.grouper | weekday }}</h2>
+      <table class="model">
+        <thead>
+          <th>Nama</th>
+          <th>Guru</th>
+          <th width="80">Mulai</th>
+          <th width="80">Berakhir</th>
+          <th width="40"></th>
+        </thead>
+        <tbody>
+            {% for item in jadwal.list %}
+              <tr>
+                <td><strong>{{ item.mata_pelajaran.mata_pelajaran.nama }}</strong></td>
+                <td>{{ item.mata_pelajaran.guru }}</td>
+                <td>{{ item.jam_mulai }}</td>
+                <td>{{ item.jam_berakhir }}</td>
+                <td>
+                  <a class="changelink" href="{% url 'admin:guruadmin_kelas_jadwal_update' object_id=item.id %}" title="Ubah"></a>
+                  <a class="deletelink" href="{% url 'admin:guruadmin_kelas_jadwal_delete' object_id=item.id %}" title="Hapus"></a>
+                </td>
+              </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      <br/>
+      {% endfor %}
+    {% else %}
+    <tr>
+        <td colspan="5">
+          Kelas {{ instance }} tidak memilik jadwal.
+        </td>
+    </tr>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

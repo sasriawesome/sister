@@ -16,6 +16,25 @@ class CustomRequest:
 
 
 @register.filter(is_safe=True)
+def weekday(value):
+    """
+    Convert an number to weekday.
+    """
+    HARI = (
+        (0, 'Senin'),
+        (1, 'Selasa'),
+        (2, 'Rabu'),
+        (3, 'Kamis'),
+        (4, 'Jumat'),
+        (5, 'Sabtu'),
+        (6, 'Minggu'),
+    )
+
+    hari = dict(HARI)
+    return hari[value]
+
+
+@register.filter(is_safe=True)
 def money(value, use_l10n=True):
     """
     Convert an integer to a string containing commas every three digits.

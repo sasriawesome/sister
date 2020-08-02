@@ -16,47 +16,41 @@ class TahunAjaranAdmin(ModelAdmin):
 
 
 class MataPelajaranKelasInline(admin.TabularInline):
-    extra = 0
+    extra = 1
     exclude = ['kkm', 'tugas', 'ph', 'pts', 'pas']
     model = MataPelajaranKelas
 
 
-class ItemJadwalPelajaranInline(admin.TabularInline):
-    extra = 0
-    model = ItemJadwalPelajaran
+class JadwalPelajaranInline(admin.TabularInline):
+    extra = 1
+    model = JadwalPelajaran
 
 
-class ItemJadwalEkstraKurikulerInline(admin.TabularInline):
-    extra = 0
-    model = ItemJadwalEkstraKurikuler
-
-
-class JadwalKelasAdmin(ModelAdmin):
-    inlines = [
-        ItemJadwalPelajaranInline,
-        ItemJadwalEkstraKurikulerInline
-        ]
-
-
-class ItemPiketKelasInline(admin.TabularInline):
-    extra = 0
-    model = ItemPiketKelas
-
-
-class PiketKelasAdmin(ModelAdmin):
-    inlines = [ItemPiketKelasInline]
+class JadwalPiketSiswaInline(admin.TabularInline):
+    extra = 1
+    model = JadwalPiketSiswa
 
 
 class SiswaKelasInline(admin.TabularInline):
-    extra = 0
+    extra = 1
     model = SiswaKelas
+
+
+class RentangNilaiInline(admin.TabularInline):
+    extra = 0
+    model = RentangNilai
 
 
 class KelasAdmin(ModelAdmin):
     search_fields = ['nama_kelas', 'guru_kelas__nip', 'guru_kelas__person__full_name']
     list_display = ['nama_kelas', 'guru_kelas', 'tahun_ajaran', 'kurikulum']
     list_select_related = ['guru_kelas', 'tahun_ajaran', 'kurikulum']
-    inlines = [MataPelajaranKelasInline, SiswaKelasInline]
+    inlines = [
+        MataPelajaranKelasInline,
+        SiswaKelasInline,
+        JadwalPelajaranInline,
+        JadwalPiketSiswaInline,
+        ]
 
     def get_list_display(self, request):
         list_display = super().get_list_display(request)
@@ -118,13 +112,10 @@ class PresensiKelasAdmin(ModelAdmin):
             return self.inlines
         return []
 
-# tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
-# tenant_admin.register(Kelas, KelasAdmin)
-# tenant_admin.register(JadwalKelas, JadwalKelasAdmin)
-# tenant_admin.register(PiketKelas, PiketKelasAdmin)
-# tenant_admin.register(NilaiSiswa, NilaiSiswaAdmin)
-# tenant_admin.register(RentangNilai, RentangNilaiAdmin)
-# tenant_admin.register(PresensiKelas, PresensiKelasAdmin)
+tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
+tenant_admin.register(Kelas, KelasAdmin)
+tenant_admin.register(NilaiSiswa, NilaiSiswaAdmin)
+tenant_admin.register(PresensiKelas, PresensiKelasAdmin)
 
 
 # class PersonalModelMenuGroup(ModelMenuGroup):

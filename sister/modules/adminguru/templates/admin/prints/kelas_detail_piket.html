@@ -1,0 +1,45 @@
+{% extends 'admin/prints/base_print.html' %}
+{% load sister_core_tags %}
+
+{% block content %}
+<div class="spacer-2"></div>
+<h1 class="text-center">
+    Piket Kelas {{ instance }}
+</h1>
+<div class="spacer-2"></div>
+
+{% regroup instance.piket.all by hari as piket_list %}
+
+{% if piket_list %}
+  {% for piket in piket_list %}
+  <h2 class="subhead">{{ piket.grouper | weekday }}</h2>
+  <div class="spacer-1"></div>
+  <table class="model">
+    <thead>
+      <th>Nama Siswa</th>
+      <th width="120">NIS</th>
+      <th width="120">NISN</th>
+      <th width="120">Jenis Kelamin</th>
+    </thead>
+    <tbody>
+        {% for item in piket.list %}
+          <tr>
+            <td><strong>{{ item.siswa_kelas.siswa }}</strong></td>
+            <td>{{ item.siswa_kelas.siswa.nis }}</td>
+            <td>{{ item.siswa_kelas.siswa.nisn }}</td>
+            <td>{{ item.siswa_kelas.siswa.person.get_gender_display }}</td>
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+  <br/>
+  {% endfor %}
+{% else %}
+  <p>Kelas {{ instance }} tidak ada siswa piket</p>
+{% endif %}
+
+<div class="spacer-4"></div>
+{% include 'admin/prints/sign_kepsek_guru_kelas.html' %}
+<div class="spacer-2"></div>
+
+{% endblock %}

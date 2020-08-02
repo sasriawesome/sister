@@ -1,0 +1,48 @@
+{% extends 'admin/prints/base_print.html' %}
+{% load sister_core_tags %}
+
+{% block content %}
+<div class="spacer-2"></div>
+<h1 class="text-center">
+    Jadwal Kelas {{ instance }}
+</h1>
+<div class="spacer-2"></div>
+
+    {% regroup instance.jadwal_pelajaran.all by hari as jadwal_list %}
+    
+    {% if jadwal_list %}
+      {% for jadwal in jadwal_list %}
+      <h2 class="subhead">{{ jadwal.grouper | weekday }}</h2>
+      <div class="spacer-1"></div>
+      <table class="model">
+        <thead>
+          <th>Nama</th>
+          <th>Guru</th>
+          <th width="80">Mulai</th>
+          <th width="80">Berakhir</th>
+        </thead>
+        <tbody>
+            {% for item in jadwal.list %}
+              <tr>
+                <td><strong>{{ item.mata_pelajaran.mata_pelajaran.nama }}</strong></td>
+                <td>{{ item.mata_pelajaran.guru }}</td>
+                <td>{{ item.jam_mulai }}</td>
+                <td>{{ item.jam_berakhir }}</td>
+            {% endfor %}
+        </tbody>
+      </table>
+      <br/>
+      {% endfor %}
+    {% else %}
+    <tr>
+        <td colspan="5">
+          Kelas {{ instance }} tidak memilik jadwal.
+        </td>
+    </tr>
+    {% endif %}
+
+<div class="spacer-4"></div>
+{% include 'admin/prints/sign_kepsek_guru_kelas.html' %}
+<div class="spacer-2"></div>
+
+{% endblock %}

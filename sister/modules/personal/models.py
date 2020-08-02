@@ -23,7 +23,6 @@ __all__ = [
     'Siswa'
 ]
 
-
 class Gender(enum.Enum):
     MALE = 'L'
     FEMALE = 'P'
@@ -50,22 +49,29 @@ class Person(BaseModel):
         related_name='profile',
         on_delete=models.CASCADE,
         verbose_name=_('User account'))
+    pid = models.CharField(
+        null=True, blank=True,
+        max_length=MaxLength.MEDIUM.value,
+        verbose_name=_("PID"),
+        help_text=_('Personal Identifier Number'))
     full_name = models.CharField(_('full name'), max_length=30, blank=False)
     short_name = models.CharField(_('short name'), max_length=150, blank=True)
     title = models.CharField(
         null=True, blank=True,
         max_length=MaxLength.MEDIUM.value,
         verbose_name=_("Title"))
-    pid = models.CharField(
+    blood_type = models.CharField(
+        max_length=3,
         null=True, blank=True,
-        max_length=MaxLength.MEDIUM.value,
-        verbose_name=_("PID"),
-        help_text=_('Personal Identifier Number'))
+        verbose_name=_('blood_type'))
     gender = models.CharField(
         max_length=1,
         choices=Gender.CHOICES.value,
         default=Gender.MALE.value,
         verbose_name=_('gender'))
+    religion = models.CharField(
+        max_length=25,
+        verbose_name=_('religion'))
     date_of_birth = models.DateField(
         null=True, blank=True,
         default=timezone.now,
@@ -74,6 +80,20 @@ class Person(BaseModel):
         null=True, blank=True,
         max_length=255,
         verbose_name=_('place of birth'))
+    job = models.CharField(
+        null=True, blank=True,
+        max_length=255,
+        verbose_name=_('Job'))
+    income =  models.DecimalField(
+        default=0,
+        max_digits=15,
+        decimal_places=0,
+        verbose_name=_('Maximum income per month')
+    )
+
+    @cached_property
+    def address(self):
+        return self.addresses.first()
 
     def __str__(self):
         return self.full_name

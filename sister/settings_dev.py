@@ -7,6 +7,8 @@ import datetime
 import pydf
 from sister import __version__ as version
 
+# Used by shell_plus  --notebook
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 # =============================================================================
 # SECURITY WARNING: 
@@ -44,6 +46,9 @@ INSTALLED_APPS = (
     'sister.admin',
     
     # Apps dependecies
+
+    'django_extensions',
+
     'rangefilter',
     'admin_numeric_filter',
     'nested_admin',

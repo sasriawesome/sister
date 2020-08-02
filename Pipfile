@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+jupyter = "*"
 
 [packages]
 django = "==3.0.8"
@@ -33,6 +34,7 @@ django-nested-admin = "*"
 django-payments = "*"
 django-tenants = "*"
 django-tenant-users = "*"
+django-extensions = "*"
 pandas = "*"
 
 [requires]

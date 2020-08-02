@@ -1,0 +1,90 @@
+{% extends 'admin/prints/base_print.html' %}
+
+
+{% block content %}
+<div class="spacer-2"></div>
+<h1 class="text-center">
+    Daftar Siswa Kelas {{ instance }}
+</h1>
+<div class="spacer-3"></div>
+
+<table width="100%">
+    <thead>
+        <tr>
+            <th width="30px" class="text-center">No</th>
+            <th width="70px" class="text-center">NIS</th>
+            <th width="70px" class="text-center">NISN</th>
+            <th width="200px">Nama Siswa</th>
+            <th width="90px">Tmp. Lahir</th>
+            <th width="80px">Tgl. Lahir</th>
+            <th width="40px">JK</th>
+            <th width="40px">Agama</th>
+            <th >Alamat Peserta Didik</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for siswa_kelas in instance.siswa.all %}
+        <tr>
+            <td class="text-center">{{ siswa_kelas.no_urut }}</td>
+            <td class="text-center">{{ siswa_kelas.siswa.nis }}</td>
+            <td class="text-center">{% firstof siswa_kelas.siswa.nisn '-' %}</td>
+            <td>{{ siswa_kelas.siswa.person.full_name | upper }}</td>
+            <td>{% firstof siswa_kelas.siswa.person.place_of_birth '-' %}</td>
+            <td>{% firstof siswa_kelas.siswa.person.date_of_birth '-' %}</td>
+            <td>{{ siswa_kelas.siswa.person.gender }}</td>
+            <td>{% firstof siswa_kelas.siswa.person.religion '-' %}</td>
+            <td>{% firstof siswa_kelas.siswa.person.address.fulladdress '-' %}</td>
+        </tr>
+        <tr>
+            <td colspan="3"></td>
+            <td><strong>Orang Tua/Wali</strong></td>
+            <td><strong>Status</strong></td>
+            <td><strong>Pekerjaan</strong></td>
+            <td colspan="2"><strong>Telpon</strong></td>
+            <td><strong>Alamat Orang Tua/Wali</strong></td>
+        </tr>
+        {% if siswa_kelas.siswa.wali.count %}
+            {% for wali in siswa_kelas.siswa.wali.all %}
+            <tr>
+                <td colspan="3"></td>
+                <td>{{ wali.person.full_name | upper }}</strong></td>
+                <td>{{ wali.get_status_display }}</td>
+                <td>{% firstof wali.person.job '-' %}</td>
+                <td colspan="2">{% firstof wali.person.personcontact.phone '-' %}</td>
+                <td>{% firstof wali.person.address.fulladdress '-' %}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="3"></td>
+            <td colspan="6">Data orang tua/wali {{ siswa_kelas.siswa.person.full_name | upper }} tidak ada.</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td colspan="9"><div class="spacer-1"></div></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="spacer-1"></div>
+<table width="100%" class="table no-border">
+    <tr>
+        <td width="120px"><strong>Siswa Laki-Laki</strong></td>
+        <td>: {{ instance.siswa_laki_laki }} Orang</td>
+    </tr>
+    <tr>
+        <td><strong>Siswa Perempuan</strong></td>
+        <td>: {{ instance.siswa_perempuan }} Orang</td>
+    </tr>
+    <tr>
+        <td><strong>Jumlah Siswa</strong></td>
+        <td>: {{ instance.jumlah_siswa }} Orang</td>
+    </tr>
+</table>
+<div class="spacer-1"></div>
+
+<div class="spacer-4"></div>
+{% include 'admin/prints/sign_kepsek_guru_kelas.html' %}
+<div class="spacer-2"></div>
+
+{% endblock %}

@@ -19,7 +19,7 @@
       </a>
     </li>
     <li>
-      <a href="{% url 'admin:guruadmin_kelas_presensi_add' object_id=instance.id  %}" class="mdi mdi-calendar">
+      <a href="{% url 'admin:guruadmin_kelas_presensi_add' object_id=instance.id  %}" class="mdi mdi-plus">
         Tambah Presensi 
       </a>
     </li>
@@ -65,7 +65,7 @@
     <table>
       <tr>
           <td colspan="5">Kelas {{ instance }} belum memiliki presensi.
-          <a href=""> &rarr; <strong>Tambah Presensi</strong></a></td>
+          <a href="{% url 'admin:guruadmin_kelas_presensi_add' object_id=instance.id  %}"> &rarr; <strong>Tambah Presensi</strong></a></td>
       </tr>
       {% endif %}
     </table>
