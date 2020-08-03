@@ -1,3 +1,4 @@
+import enum
 import uuid
 import decimal
 from django.db import models
@@ -45,6 +46,21 @@ class TahunAjaran(BaseModel):
         verbose_name = 'Tahun Ajaran'
         verbose_name_plural = 'Tahun Ajaran'
 
+    BULAN = (
+        (1, _('Januari')),
+        (2, _('Februari')),
+        (3, _('Maret')),
+        (4, _('April')),
+        (5, _('Mei')),
+        (6, _('Juni')),
+        (7, _('Juli')),
+        (8, _('Agustus')),
+        (9, _('September')),
+        (10, _('Oktober')),
+        (11, _('November')),
+        (12, _('Desember')),
+    )
+
     kode = models.CharField(
         max_length=10,
         editable=False, unique=True
@@ -55,11 +71,19 @@ class TahunAjaran(BaseModel):
             MaxValueValidator(3000),
         ]
     )
+    bulan_mulai = models.IntegerField(
+        choices=BULAN,
+        default=7
+    )
     tahun_akhir = models.IntegerField(
         validators=[
             MinValueValidator(2000),
             MaxValueValidator(3000),
         ]
+    )
+    bulan_akhir = models.IntegerField(
+        choices=BULAN,
+        default=6
     )
 
     def __str__(self):
@@ -100,6 +124,13 @@ class Kelas(BaseModel):
         Ruang, null=True, blank=False,
         on_delete=models.PROTECT,
         related_name='ruang')
+    
+    # Pengaturan Kelas
+    semester = models.IntegerField(
+        choices=((1, 1), (2, 2),),
+        default=1,
+        help_text=_('Tampilkan informasi kelas berdasarkan semester')
+    )
     status = models.CharField(
         max_length=10,
         choices=(
@@ -107,8 +138,10 @@ class Kelas(BaseModel):
             ('AKTIF', 'Aktif'),
             ('SELESAI', 'Selesai'),
         ),
-        default='PENDING'
+        default='PENDING',
+        help_text=_('Tandai kelas sebagai: Pending, Aktif atau Selesai')
     )
+
 
     @cached_property
     def jumlah_siswa(self):
@@ -121,6 +154,18 @@ class Kelas(BaseModel):
     @cached_property
     def siswa_perempuan(self):
         return self.siswa.filter(siswa__person__gender='P').count()
+    
+    @cached_property
+    def jadwal_pelajaran_semester(self):
+        return self.jadwal_pelajaran.filter(semester=self.semester)
+
+    @cached_property
+    def piket_semester(self):
+        return self.piket.filter(semester=self.semester)
+
+    @cached_property
+    def presensi_semester(self):
+        return self.presendi.filter(semester=self.semester)
 
     def __str__(self):
         return "%s %s" % (self.nama_kelas, self.tahun_ajaran)
@@ -303,11 +348,15 @@ class JadwalPelajaran(BaseModel):
     class Meta:
         verbose_name = 'Jadwal Kelas'
         verbose_name_plural = 'Jadwal Kelas'
-        unique_together = ('kelas', 'hari', 'mata_pelajaran')
+        unique_together = ('kelas', 'semester', 'hari', 'mata_pelajaran')
 
     kelas = models.ForeignKey(
         Kelas, on_delete=models.CASCADE,
         related_name='jadwal_pelajaran')
+    semester = models.IntegerField(
+        choices=((1, 1), (2, 2),),
+        default=1
+    )
     hari = models.IntegerField(
         choices=Weekday.CHOICES.value,
         default=Weekday.MONDAY.value
@@ -325,15 +374,20 @@ class JadwalPelajaran(BaseModel):
     def __str__(self):
         return "%s %s" % (self.kelas, self.get_hari_display())
 
+
 class JadwalPiketSiswa(BaseModel):
     class Meta:
         verbose_name = 'Jadwal Piket Siswa'
         verbose_name_plural = 'Jadwal Piket Siswa'
-        unique_together = ('kelas', 'hari', 'siswa_kelas')
+        unique_together = ('kelas', 'semester', 'hari', 'siswa_kelas')
 
     kelas = models.ForeignKey(
         Kelas, on_delete=models.CASCADE,
         related_name='piket')
+    semester = models.IntegerField(
+        choices=((1, 1), (2, 2),),
+        default=1
+    )
     hari = models.IntegerField(
         choices=Weekday.CHOICES.value,
         default=Weekday.MONDAY.value
@@ -347,11 +401,12 @@ class JadwalPiketSiswa(BaseModel):
     def __str__(self):
         return "%s %s" % (self.kelas, self.get_hari_display())
 
+
 class JadwalEkstraKurikuler(BaseModel):
     class Meta:
         verbose_name = 'Jadwal Ekstra Kurikuler'
         verbose_name_plural = 'Jadwal Ekstra Kurikuler'
-        unique_together = ('hari', 'kelas', 'ekstra_kurikuler')
+        unique_together = ('hari', 'semester', 'kelas', 'ekstra_kurikuler')
 
 
     kelas = models.ForeignKey(
@@ -359,6 +414,10 @@ class JadwalEkstraKurikuler(BaseModel):
         on_delete=models.CASCADE,
         related_name='jadwal_ekskul'
         )
+    semester = models.IntegerField(
+        choices=((1, 1), (2, 2),),
+        default=1
+    )
     hari = models.IntegerField(
         choices=Weekday.CHOICES.value,
         default=Weekday.MONDAY.value
@@ -376,6 +435,41 @@ class JadwalEkstraKurikuler(BaseModel):
         return "%s" % self.ekstra_kurikuler
 
 
+class AktifitasPendidikan(enum.Enum):
+
+    AWAL_TAHUN_PELAJARAN = 1
+    HARI_SEKOLAH_EFEKTIF = 2
+    PENILAIAN_HARIAN = 3
+    PENILAIAN_TENGAH_SEMESTER = 4
+    PENILAIAN_AKHIR_SEMESTER = 5
+    UJIAN_AKHIR_SEKOLAH = 6
+    PENERIMAAN_RAPOR = 7
+    HARI_MINGGU = 8
+    HARI_LIBUR_UMUM = 9
+    HARI_LIBUR_SEMESTER = 10
+    HARI_LIBUR_PUASA = 11
+
+    LIBUR = (
+        HARI_MINGGU,
+        HARI_LIBUR_UMUM,
+        HARI_LIBUR_SEMESTER,
+        HARI_LIBUR_PUASA
+    )
+
+    CHOICES = (
+        (AWAL_TAHUN_PELAJARAN, 'Awal tahun pelajaran'),
+        (HARI_SEKOLAH_EFEKTIF, 'Hari sekolah efektif'),
+        (PENILAIAN_HARIAN, 'Penilaian harian'),
+        (PENILAIAN_TENGAH_SEMESTER, 'Penilaian tengah semester'),
+        (PENILAIAN_AKHIR_SEMESTER, 'Penilaian akhir semester'),
+        (UJIAN_AKHIR_SEKOLAH, 'Ujian akhir sekolah'),
+        (PENERIMAAN_RAPOR, 'Penerimaan rapor'),
+        (HARI_MINGGU, 'Hari minggu'),
+        (HARI_LIBUR_UMUM, 'Hari minggu'),
+        (HARI_LIBUR_SEMESTER, 'Hari libur semester'),
+        (HARI_LIBUR_PUASA, 'Hari libur semester')
+    )
+
 class PresensiKelas(BaseModel):
     class Meta:
         verbose_name = 'Presensi Kelas'
@@ -392,18 +486,22 @@ class PresensiKelas(BaseModel):
     semester = models.IntegerField(
         choices=((1, 1), (2, 2),),
         default=1
-    )
+        )
     tanggal = models.DateField(default=timezone.now)
-    libur = models.BooleanField(default=False,
-        help_text=_('Tandai sebagai hari libur.'))
-    keterangan = models.CharField(
+    aktifitas = models.IntegerField(
+        choices=AktifitasPendidikan.CHOICES.value,
+        default=AktifitasPendidikan.HARI_SEKOLAH_EFEKTIF.value,
+        help_text=_('Alasan kelas diliburkan, atau catatan lain.')
+        )
+    deskripsi = models.CharField(
         max_length=250,
         null=True, blank=True,
-        help_text=_('Alasan kelas diliburkan, atau catatan lain.')
-    )
+        help_text=_('Penjelasan aktifitas.')
+        )
+        
     @cached_property
     def hari(self):
-        return Weekday.CHOICES[self.tanggal.weekday()][1]
+        return Weekday.CHOICES.value[self.tanggal.weekday()][1]
 
     @cached_property
     def hadir(self):

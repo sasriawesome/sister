@@ -10,4 +10,4 @@ from sister.modules.ruang.models import Ruang
 class RuangAdmin(ModelAdmin):
     list_display = ['kode', 'nama', 'kapasitas']
 
-# tenant_admin.register(Ruang, RuangAdmin)
+tenant_admin.register(Ruang, RuangAdmin)

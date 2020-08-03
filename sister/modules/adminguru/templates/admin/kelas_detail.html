@@ -8,7 +8,75 @@
 </div>
 {% endblock %}
 
-{% block coltype %}colMS{% endblock %}
+{% block coltype %}{% endblock %}
+
+{% block content_top %}
+  <div class="section is-narrow toolbox">
+    <div class="columns is-mobile is-multiline">
+
+      <div class="column toolbox__item">
+        <a class="toolbox__item__link"
+           href="{% url 'admin:guruadmin_kelas_detail' object_id=instance.id %}">
+          <div class="toolbox__item__icon">
+            <i class="mdi mdi-home-variant-outline"></i>
+          </div>
+          <div class="">Depan Kelas</div>
+        </a>
+      </div>
+
+      <div class="column toolbox__item">
+        <a class="toolbox__item__link"
+           href="{% url 'admin:guruadmin_kelas_siswa' object_id=instance.id %}">
+          <div class="toolbox__item__icon">
+            <i class="mdi mdi-account-group"></i>
+          </div>
+          <div class="">Siswa Kelas</div>
+        </a>
+      </div>
+
+      <div class="column toolbox__item">
+        <a class="toolbox__item__link"
+           href="{% url 'admin:guruadmin_kelas_mapel' object_id=instance.id %}">
+          <div class="toolbox__item__icon">
+            <i class="mdi mdi-book-open-variant"></i>
+          </div>
+          <div class="">Mata Pelajaran</div>
+        </a>
+      </div>
+
+      <div class="column toolbox__item">
+        <a class="toolbox__item__link"
+           href="{% url 'admin:guruadmin_kelas_presensi' object_id=instance.id %}">
+          <div class="toolbox__item__icon">
+            <i class="mdi mdi-human-greeting"></i>
+          </div>
+          <div class="">Presensi Siswa</div>
+        </a>
+      </div>
+
+      <div class="column toolbox__item">
+        <a class="toolbox__item__link"
+           href="{% url 'admin:guruadmin_kelas_jadwal' object_id=instance.id %}">
+          <div class="toolbox__item__icon">
+            <i class="mdi mdi-calendar"></i>
+          </div>
+          <div class="">Jadwal Kelas</div>
+        </a>
+      </div>
+
+      <div class="column toolbox__item">
+        <a class="toolbox__item__link"
+           href="{% url 'admin:guruadmin_kelas_piket' object_id=instance.id %}">
+          <div class="toolbox__item__icon">
+            <i class="mdi mdi-ballot-recount-outline"></i>
+          </div>
+          <div class="">Piket Kelas</div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
 
 {% block content %}
 
@@ -26,7 +94,38 @@
 
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
+
+    <table class="model">
+      <tbody>
+          <tr>
+              <td width="15%"><strong>Nama Kelas</strong></td>
+              <td width="35%">{{ instance.nama_kelas }}</td>
+              <td width="15%"><strong>Status</strong></td>
+              <td width="35%">{{ instance.get_status_display }}</td>
+          </tr>
+          <tr>
+              <td><strong>Guru Kelas</strong></td>
+              <td>{{ instance.guru_kelas }}</td>
+              <td><strong>Ruang</strong></td>
+              <td>{{ instance.ruang }}</td>
+          </tr>
+          <tr>
+              <td><strong>Tahun Ajaran</strong></td>
+              <td>{{ instance.tahun_ajaran }}</td>
+              <td><strong>Jumlah Siswa</strong></td>
+              <td>{{ instance.siswa.count }}</td>
+          </tr>
+          <tr>
+              <td><strong>Kurikulum</strong></td>
+              <td>{{ instance.kurikulum }}</td>
+              <td></td>
+              <td></td>
+          </tr>
+      </tbody>
+    </table>
+    <br/>
     <h2 class="subhead">Rentang Nilai {{ instance }}</h2>
+
     <table class="model">
       <thead>
       <tr>
@@ -130,53 +229,5 @@
 
 {% block sidebar %}
 <div id="content-related" class="sidebar">
-
-    <div class="module">
-        <div class="module__widget">
-        <a class="button" href="{% url 'admin:guruadmin_kelas_detail' object_id=instance.id %}">Depan Kelas</a>
-        <a class="button" href="{% url 'admin:guruadmin_kelas_siswa' object_id=instance.id %}">Siswa Kelas</a>
-        <a class="button" href="{% url 'admin:guruadmin_kelas_presensi' object_id=instance.id %}">Presensi Siswa</a>
-        <a class="button" href="{% url 'admin:guruadmin_kelas_mapel' object_id=instance.id %}">Mata Pelajaran</a>
-        <a class="button" href="{% url 'admin:guruadmin_kelas_jadwal' object_id=instance.id %}">Jadwal Kelas</a>
-        <a class="button" href="{% url 'admin:guruadmin_kelas_piket' object_id=instance.id %}">Piket Kelas</a>
-        </div>
-    </div>
-
-    <div class="module">
-        <div class="module__widget">
-            <table class="model">
-                <tbody>
-                    <tr>
-                        <td width="90px"><strong>Nama Kelas</strong></td>
-                        <td>{{ instance.nama_kelas }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Guru Kelas</strong></td>
-                        <td>{{ instance.guru_kelas }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tahun Ajaran</strong></td>
-                        <td>{{ instance.tahun_ajaran }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Kurikulum</strong></td>
-                        <td>{{ instance.kurikulum }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Status</strong></td>
-                        <td>{{ instance.get_status_display }}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Ruang</strong></td>
-                      <td>{{ instance.ruang }}</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Jumlah Siswa</strong></td>
-                      <td>{{ instance.siswa.count }}</td>
-                  </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
 {% endblock %}

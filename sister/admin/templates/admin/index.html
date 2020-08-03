@@ -2,13 +2,7 @@
 {% load i18n static sister_admin_tags %}
 
 {% block extrastyle %}
-{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">
-<style>
-    .dashboard #content {
-        width: auto;
-    }
-</style>
+    {{ block.super }}
 {% endblock %}
 
 {% block coltype %}colMS{% endblock %}

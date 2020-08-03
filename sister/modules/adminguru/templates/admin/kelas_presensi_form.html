@@ -1,4 +1,4 @@
-{% extends 'admin/kelas_detail.html' %}
+{% extends 'admin/base_form.html' %}
 {% load i18n static admin_urls admin_modify %}
 
 {% block extrahead %}{{ block.super }}
@@ -13,6 +13,8 @@
   &rsaquo; {% if instance %}{{ instance | truncatewords:"18" }}{% else %}{{ title }}{% endif %}
 </div>
 {% endblock %}
+
+{% block content_top %}{% endblock %}
 
 {% block content %}
 <div id="content-main">
@@ -52,7 +54,7 @@
           <thead>
             <tr>
               <th>Nama Siswa</th>
-              <th width="120px">Keterangan</th>
+              <th width="150px">Keterangan</th>
             </tr>
           </thead>
         {{ inlineform.management_form }}

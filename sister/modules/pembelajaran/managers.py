@@ -19,15 +19,13 @@ class KelasManager(models.Manager):
         siswa_kelas_df = pd.DataFrame(
             kelas.siswa.values('id', 'no_urut','siswa__person__full_name')
         )
-        siswa_kelas_df['index'] = siswa_kelas_df['id']
-        siswa_kelas_df = siswa_kelas_df.set_index('index')    
         siswa_kelas_df = siswa_kelas_df.rename(
             columns={
-                'siswa__no_urut':'no',
-                'siswa__person__full_name':'full_name'
+                'no_urut':'no',
+                'siswa__person__full_name':'nama_siswa'
             }
         )
-
+        siswa_kelas_df = siswa_kelas_df.set_index(['id', 'no', 'nama_siswa'])
         return siswa_kelas_df
     
     def get_presensi_siswa_df(self, kelas, semester, bulan):
@@ -46,38 +44,64 @@ class KelasManager(models.Manager):
         presensi_df = pd.DataFrame(presensi)
         return presensi_df
         
-    def get_rekap_presensi(self, kelas, semester, bulan):
+
+    def get_matrix_presensi(self, kelas, semester, bulan):
         
-        results_df = self.get_siswa_kelas_df(kelas)
+        matrix = self.get_siswa_kelas_df(kelas)
         presensi_df = self.get_presensi_siswa_df(kelas, semester, bulan)
 
         days = calendar.monthrange(2020, bulan)[1]
 
         for day in range(1, days + 1):
-
+            col_header = str(day).zfill(2)
             if not presensi_df.empty:
                 result = presensi_df.loc[pd.to_datetime(presensi_df['tanggal']).dt.day == day]
                 result = result[['siswa_kelas_id', 'status']]
-                result = result.rename(columns={'status': day})
+                result = result.rename(columns={'status': col_header})
                 result = result.set_index('siswa_kelas_id')
             else:
-                result = results_df.copy()
-                result[day] = np.nan
-                result = result[day]
-
-            results_df = results_df.join(
+                result = matrix.copy()
+                result = result.reset_index(['no', 'nama_siswa'])
+                result[col_header] = np.nan
+                result = result[col_header]
+            print(result)
+            matrix = matrix.join(
                 result,
                 on='id',
                 how='left'
             )
 
-        results_df = results_df.replace({np.nan: None})
-        results_df['H'] = results_df.eq('H').sum(axis=1)
-        results_df['S'] = results_df.eq('S').sum(axis=1)
-        results_df['I'] = results_df.eq('I').sum(axis=1)
-        results_df['A'] = results_df.eq('A').sum(axis=1)
-        results_df['L'] = results_df.eq('L').sum(axis=1)
-        return results_df
+        matrix = matrix.replace({np.nan: None})
+        matrix['H'] = matrix.eq('H').sum(axis=1)
+        matrix['S'] = matrix.eq('S').sum(axis=1)
+        matrix['I'] = matrix.eq('I').sum(axis=1)
+        matrix['A'] = matrix.eq('A').sum(axis=1)
+        matrix['L'] = matrix.eq('L').sum(axis=1)
+        matrix = matrix.reset_index()
+
+        matrix_index = ['id', 'no', 'nama_siswa', 'H', 'S', 'I', 'A', 'L']
+        matrix = matrix.set_index(matrix_index)
+
+        return matrix
+
+
+    def get_rekap_presensi_siswa(self, kelas, semester, bulan):
+        
+        matrix = self.get_matrix_presensi(kelas, semester, bulan)
+        
+        summary = pd.DataFrame()
+        summary['Hadir'] = matrix.eq('H').sum(axis=0)
+        summary['Sakit'] = matrix.eq('S').sum(axis=0)
+        summary['Izin'] = matrix.eq('I').sum(axis=0)
+        summary['Tanpa Keterangan'] = matrix.eq('A').sum(axis=0)
+        summary['Libur'] = matrix.eq('L').sum(axis=0)
+        summary = summary.transpose()
+        summary['total'] = summary.sum(axis=1)
+        summary = summary.reset_index()
+        summary_index = ['index', 'total']
+        summary = summary.set_index(summary_index)
+
+        return matrix, summary
 
 
 class PresensiKelasManager(models.Manager):

@@ -1,4 +1,4 @@
-{% extends 'admin/kelas_detail.html' %}
+{% extends 'admin/base_form.html' %}
 {% load i18n static admin_urls admin_modify %}
 
 {% block extrahead %}{{ block.super }}
@@ -11,6 +11,8 @@
   &rsaquo; Rentang Nilai {{ view.object | truncatewords:"18" }} kelas {{ view.object.kelas }}
 </div>
 {% endblock %}
+
+{% block content_top %}{% endblock %}
 
 {% block content %}
 <div id="content-main">

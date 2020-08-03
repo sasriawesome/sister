@@ -8,7 +8,7 @@
 </h1>
 <div class="spacer-2"></div>
 
-    {% regroup instance.jadwal_pelajaran.all by hari as jadwal_list %}
+    {% regroup instance.jadwal_pelajaran_semester by hari as jadwal_list %}
     
     {% if jadwal_list %}
       {% for jadwal in jadwal_list %}

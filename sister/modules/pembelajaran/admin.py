@@ -42,14 +42,13 @@ class RentangNilaiInline(admin.TabularInline):
 
 
 class KelasAdmin(ModelAdmin):
+    list_per_page = 1
     search_fields = ['nama_kelas', 'guru_kelas__nip', 'guru_kelas__person__full_name']
     list_display = ['nama_kelas', 'guru_kelas', 'tahun_ajaran', 'kurikulum']
     list_select_related = ['guru_kelas', 'tahun_ajaran', 'kurikulum']
     inlines = [
         MataPelajaranKelasInline,
         SiswaKelasInline,
-        JadwalPelajaranInline,
-        JadwalPiketSiswaInline,
         ]
 
     def get_list_display(self, request):

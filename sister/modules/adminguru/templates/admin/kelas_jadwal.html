@@ -14,11 +14,6 @@
   {% block object_tools %}
   <ul class="object-tools">
     <li>
-      <a href="{% url 'admin:guruadmin_kelas_jadwal_print' object_id=instance.id %}" class="mdi mdi-calendar">
-        Cetak Jadwal Kelas 
-      </a>
-    </li>
-    <li>
       <a href="{% url 'admin:guruadmin_kelas_jadwal_add' object_id=instance.id  %}" class="mdi mdi-plus">
         Tambah Jadwal Pelajaran 
       </a>
@@ -26,9 +21,28 @@
   </ul>
   {% endblock %}
 
+  <div id="changelist">
+    <div id="toolbar">
+      <form id="" method="get">
+      <div><!-- DIV needed for valid HTML -->
+        <label>Semester:
+          <select name="action" required="">
+            <option value="" selected="">---------</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+          </select>
+        </label>
+        <input type="submit" title="Filter" name="submit_action" value="Filter">
+        <input type="submit" title="Reset" name="submit_action" value="Reset">
+        <input type="submit" title="Download" name="submit_action" value="Download">
+      </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
-    {% regroup instance.jadwal_pelajaran.all by hari as jadwal_list %}
+    {% regroup instance.jadwal_pelajaran_semester by hari as jadwal_list %}
     
     {% if jadwal_list %}
       {% for jadwal in jadwal_list %}

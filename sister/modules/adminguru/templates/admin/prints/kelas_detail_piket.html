@@ -8,7 +8,7 @@
 </h1>
 <div class="spacer-2"></div>
 
-{% regroup instance.piket.all by hari as piket_list %}
+{% regroup instance.piket_semester by hari as piket_list %}
 
 {% if piket_list %}
   {% for piket in piket_list %}

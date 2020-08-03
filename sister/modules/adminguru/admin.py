@@ -108,6 +108,36 @@ class KelasDetailPresensi(KelasDetailBase):
     def get_page_title(self):
         return "Presensi Kelas: %s" % str(self.object)
 
+    def get_extra_context(self):
+        import pandas as pd
+
+        matrix, summary = Kelas.objects.get_rekap_presensi(self.object, 1, 8)
+        
+        matrix  = matrix.transpose().to_dict()
+        matrix_to_dict = []
+
+        for index, values in matrix_value.items() :
+            item = {}
+            for idx in range(len(matrix_index)):
+                item[matrix_index[idx]] = index[idx]
+            item['matrix'] = values
+            matrix_to_dict.append(item)
+
+        summary = summary.transpose().to_dict()
+        
+        summary_to_dict = []
+        for index, values in summary.items() :
+            item = {}
+            for idx in range(len(summary_index)):
+                item[summary_index[idx]] = index[idx]
+            item['matrix'] = values
+            summary_to_dict.append(item)
+
+        return {
+            'header': matrix.columns,
+            'results': summary_siswa,
+            'summary': summary_status
+        }
 
 @tenant_admin.register_view
 class KelasPresensiAdd(AdminCreateView):

@@ -16,6 +16,7 @@ __all__ = [
     'PresensiSiswaFormSet'
 ]
 
+
 class PlainTextWidget(forms.Widget):
     def render(self, name, value, attrs, renderer=None):
         if hasattr(self, 'initial'):
@@ -29,7 +30,7 @@ class PlainTextWidget(forms.Widget):
 class JadwalPiketSiswaForm(forms.ModelForm):
     class Meta:
         model = JadwalPiketSiswa
-        fields = ['kelas', 'hari', 'siswa_kelas']
+        fields = ['kelas', 'hari', 'semester', 'siswa_kelas']
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.get('initial')
@@ -47,6 +48,14 @@ class JadwalPiketSiswaForm(forms.ModelForm):
         queryset = Kelas.objects.all(),
         widget=forms.HiddenInput(attrs={'readonly':True})
     )
+    semester = forms.ChoiceField(
+        required=True,
+        choices=(
+            (1, '1'),
+            (2, '2'),
+        ),
+        widget=forms.Select()
+    )
     hari = forms.ChoiceField(
         required=True,
         choices=Weekday.CHOICES.value,
@@ -57,7 +66,7 @@ class JadwalPiketSiswaForm(forms.ModelForm):
 class JadwalPelajaranForm(forms.ModelForm):
     class Meta:
         model = JadwalPelajaran
-        fields = ['kelas', 'hari', 'mata_pelajaran', 'jam_mulai', 'jam_berakhir', 'deskripsi']
+        fields = ['kelas', 'hari', 'semester', 'mata_pelajaran', 'jam_mulai', 'jam_berakhir', 'deskripsi']
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.get('initial')
@@ -76,6 +85,14 @@ class JadwalPelajaranForm(forms.ModelForm):
         required=True,
         queryset = Kelas.objects.all(),
         widget=forms.HiddenInput(attrs={'readonly':True})
+    )
+    semester = forms.ChoiceField(
+        required=True,
+        choices=(
+            (1, '1'),
+            (2, '2'),
+        ),
+        widget=forms.Select()
     )
     hari = forms.ChoiceField(
         required=True,
@@ -96,6 +113,14 @@ class RentangNilaiForm(forms.ModelForm):
         queryset = Kelas.objects.all(),
         widget=forms.HiddenInput(attrs={'readonly':True})
     )
+    semester = forms.ChoiceField(
+        required=True,
+        choices=(
+            (1, '1'),
+            (2, '2'),
+        ),
+        widget=forms.Select()
+    )
     predikat = forms.CharField(widget=forms.TextInput(attrs={'readonly':True}))
     nilai_minimum = forms.IntegerField(
         required=True,
@@ -108,7 +133,7 @@ class RentangNilaiForm(forms.ModelForm):
 class PresensiKelasForm(forms.ModelForm):
     class Meta:
         model = PresensiKelas
-        fields = ['kelas', 'semester', 'tanggal', 'libur', 'keterangan']
+        fields = ['kelas', 'semester', 'tanggal', 'aktifitas', 'deskripsi']
 
     kelas = forms.ModelChoiceField(
         queryset = Kelas.objects.all(),

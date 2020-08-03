@@ -3,6 +3,7 @@
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/bulma_grid.css' %}">
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
 <link rel="stylesheet" type="text/css" href="{% static 'admin/css/metisMenu.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'admin/css/mm-vertical.css' %}">
@@ -14,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive.css" %}">
     {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive_rtl.css" %}">{% endif %}
 {% endblock %}
+
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
 <style>
     .text-left {
@@ -306,7 +308,7 @@
     </div>
     {% endblock %}
     {% endif %}
-
+    
     {% block messages %}
         {% if messages %}
         <ul class="messagelist">{% for message in messages %}
@@ -314,6 +316,8 @@
         {% endfor %}</ul>
         {% endif %}
     {% endblock messages %}
+    
+    {% block content_top %}{% endblock %}
 
     <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %}">
