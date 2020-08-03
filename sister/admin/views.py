@@ -1,15 +1,18 @@
 from django import forms
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.core.exceptions import ImproperlyConfigured
+from django.forms import modelform_factory
 from django.views import View
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
-from django.views.generic.edit import UpdateView
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, Http404
 
-from constance import config
 from wkhtmltopdf.views import PDFTemplateView
+
+
+_ = translation.ugettext_lazy
+
 
 class AdminContextMixin:
 
@@ -38,7 +41,7 @@ class AdminMultipleObjectMixin(AdminContextMixin, MultipleObjectMixin):
 
 
 class AdminSingleObjectMixin(AdminContextMixin, SingleObjectMixin):
-    
+
     pk_url_kwarg = 'object_id'
     context_object_name = 'instance'
 
@@ -99,7 +102,9 @@ class FormMixin(AdminContextMixin):
     def get_success_url(self):
         """Return the URL to redirect to after processing a valid form."""
         if not self.success_url:
-            raise ImproperlyConfigured("No URL to redirect to. Provide a success_url.")
+            raise ImproperlyConfigured(
+                    "No URL to redirect to. Provide a success_url."
+                    )
         return str(self.success_url)  # success_url may be lazy
 
     def form_valid(self, form):
@@ -112,14 +117,14 @@ class FormMixin(AdminContextMixin):
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_extra_context(self):
-        return {'media' : self.media}
+        return {'media': self.media}
 
     def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
         return super().get_context_data(**kwargs)
-    
+
 
 class AdminViewMixin:
 
@@ -131,13 +136,15 @@ class AdminViewMixin:
     def __init__(self, admin_site, *args, **kwargs):
         self.admin_site = admin_site
         super().__init__(*args, **kwargs)
-    
+
     def has_permission(self, request):
         return True
-    
+
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permission(request):
-            raise PermissionError("You don’t have permission to view or edit this page")
+            raise PermissionError(
+                "You don’t have permission to view or edit this page"
+                )
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -178,10 +185,11 @@ class ModelFormMixin(FormMixin, AdminSingleObjectMixin):
             if self.fields is None:
                 raise ImproperlyConfigured(
                     "Using ModelFormMixin (base class of %s) without "
-                    "the 'fields' attribute is prohibited." % self.__class__.__name__
+                    "the 'fields' attribute is prohibited." %
+                    self.__class__.__name__
                 )
 
-            return model_forms.modelform_factory(model, fields=self.fields)
+            return modelform_factory(model, fields=self.fields)
 
     def get_form_kwargs(self):
         """Return the keyword arguments for instantiating the form."""
@@ -248,13 +256,18 @@ class BaseListView(MultipleObjectMixin, AdminView):
             # When pagination is enabled and object_list is a queryset,
             # it's better to do a cheap query than to load the unpaginated
             # queryset in memory.
-            if self.get_paginate_by(self.object_list) is not None and hasattr(self.object_list, 'exists'):
+            has_object_list = hasattr(self.object_list, 'exists')
+            has_paginate_by = self.get_paginate_by(
+                    self.object_list
+                ) is not None
+            if has_paginate_by and has_object_list:
                 is_empty = not self.object_list.exists()
             else:
                 is_empty = not self.object_list
             if is_empty:
-                raise Http404(_('Empty list and “%(class_name)s.allow_empty” is False.') % {
-                    'class_name': self.__class__.__name__,
+                msg = _('Empty list and “%(cls_name)s.allow_empty” is False.')
+                raise Http404(msg % {
+                    'cls_name': self.__class__.__name__,
                 })
         context = self.get_context_data()
         return self.render_to_response(context)
@@ -265,7 +278,7 @@ class AdminListView(BaseListView):
 
 
 class AdminDetailView(BaseDetailView):
-    
+
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         context = self.get_context_data(object=self.object)
@@ -273,7 +286,7 @@ class AdminDetailView(BaseDetailView):
 
 
 class AdminCreateView(ModelFormMixin, ProcessFormView):
-    
+
     cacheable = False
 
     def get(self, request, *args, **kwargs):
@@ -299,7 +312,7 @@ class AdminUpdateView(ModelFormMixin, ProcessFormView):
 
 
 class AdminDeleteView(AdminSingleObjectMixin, AdminView):
-    
+
     cacheable = False
 
     def get_success_url(self):
@@ -308,7 +321,7 @@ class AdminDeleteView(AdminSingleObjectMixin, AdminView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().get(request, *args, **kwargs)
-        
+
     def delete(self, request, *args, **kwargs):
         self.object.delete()
         return redirect(self.get_success_url())
@@ -319,7 +332,7 @@ class AdminDeleteView(AdminSingleObjectMixin, AdminView):
 
 
 class PDFViewMixin:
-    title = None    
+    title = None
     filename = None
     show_content_in_browser = True
 
@@ -337,10 +350,10 @@ class PDFViewMixin:
     }
 
     def get_settings(self, request):
-        return None 
+        return None
 
     def apply_settings(self, request):
-        pass # use default settings
+        pass
 
     def get_title(self):
         return self.title
@@ -391,15 +404,13 @@ class ModelPDFTemplateView(PDFViewMixin, PDFTemplateView):
         return self.filename + '_' + timezone.now().strftime('%d%m%Y')
 
     def get(self, request, *args, **kwargs):
-        """ Render PDF Response """ 
+        """ Render PDF Response """
         self.apply_settings(request)
         return super().get(request, *args, **kwargs)
 
 
-
 class AdminPDFTemplateView(AdminViewMixin, ModelPDFTemplateView):
     pass
-
 
 
 class ModelAdminPDFViewBase(PDFTemplateView):
@@ -429,11 +440,8 @@ class ModelAdminPDFViewBase(PDFTemplateView):
         self.apply_settings(request)
         return super().get(request, *args, **kwargs)
 
-    def get_settings(self, request):
-        return PrintPDFSetting.for_site(request.site)
-
     def apply_settings(self, request):
-        pass # use default settings
+        pass
 
     def get_title(self):
         return self.title or self.opts.verbose_name
@@ -473,13 +481,6 @@ class PDFPrintDetailView(ModelAdminPDFViewBase):
         return self.modeladmin.document_title or super().get_title()
 
     def apply_settings(self, request):
-        options = {
-            'margin-top': config.PDF_MARGIN_TOP,
-            'margin-left': config.PDF_MARGIN_LEFT,
-            'margin-right': config.PDF_MARGIN_RIGHT,
-            'margin-bottom': config.PDF_MARGIN_BOTTOM,
-            'orientation': config.PDF_ORIENTATION
-        }
         if not self.modeladmin.document_show_cover:
             self.cover_template = None
         if not self.modeladmin.document_show_header:

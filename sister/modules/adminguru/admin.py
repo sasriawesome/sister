@@ -1,8 +1,9 @@
 from django.db import transaction
-from django.shortcuts import get_object_or_404, reverse, redirect
+from django.utils import timezone
+from django.shortcuts import get_object_or_404, reverse
 from sister.admin.sites import tenant_admin
 from sister.admin.views import (
-    AdminListView, 
+    AdminListView,
     AdminUpdateView,
     AdminDetailView,
     AdminCreateView,
@@ -11,9 +12,23 @@ from sister.admin.views import (
     )
 
 from sister.modules.personal.models import Siswa
-from sister.modules.pembelajaran.models import *
+from sister.modules.pembelajaran.models import (
+    Kelas,
+    RentangNilai,
+    PresensiKelas,
+    JadwalPelajaran,
+    JadwalPiketSiswa,
+    SiswaKelas,
+    NilaiSiswa
+    )
 
-from .forms import *
+from .forms import (
+    RentangNilaiForm,
+    PresensiKelasForm,
+    PresensiSiswaFormSet,
+    JadwalPelajaranForm,
+    JadwalPiketSiswaForm
+    )
 
 
 class KelasDetailBase(AdminDetailView):
@@ -45,7 +60,10 @@ class RentangNilaiUpdate(AdminUpdateView):
         return "Update Rentang Nilai %s" % self.object
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_detail', args=(self.object.kelas.id,))
+        return reverse(
+            'admin:guruadmin_kelas_detail',
+            args=(self.object.kelas.id,)
+            )
 
 
 @tenant_admin.register_view
@@ -58,10 +76,9 @@ class KelasDetail(KelasDetailBase):
     def get_page_title(self):
         return "Kelas %s" % str(self.object)
 
-    
+
 @tenant_admin.register_view
 class KelasDetailSiswa(KelasDetailBase):
-
     url_name = 'guruadmin_kelas_siswa'
     url_path = 'kelas/<str:object_id>/siswa/'
     template_name = 'admin/kelas_siswa.html'
@@ -72,9 +89,8 @@ class KelasDetailSiswa(KelasDetailBase):
 
 @tenant_admin.register_view
 class KelasDetailSiswaPrint(AdminPDFTemplateView):
-    
     url_name = 'guruadmin_kelas_siswa_print'
-    url_path = 'kelas/<str:object_id>/print_siswa'
+    url_path = 'kelas/<str:object_id>/print_siswa/'
     template_name = 'admin/prints/kelas_detail_siswa.html'
     header_template = 'admin/print/header_landscape.html'
     cmd_options = {
@@ -109,35 +125,39 @@ class KelasDetailPresensi(KelasDetailBase):
         return "Presensi Kelas: %s" % str(self.object)
 
     def get_extra_context(self):
-        import pandas as pd
+        return {}
 
-        matrix, summary = Kelas.objects.get_rekap_presensi(self.object, 1, 8)
-        
-        matrix  = matrix.transpose().to_dict()
-        matrix_to_dict = []
+    def get_tabular_response(self, request, *args, **kwargs):
+        context = self.get_context_data(
+            tipe='tabular',
+            object=self.object
+            )
+        print(context)
+        return self.render_to_response(context)
 
-        for index, values in matrix_value.items() :
-            item = {}
-            for idx in range(len(matrix_index)):
-                item[matrix_index[idx]] = index[idx]
-            item['matrix'] = values
-            matrix_to_dict.append(item)
+    def get_matrix_response(self, request, *args, **kwargs):
+        # get request query
+        semester = self.request.GET.get('semester', 1)
+        bulan = self.request.GET.get('bulan', timezone.now().year)
 
-        summary = summary.transpose().to_dict()
-        
-        summary_to_dict = []
-        for index, values in summary.items() :
-            item = {}
-            for idx in range(len(summary_index)):
-                item[summary_index[idx]] = index[idx]
-            item['matrix'] = values
-            summary_to_dict.append(item)
+        get_rekap_dict = Kelas.objects.get_rekap_presensi_siswa_dict
+        rekap_presensi = get_rekap_dict(self.object, semester, int(bulan))
 
-        return {
-            'header': matrix.columns,
-            'results': summary_siswa,
-            'summary': summary_status
-        }
+        context = self.get_context_data(
+            **rekap_presensi,
+            tipe='matrix',
+            object=self.object
+            )
+        return self.render_to_response(context)
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        tipe = self.request.GET.get('tipe', 'tabular')
+        if tipe == 'tabular':
+            return self.get_tabular_response(request, *args, **kwargs)
+        else:
+            return self.get_matrix_response(request, *args, **kwargs)
+
 
 @tenant_admin.register_view
 class KelasPresensiAdd(AdminCreateView):
@@ -150,8 +170,14 @@ class KelasPresensiAdd(AdminCreateView):
 
     def get_success_url(self):
         if self.object and '_save_and_update' in self.request.POST:
-            return reverse('admin:guruadmin_kelas_presensi_update', args=(self.object.id,)) 
-        return reverse('admin:guruadmin_kelas_presensi', args=(self.parent.id,))
+            return reverse(
+                'admin:guruadmin_kelas_presensi_update',
+                args=(self.object.id,)
+                )
+        return reverse(
+            'admin:guruadmin_kelas_presensi',
+            args=(self.parent.id,)
+            )
 
     def get_initial(self):
         return {'kelas': self.parent}
@@ -178,9 +204,15 @@ class KelasPresensiUpdate(AdminUpdateView):
 
     def get_success_url(self):
         if '_save_and_update' in self.request.POST:
-            return reverse('admin:guruadmin_kelas_presensi_update', args=(self.object.id,))    
-        return reverse('admin:guruadmin_kelas_presensi', args=(self.object.kelas.id,))
-    
+            return reverse(
+                'admin:guruadmin_kelas_presensi_update',
+                args=(self.object.id,)
+                )
+        return reverse(
+            'admin:guruadmin_kelas_presensi',
+            args=(self.object.kelas.id,)
+            )
+
     def get_initial(self):
         return {'kelas': self.object.kelas}
 
@@ -220,7 +252,10 @@ class KelasPresensiDelete(AdminDeleteView):
     template_name = 'admin/confirm_delete.html'
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_presensi', args=(self.object.kelas.id,))
+        return reverse(
+            'admin:guruadmin_kelas_presensi',
+            args=(self.object.kelas.id,)
+            )
 
     def get_page_title(self):
         return "Hapus Mata Pelajaran dari Jadwal  ?"
@@ -287,12 +322,14 @@ class KelasJadwalPelajaranUpdate(AdminUpdateView):
         return "Update Jadwal: %s" % self.object
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_jadwal', args=(self.object.kelas.id,))
+        return reverse(
+            'admin:guruadmin_kelas_jadwal',
+            args=(self.object.kelas.id,)
+            )
 
 
 @tenant_admin.register_view
 class KelasJadwalPelajaranPrint(AdminPDFTemplateView):
-    
     url_name = 'guruadmin_kelas_jadwal_print'
     url_path = 'kelas/<str:object_id>/print_jadwal'
     template_name = 'admin/prints/kelas_detail_jadwal.html'
@@ -327,7 +364,10 @@ class KelasJadwalPelajaranDelete(AdminDeleteView):
     template_name = 'admin/confirm_delete.html'
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_jadwal', args=(self.object.kelas.id,))
+        return reverse(
+            'admin:guruadmin_kelas_jadwal',
+            args=(self.object.kelas.id,)
+            )
 
     def get_page_title(self):
         return "Hapus Mata Pelajaran dari Jadwal  ?"
@@ -376,7 +416,10 @@ class KelasPiketSiswaDelete(AdminDeleteView):
     template_name = 'admin/confirm_delete.html'
 
     def get_success_url(self):
-        return reverse('admin:guruadmin_kelas_piket', args=(self.object.kelas.id,))
+        return reverse(
+            'admin:guruadmin_kelas_piket',
+            args=(self.object.kelas.id,)
+            )
 
     def get_page_title(self):
         return "Hapus Siswa Piket ?"
@@ -384,7 +427,6 @@ class KelasPiketSiswaDelete(AdminDeleteView):
 
 @tenant_admin.register_view
 class KelasPiketPrint(AdminPDFTemplateView):
-    
     url_name = 'guruadmin_kelas_piket_print'
     url_path = 'kelas/<str:object_id>/print_piket'
     template_name = 'admin/prints/kelas_detail_piket.html'

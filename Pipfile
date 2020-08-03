@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 jupyter = "*"
+flake8 = "*"
 
 [packages]
 django = "==3.0.8"

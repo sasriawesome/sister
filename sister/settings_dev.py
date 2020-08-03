@@ -11,7 +11,7 @@ from sister import __version__ as version
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 # =============================================================================
-# SECURITY WARNING: 
+# SECURITY WARNING:
 # Don't run with debug turned on in production!
 # =============================================================================
 
@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     # app where tenant model resides in
     'sister.auth',
     'sister.admin',
-    
+
     # Apps dependecies
 
     'django_extensions',
@@ -149,19 +149,20 @@ AUTHENTICATION_BACKENDS = (
 ROOT_URLCONF = 'sister.urls_tenants'
 PUBLIC_SCHEMA_URLCONF = 'sister.urls_public'
 
+DJANGO_VALIDATOR = 'django.contrib.auth.password_validation.'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': DJANGO_VALIDATOR + 'UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': DJANGO_VALIDATOR + 'MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': DJANGO_VALIDATOR + 'CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': DJANGO_VALIDATOR + 'NumericPasswordValidator',
     },
 ]
 
@@ -219,7 +220,10 @@ EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'sister.noreply@gmail.com')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_USER', 'somepassword')
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_BACKEND = os.getenv(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend'
+    )
 
 # =============================================================================
 # REST FRAMEWORK
@@ -240,7 +244,9 @@ SWAGGER_SETTINGS = {
 
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': (
+        'rest_framework.pagination.PageNumberPagination'
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -262,7 +268,7 @@ CACHE_TTL = 60 * 5
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        "LOCATION": os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0'),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             # the password you should use to connect Redis is not URL-safe
@@ -279,18 +285,18 @@ CACHES = {
 RQ_QUEUES = {
     'default': {
         'DEFAULT_TIMEOUT': 180,
-        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/1'), # If you're on Heroku
+        'URL': os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1'),
     },
     'high': {
         'DEFAULT_TIMEOUT': 360,
         # 'PASSWORD': 'some-password',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': 6379,
         'DB': 1,
     },
     'low': {
         'DEFAULT_TIMEOUT': 500,
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': 6379,
         'DB': 1,
     }
@@ -302,11 +308,10 @@ RQ_QUEUES = {
 # =============================================================================
 
 PYPDF_PATH = os.path.dirname(inspect.getfile(pydf))
-WKHTMLTOPDF_PATH = os.path.join(PYPDF_PATH, 'bin','wkhtmltopdf')
+WKHTMLTOPDF_PATH = os.path.join(PYPDF_PATH, 'bin', 'wkhtmltopdf')
+WKHTMLTOPDF_CMD = os.getenv('WKHTMLTOPDF_CMD', WKHTMLTOPDF_PATH)
 
-WKHTMLTOPDF_CMD = os.getenv('WKHTMLTOPDF_CMD', '')
-
-# Optional 
+# Optional
 # WKHTMLTOPDF_CMD_OPTIONS = {
 #     'quiet': False,
 # }
@@ -318,7 +323,7 @@ WKHTMLTOPDF_CMD = os.getenv('WKHTMLTOPDF_CMD', '')
 CONSTANCE_BACKEND = 'constance.backends.redisd.RedisBackend'
 
 CONSTANCE_REDIS_CONNECTION = {
-    'host': 'localhost',
+    'host': '127.0.0.1',
     'port': 6379,
     'db': 3,
 }
@@ -336,7 +341,9 @@ CONSTANCE_CONFIG = {
     # Website Settings
     'SITE_LOGO': ('logo.png', 'Website Logo', 'image_field'),
     'SITE_TITLE': ('My Website', 'Website title', 'char_field'),
-    'SITE_SUBTITLE': ('Another Awesome Website', 'Website subtitle', 'char_field'),
+    'SITE_SUBTITLE': (
+        'Another Awesome Website', 'Website subtitle', 'char_field'
+        ),
     'SITE_DESCRIPTION': ('Website about good service', 'Website description'),
     # Company Profile
     'COMPANY_NAME': (
@@ -353,10 +360,13 @@ CONSTANCE_CONFIG = {
     'COMPANY_COUNTRY': ('Indonesia', '', 'char_field'),
     'COMPANY_POSTALCODE': ('35223', '', 'char_field'),
     'COMPANY_PHONE': ('0721373767', 'Valid phone number', 'char_field'),
-    'COMPANY_EMAIL': ('mycompany@gmail.com', 'Company email address', 'email_field'),
+    'COMPANY_EMAIL': (
+        'mycompany@gmail.com', 'Company email address', 'email_field'),
     # Tahun Anggaran
-    'FISCAL_DATE_START': (datetime.date(2020, 1, 1), 'Fiscal start date', 'date_field'),
-    'FISCAL_DATE_END': (datetime.date(2020, 12, 31), 'Fiscal start date', 'date_field'),
+    'FISCAL_DATE_START': (
+        datetime.date(2020, 1, 1), 'Fiscal start date', 'date_field'),
+    'FISCAL_DATE_END': (
+        datetime.date(2020, 12, 31), 'Fiscal start date', 'date_field'),
     # PDF Settings
     'PDF_MARGIN_TOP': (40, ''),
     'PDF_MARGIN_LEFT': (30, ''),
@@ -367,8 +377,8 @@ CONSTANCE_CONFIG = {
 
 CONSTANCE_CONFIG_FIELDSETS = {
     'General Settings': (
-        'SITE_LOGO', 
-        'SITE_TITLE', 
+        'SITE_LOGO',
+        'SITE_TITLE',
         'SITE_SUBTITLE',
         'SITE_DESCRIPTION'
     ),

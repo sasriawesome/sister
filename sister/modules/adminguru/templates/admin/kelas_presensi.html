@@ -11,9 +11,13 @@
 
 {% block extrahead %}{{ block.super }}
 <style>
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+  }
   table.matrix th,
   table.matrix td {
-    padding: 5px 1px;
+    padding: 5px 5px;
     font-size: 11px;
   }
 </style>
@@ -35,21 +39,20 @@
 
   <!-- Module Kelas untuk Wali Kelas -->
   <div class="module">
-
     <div id="changelist">
       <div id="toolbar">
         <form id="" method="get">
         <div><!-- DIV needed for valid HTML -->
           <label>Semester:
-            <select name="action" required="">
-              <option value="" selected="">---------</option>
+            <select name="semester" required="">
+              <option value="">---------</option>
               <option value="1">Semester 1</option>
               <option value="2">Semester 2</option>
             </select>
           </label>
           <label>Bulan:
-            <select name="action" required="">
-              <option value="" selected="">---------</option>
+            <select name="bulan" required="">
+              <option value="">---------</option>
               <option value="7">Juli</option>
               <option value="8">Agustus</option>
               <option value="9">September</option>
@@ -65,7 +68,7 @@
             </select>
           </label>
           <label>Format:
-            <select name="action" required="">
+            <select name="tipe" required="">
               <option value="" selected="">---------</option>
               <option value="matrix">Matrix</option>
               <option value="tabular">Tabular</option>
@@ -79,97 +82,105 @@
       </div>
     </div>
 
+    {% if tipe == 'matrix' %}
     <h2 class="subhead">Matrix Presensi Siswa bulan Juli</h2>
-    <table class="matrix">
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Nama</th>
-          {% for col in header %}
-            <th>{% firstof col '-' %}</th>
-          {% endfor %}
-          <th>H</th>
-          <th>S</th>
-          <th>I</th>
-          <th>A</th>
-          <th>L</th>
-        </tr>
-      </thead>
-      <tbody>
-          {% for row in results %}
+    <div class="table-responsive">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th width="150px" >Nama</th>
+            {% for col in header %}
+              <th>{% firstof col '-' %}</th>
+            {% endfor %}
+            <th>H</th>
+            <th>S</th>
+            <th>I</th>
+            <th>A</th>
+            <th>L</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for row in results %}
+              <tr>
+                <td>{{ row.no }}</td>
+                <td>{{ row.nama_siswa }}</td>
+                {% for key, value in row.matrix.items %}
+                <td>
+                  <div>{% firstof value '-' %}</div>
+                </td>
+                {% endfor %}
+                <td>{{ row.H }}</td>
+                <td>{{ row.S }}</td>
+                <td>{{ row.I }}</td>
+                <td>{{ row.A }}</td>
+                <td>{{ row.L }}</td>
+              </tr>
+            {% endfor %}
+            {% for row in summary %}
             <tr>
-              <td>{{ row.no }}</td>
-              <td>{{ row.nama_siswa }}</td>
+              <td colspan="2"><strong>{{ row.index }}</strong></td>
               {% for key, value in row.matrix.items %}
               <td>
-                <div>{% firstof value '-' %}</div>
+                <strong>{% firstof value '-' %}</strong>
               </td>
               {% endfor %}
-              <td>{{ row.H }}</td>
-              <td>{{ row.S }}</td>
-              <td>{{ row.I }}</td>
-              <td>{{ row.A }}</td>
-              <td>{{ row.L }}</td>
+              <td colspan="5" align="center">{{ row.total }}</td>
             </tr>
-          {% endfor %}
-          {% for row in summary %}
-          <tr>
-            <td colspan="2"><strong>{{ row.index }}</strong></td>
-            {% for key, value in row.matrix.items %}
-            <td>
-              <strong>{% firstof value '-' %}</strong>
-            </td>
             {% endfor %}
-            <td colspan="5" align="center">{{ row.total }}</td>
-          </tr>
-          {% endfor %}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
     <br/>
+    {% endif %}
 
+    {% if tipe == 'tabular' %}
     <h2 class="subhead">Daftar Presensi Bulan Juli</h2>
     {% if instance.presensi.count %}
-    <table class="model">
-      <thead>
-      <tr>
-        <th width="120">Tanggal</th>
-        <th>Hari</th>
-        <th>Aktifitas</th>
-        <th>Hadir</th>
-        <th>Sakit</th>
-        <th>Izin</th>
-        <th>TK</th>
-        <th>Total</th>
-        <th width="40"></th>
-      </tr>
-      </thead>
-      <tbody>
-        {% for item in instance.presensi.all %}
+    <div class="table-responsive">
+      <table class="model">
+        <thead>
         <tr>
-          <td><strong>{{ item.tanggal }}</strong></td>
-          <td>{{ item.hari }}</td>
-          <td>{{ item.get_aktifitas_display }}</td>
-          <td>{{ item.hadir }}</td>
-          <td>{{ item.sakit }}</td>
-          <td>{{ item.izin }}</td>
-          <td>{{ item.tanpa_keterangan }}</td>
-          <td>{{ item.total }}</td>
-          <td>
-            <a class="changelink" href="{% url 'admin:guruadmin_kelas_presensi_update' object_id=item.id %}" title="Ubah"></a>
-            <a class="deletelink" href="{% url 'admin:guruadmin_kelas_presensi_delete' object_id=item.id %}" title="Hapus"></a>
-          </td>
+          <th width="120">Tanggal</th>
+          <th>Hari</th>
+          <th>Aktifitas</th>
+          <th>Hadir</th>
+          <th>Sakit</th>
+          <th>Izin</th>
+          <th>TK</th>
+          <th>Total</th>
+          <th width="40"></th>
         </tr>
-        {% endfor %}
-       </tbody>
-    </table>
-      {% else %}
-    <table>
-      <tr>
-          <td colspan="5">Kelas {{ instance }} belum memiliki presensi.
-          <a href="{% url 'admin:guruadmin_kelas_presensi_add' object_id=instance.id  %}"> &rarr; <strong>Tambah Presensi</strong></a></td>
-      </tr>
-      {% endif %}
-    </table>
+        </thead>
+        <tbody>
+          {% for item in instance.presensi.all %}
+          <tr>
+            <td><strong>{{ item.tanggal }}</strong></td>
+            <td>{{ item.hari }}</td>
+            <td>{{ item.get_aktifitas_display }}</td>
+            <td>{{ item.hadir }}</td>
+            <td>{{ item.sakit }}</td>
+            <td>{{ item.izin }}</td>
+            <td>{{ item.tanpa_keterangan }}</td>
+            <td>{{ item.total }}</td>
+            <td>
+              <a class="changelink" href="{% url 'admin:guruadmin_kelas_presensi_update' object_id=item.id %}" title="Ubah"></a>
+              <a class="deletelink" href="{% url 'admin:guruadmin_kelas_presensi_delete' object_id=item.id %}" title="Hapus"></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <table>
+        <tr>
+            <td colspan="5">Kelas {{ instance }} belum memiliki presensi.
+              <a href="{% url 'admin:guruadmin_kelas_presensi_add' object_id=instance.id  %}"> &rarr; <strong>Tambah Presensi</strong></a></td>
+        </tr>
+    {% endif %}
+      </table>
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
