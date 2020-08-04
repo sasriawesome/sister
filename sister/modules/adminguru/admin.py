@@ -24,6 +24,7 @@ from sister.modules.pembelajaran.models import (
 
 from .forms import (
     RentangNilaiForm,
+    PresensiFilterForm,
     PresensiKelasForm,
     PresensiSiswaFormSet,
     JadwalPelajaranForm,
@@ -124,24 +125,34 @@ class KelasDetailPresensi(KelasDetailBase):
     def get_page_title(self):
         return "Presensi Kelas: %s" % str(self.object)
 
+    def get_filter_form(self):
+        if 'submit_action' in self.request.GET:
+            form = PresensiFilterForm(self.request.GET)
+        else:
+            form = PresensiFilterForm()
+        return form
+
     def get_extra_context(self):
-        return {}
+        return {
+            'filter_form': self.get_filter_form()
+        }
 
     def get_tabular_response(self, request, *args, **kwargs):
+        queryset = self.object.presensi.filter(tanggal__month=self.bulan)
         context = self.get_context_data(
             tipe='tabular',
-            object=self.object
+            object=self.object,
+            object_list=queryset
             )
-        print(context)
         return self.render_to_response(context)
 
     def get_matrix_response(self, request, *args, **kwargs):
-        # get request query
-        semester = self.request.GET.get('semester', 1)
-        bulan = self.request.GET.get('bulan', timezone.now().year)
-
         get_rekap_dict = Kelas.objects.get_rekap_presensi_siswa_dict
-        rekap_presensi = get_rekap_dict(self.object, semester, int(bulan))
+        rekap_presensi = get_rekap_dict(
+            self.object,
+            self.semester,
+            int(self.bulan)
+            )
 
         context = self.get_context_data(
             **rekap_presensi,
@@ -152,8 +163,10 @@ class KelasDetailPresensi(KelasDetailBase):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        tipe = self.request.GET.get('tipe', 'tabular')
-        if tipe == 'tabular':
+        self.tipe = self.request.GET.get('tipe', 'tabular')
+        self.semester = self.request.GET.get('semester', 1)
+        self.bulan = self.request.GET.get('bulan', timezone.now().month)
+        if self.tipe == 'tabular':
             return self.get_tabular_response(request, *args, **kwargs)
         else:
             return self.get_matrix_response(request, *args, **kwargs)

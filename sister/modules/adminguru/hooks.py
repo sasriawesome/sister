@@ -5,6 +5,7 @@ from sister.admin.menus import MenuItem
 
 from sister.modules.pembelajaran.models import Kelas
 
+
 class GuruMenuItem(MenuItem):
 
     def is_shown(self, request):
@@ -17,7 +18,9 @@ class KelasBlockItem(AdminBlockItem):
     def get_context(self, request):
         context = super().get_context(request)
         context.update({
-            'kelas_list': Kelas.objects.filter(guru_kelas=request.user.profile.guru)
+            'kelas_list': Kelas.objects.filter(
+                guru_kelas=request.user.profile.guru
+                )
         })
         return context
 
@@ -29,7 +32,10 @@ class KelasBlockItem(AdminBlockItem):
 
 @hooks.register('admin_menu_item')
 def register_guru_kelas_menu(request):
-    return GuruMenuItem('Kelas', reverse('admin:guruadmin_kelas_index'), icon='teach' )
+    return GuruMenuItem(
+        'Kelas',
+        reverse('admin:guruadmin_kelas_index'),
+        icon='teach')
 
 
 @hooks.register('admin_homepage_block_item')

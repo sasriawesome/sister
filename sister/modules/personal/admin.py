@@ -1,9 +1,15 @@
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 from sister.admin.sites import tenant_admin
 from sister.admin.admin import ModelAdmin
 
-from .models import *
+from .models import (
+    PersonContact,
+    PersonAddress,
+    Person,
+    Wali,
+    Guru,
+    Siswa
+)
 
 
 class ContactInline(admin.StackedInline):

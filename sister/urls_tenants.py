@@ -7,8 +7,16 @@ from django.urls import path, include
 
 from sister.admin.sites import tenant_admin
 
+
+def index_view(request):
+    from django.shortcuts import render
+
+    return render(request, 'web/index.html')
+
+
 urlpatterns = [
-    path('', include((tenant_admin.get_urls(), 'admin'))),
+    path('', index_view),
+    path('admin/', include((tenant_admin.get_urls(), 'admin'))),
 ]
 
 if settings.DEBUG:
@@ -21,7 +29,10 @@ if settings.DEBUG:
         # path('__debug__/', include(debug_toolbar.urls)),
     ]
     urlpatterns += staticfiles_urlpatterns()
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+        )
 
 
 urlpatterns = urlpatterns + [

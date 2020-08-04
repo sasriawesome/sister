@@ -1,15 +1,26 @@
 from django.contrib import admin
 from django.shortcuts import reverse
-from django.template.response import TemplateResponse
-from django.urls import path
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
 
-from sister.core import hooks
+# from sister.core import hooks
 from sister.admin.sites import tenant_admin
-from sister.admin.admin import ModelAdmin, ModelMenuGroup
+from sister.admin.admin import ModelAdmin
 
-from .models import *
+from .models import (
+    TahunAjaran,
+    Kelas,
+    NilaiSiswa,
+    PresensiKelas,
+    MataPelajaranKelas,
+    PresensiSiswa,
+    JadwalPelajaran,
+    JadwalPiketSiswa,
+    SiswaKelas,
+    RentangNilai,
+    NilaiMataPelajaranK13
+)
+
 
 class TahunAjaranAdmin(ModelAdmin):
     pass
@@ -43,8 +54,17 @@ class RentangNilaiInline(admin.TabularInline):
 
 class KelasAdmin(ModelAdmin):
     list_per_page = 1
-    search_fields = ['nama_kelas', 'guru_kelas__nip', 'guru_kelas__person__full_name']
-    list_display = ['nama_kelas', 'guru_kelas', 'tahun_ajaran', 'kurikulum']
+    search_fields = [
+        'nama_kelas',
+        'guru_kelas__nip',
+        'guru_kelas__person__full_name'
+        ]
+    list_display = [
+        'nama_kelas',
+        'guru_kelas',
+        'tahun_ajaran',
+        'kurikulum'
+        ]
     list_select_related = ['guru_kelas', 'tahun_ajaran', 'kurikulum']
     inlines = [
         MataPelajaranKelasInline,
@@ -53,18 +73,24 @@ class KelasAdmin(ModelAdmin):
 
     def get_list_display(self, request):
         list_display = super().get_list_display(request)
-        return [ *list_display, 'view_link']
+        return [*list_display, 'view_link']
 
     def view_link(self, obj):
         template = "<a class='viewlink' href='%s' title='%s'></a>"
         url = reverse('admin:guruadmin_kelas_detail', args=(obj.id,))
         return format_html(template % (url, _('inspect').title()))
 
-    view_link.short_description=''
+    view_link.short_description = ''
 
 
 class RentangNilaiAdmin(ModelAdmin):
-    list_display = ['kelas', 'nilai_minimum', 'nilai_maximum', 'predikat', 'aksi']
+    list_display = [
+        'kelas',
+        'nilai_minimum',
+        'nilai_maximum',
+        'predikat',
+        'aksi'
+        ]
 
 
 class NilaiMataPelajaranK13Inline(admin.StackedInline):
@@ -77,22 +103,23 @@ class NilaiSiswaAdmin(ModelAdmin):
         NilaiMataPelajaranK13Inline
         ]
 
+
 class NilaiSiswaKTSPAdmin(ModelAdmin):
     list_display = [
-        'siswa', 
-        'mata_pelajaran', 
-        'nilai', 
-        'deskripsi', 
+        'siswa',
+        'mata_pelajaran',
+        'nilai',
+        'deskripsi',
         ]
 
 
 class NilaiSiswaK13Admin(ModelAdmin):
     list_display = [
-        'siswa', 
-        'mata_pelajaran', 
-        'nilai_spiritual', 
-        'nilai_sosial', 
-        'nilai_pengetahuan', 
+        'siswa',
+        'mata_pelajaran',
+        'nilai_spiritual',
+        'nilai_sosial',
+        'nilai_pengetahuan',
         'nilai_keterampilan'
         ]
 
@@ -110,6 +137,7 @@ class PresensiKelasAdmin(ModelAdmin):
         if obj:
             return self.inlines
         return []
+
 
 tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
 tenant_admin.register(Kelas, KelasAdmin)

@@ -1,4 +1,3 @@
-import uuid
 import enum
 from django.db import models
 from django.conf import settings
@@ -6,11 +5,10 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from django_personals.models import AddressAbstract, ContactAbstract
 from django_personals.enums import AddressName
 
 from sister.core.enums import MaxLength
-from sister.core.models import BaseModel, SimpleBaseModel
+from sister.core.models import BaseModel
 from sister.modules.personal.managers import PersonManager
 
 
@@ -23,6 +21,7 @@ __all__ = [
     'Siswa'
 ]
 
+
 class Gender(enum.Enum):
     MALE = 'L'
     FEMALE = 'P'
@@ -31,6 +30,7 @@ class Gender(enum.Enum):
         (MALE, _("laki-laki").title()),
         (FEMALE, _("perempuan").title()),
     )
+
 
 class Person(BaseModel):
     class Meta:
@@ -54,8 +54,12 @@ class Person(BaseModel):
         max_length=MaxLength.MEDIUM.value,
         verbose_name=_("PID"),
         help_text=_('Personal Identifier Number'))
-    full_name = models.CharField(_('full name'), max_length=30, blank=False)
-    short_name = models.CharField(_('short name'), max_length=150, blank=True)
+    full_name = models.CharField(
+        _('full name'),
+        max_length=30, blank=False)
+    short_name = models.CharField(
+        _('short name'),
+        max_length=150, blank=True)
     title = models.CharField(
         null=True, blank=True,
         max_length=MaxLength.MEDIUM.value,
@@ -84,7 +88,7 @@ class Person(BaseModel):
         null=True, blank=True,
         max_length=255,
         verbose_name=_('Job'))
-    income =  models.DecimalField(
+    income = models.DecimalField(
         default=0,
         max_digits=15,
         decimal_places=0,
@@ -166,7 +170,13 @@ class AddressAbstract(BaseModel):
 
     @property
     def fulladdress(self):
-        address = [self.street, self.city, self.province, self.country, self.zipcode]
+        address = [
+            self.street,
+            self.city,
+            self.province,
+            self.country,
+            self.zipcode
+            ]
         return ", ".join(map(str, address))
 
 
@@ -209,13 +219,13 @@ class Guru(BaseModel):
         from sister.modules.pembelajaran.models import ItemJadwalPelajaran
         mapel = self.mata_pelajaran.all()
         filters = {
-                'mata_pelajaran_kelas__in':[ x.id for x in mapel],
+                'mata_pelajaran_kelas__in': [x.id for x in mapel],
             }
         if current_day:
             filters['hari'] = timezone.now().weekday()
         return ItemJadwalPelajaran.objects.annotate(
-                kelas = models.F('jadwal_kelas__kelas'),
-                hari = models.F('jadwal_kelas__hari')
+                kelas=models.F('jadwal_kelas__kelas'),
+                hari=models.F('jadwal_kelas__hari')
             ).filter(**filters)
 
 

@@ -1,11 +1,8 @@
 import enum
-import uuid
-import decimal
 from django.db import models
 from django.db.utils import cached_property
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils import timezone, translation
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -16,9 +13,17 @@ from sister.core.models import BaseModel
 from sister.core.enums import Weekday
 from sister.modules.ruang.models import Ruang
 from sister.modules.personal.models import Guru, Siswa
-from sister.modules.kurikulum.models import *
+from sister.modules.kurikulum.models import (
+    Kurikulum,
+    MataPelajaran,
+    EkstraKurikuler
+)
 
-from .managers import *
+from .managers import (
+    KelasManager,
+    PresensiKelasManager,
+    PresensiSiswaManager
+)
 
 
 __all__ = [
@@ -111,12 +116,14 @@ class Kelas(BaseModel):
         default=1
     )
     kurikulum = models.ForeignKey(
-        Kurikulum, 
+        Kurikulum,
         on_delete=models.CASCADE,
         related_name='kelas_belajar')
-    tahun_ajaran = models.ForeignKey(TahunAjaran, on_delete=models.CASCADE)
+    tahun_ajaran = models.ForeignKey(
+        TahunAjaran,
+        on_delete=models.CASCADE)
     guru_kelas = models.ForeignKey(
-        Guru, 
+        Guru,
         on_delete=models.CASCADE,
         related_name='kelas'
         )
@@ -124,7 +131,7 @@ class Kelas(BaseModel):
         Ruang, null=True, blank=False,
         on_delete=models.PROTECT,
         related_name='ruang')
-    
+
     # Pengaturan Kelas
     semester = models.IntegerField(
         choices=((1, 1), (2, 2),),
@@ -142,7 +149,6 @@ class Kelas(BaseModel):
         help_text=_('Tandai kelas sebagai: Pending, Aktif atau Selesai')
     )
 
-
     @cached_property
     def jumlah_siswa(self):
         return self.siswa.count()
@@ -154,7 +160,7 @@ class Kelas(BaseModel):
     @cached_property
     def siswa_perempuan(self):
         return self.siswa.filter(siswa__person__gender='P').count()
-    
+
     @cached_property
     def jadwal_pelajaran_semester(self):
         return self.jadwal_pelajaran.filter(semester=self.semester)
@@ -175,7 +181,9 @@ class Kelas(BaseModel):
             raise ValidationError({'kurikulum': 'silahkan pilih kurikulum'})
 
         if self.kurikulum.kelas != self.kelas:
-            raise ValidationError({'kurikulum': 'Kelas pada kurikulum tidak sesuai'})
+            raise ValidationError({
+                'kurikulum': 'Kelas pada kurikulum tidak sesuai'
+                })
 
 
 class SiswaKelas(BaseModel):
@@ -229,8 +237,8 @@ class RentangNilai(BaseModel):
         ('E', 'sangat kurang'),
     )
 
-    PERTAHANKAN = 'pertahankan' 
-    TINGKATKAN =  'tingkatkan'
+    PERTAHANKAN = 'pertahankan'
+    TINGKATKAN = 'tingkatkan'
     PERLU_BIMBINGAN = 'perlu_bimbingan'
 
     AKSI = (
@@ -334,9 +342,9 @@ class MataPelajaranKelas(BaseModel):
     @property
     def total(self):
         total_bobot = (
-            self.tugas 
-            + self.ph 
-            + self.pts 
+            self.tugas
+            + self.ph
+            + self.pts
             + self.pas)
         return total_bobot
 
@@ -364,13 +372,12 @@ class JadwalPelajaran(BaseModel):
     mata_pelajaran = models.ForeignKey(
         MataPelajaranKelas,
         on_delete=models.CASCADE,
-        null=True, blank=True, # TODO should not null
         related_name='jadwal_pelajaran'
     )
     jam_mulai = models.TimeField(default=timezone.now)
     jam_berakhir = models.TimeField(default=timezone.now)
     deskripsi = models.CharField(max_length=225, null=True, blank=True)
-    
+
     def __str__(self):
         return "%s %s" % (self.kelas, self.get_hari_display())
 
@@ -393,7 +400,7 @@ class JadwalPiketSiswa(BaseModel):
         default=Weekday.MONDAY.value
     )
     siswa_kelas = models.ForeignKey(
-        SiswaKelas, 
+        SiswaKelas,
         null=True, blank=True,
         related_name='piket_kelas',
         on_delete=models.CASCADE)
@@ -407,7 +414,6 @@ class JadwalEkstraKurikuler(BaseModel):
         verbose_name = 'Jadwal Ekstra Kurikuler'
         verbose_name_plural = 'Jadwal Ekstra Kurikuler'
         unique_together = ('hari', 'semester', 'kelas', 'ekstra_kurikuler')
-
 
     kelas = models.ForeignKey(
         Kelas,
@@ -470,6 +476,7 @@ class AktifitasPendidikan(enum.Enum):
         (HARI_LIBUR_PUASA, 'Hari libur semester')
     )
 
+
 class PresensiKelas(BaseModel):
     class Meta:
         verbose_name = 'Presensi Kelas'
@@ -498,7 +505,7 @@ class PresensiKelas(BaseModel):
         null=True, blank=True,
         help_text=_('Penjelasan aktifitas.')
         )
-        
+
     @cached_property
     def hari(self):
         return Weekday.CHOICES.value[self.tanggal.weekday()][1]
@@ -565,9 +572,9 @@ class NilaiSiswa(BaseModel):
         verbose_name = 'Nilai Siswa'
         verbose_name_plural = 'Nilai Siswa'
         unique_together = ('siswa', 'semester')
-        
+
     siswa = models.ForeignKey(
-        SiswaKelas, 
+        SiswaKelas,
         on_delete=models.CASCADE,
         related_name='nilai_siswa'
     )
@@ -575,7 +582,7 @@ class NilaiSiswa(BaseModel):
         choices=((1, 1), (2, 2),),
         default=1
     )
-    
+
     berat_badan = models.IntegerField(
         default=15,
         validators=[
@@ -600,7 +607,7 @@ class NilaiSiswa(BaseModel):
     )
     predikat_spiritual = models.CharField(max_length=1, null=True, blank=True)
     deskripsi_spiritual = models.TextField(null=True, blank=True)
-    
+
     nilai_sosial = models.IntegerField(
         default=0,
         validators=[
@@ -620,7 +627,7 @@ class NilaiMataPelajaran(PolymorphicModel, BaseModel):
         verbose_name = 'Nilai Mata Pelajaran'
         verbose_name_plural = 'Nilai Pelajaran'
         unique_together = ('nilai_siswa', 'mata_pelajaran')
-    
+
     no_urut = models.IntegerField(
         default=1,
         validators=[
@@ -629,7 +636,7 @@ class NilaiMataPelajaran(PolymorphicModel, BaseModel):
         ]
     )
     nilai_siswa = models.ForeignKey(
-        NilaiSiswa, 
+        NilaiSiswa,
         on_delete=models.CASCADE,
         related_name='nilai_mata_pelajaran'
     )
@@ -673,18 +680,22 @@ class NilaiMataPelajaranK13(NilaiMataPelajaran):
             MaxValueValidator(100)
         ]
     )
-    predikat_pengetahuan = models.CharField(max_length=1, null=True, blank=True)
-    deskripsi_pengetahuan = models.TextField(null=True, blank=True)
-    
+    predikat_pengetahuan = models.CharField(
+        max_length=1,
+        null=True, blank=True)
+    deskripsi_pengetahuan = models.TextField(
+        null=True, blank=True)
     nilai_keterampilan = models.IntegerField(
         default=0,
         validators=[
             MinValueValidator(0),
             MaxValueValidator(100)
         ])
-    predikat_keterampilan = models.CharField(max_length=1, null=True, blank=True)
-    deskripsi_keterampilan = models.TextField(null=True, blank=True)
-
+    predikat_keterampilan = models.CharField(
+        max_length=1,
+        null=True, blank=True)
+    deskripsi_keterampilan = models.TextField(
+        null=True, blank=True)
 
 
 @receiver(post_save, sender=Kelas)
@@ -698,48 +709,63 @@ def after_save_kelas(sender, **kwargs):
             RentangNilai(
                 kelas=instance,
                 predikat='A',
-                nilai_minimum = 81,
-                nilai_maximum = 100,
-                aksi = RentangNilai.PERTAHANKAN,
+                nilai_minimum=81,
+                nilai_maximum=100,
+                aksi=RentangNilai.PERTAHANKAN,
             )
         )
         rentang.append(
             RentangNilai(
                 kelas=instance,
                 predikat='B',
-                nilai_minimum = 66,
-                nilai_maximum = 80,
-                aksi = RentangNilai.TINGKATKAN,
+                nilai_minimum=66,
+                nilai_maximum=80,
+                aksi=RentangNilai.TINGKATKAN,
             )
         )
         rentang.append(
             RentangNilai(
                 kelas=instance,
                 predikat='C',
-                nilai_minimum = 56,
-                nilai_maximum = 65,
-                aksi = RentangNilai.TINGKATKAN,
+                nilai_minimum=56,
+                nilai_maximum=65,
+                aksi=RentangNilai.TINGKATKAN,
             )
         )
         rentang.append(
             RentangNilai(
                 kelas=instance,
                 predikat='D',
-                nilai_minimum = 41,
-                nilai_maximum = 55,
-                aksi = RentangNilai.PERLU_BIMBINGAN,
+                nilai_minimum=41,
+                nilai_maximum=5,
+                aksi=RentangNilai.PERLU_BIMBINGAN,
             )
         )
         rentang.append(
             RentangNilai(
                 kelas=instance,
                 predikat='E',
-                nilai_minimum = 0,
-                nilai_maximum = 40,
-                aksi = RentangNilai.PERLU_BIMBINGAN,
+                nilai_minimum=0,
+                nilai_maximum=40,
+                aksi=RentangNilai.PERLU_BIMBINGAN,
             )
         )
         RentangNilai.objects.bulk_create(rentang)
+
+
+@receiver(post_save, sender=SiswaKelas)
+def after_save_siswa_kelas(sender, **kwargs):
+    created = kwargs.pop('created', None)
+    instance = kwargs.pop('instance', None)
+    if created:
+        NilaiSiswa.objects.get_or_create(
+            siswa=instance,
+            semester=1,
+            defaults={
+                'siswa': instance,
+                'semester': 1
+            }
+        )
 
 
 @receiver(post_save, sender=PresensiKelas)

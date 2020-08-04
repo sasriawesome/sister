@@ -1,11 +1,17 @@
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 
-from sister.core import hooks
 from sister.admin.sites import tenant_admin
-from sister.admin.admin import ModelAdmin, ModelMenuGroup
+from sister.admin.admin import ModelAdmin
 
-from .models import *
+from .models import (
+    EkstraKurikuler,
+    Kurikulum,
+    MataPelajaran,
+    MataPelajaranKurikulum,
+    KompetensiInti,
+    KompetensiDasar,
+    Tema
+)
 
 
 # class SekolahAdmin(ModelAdmin):

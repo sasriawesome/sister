@@ -1,14 +1,6 @@
-import uuid
 from django.db import models
-from django.conf import settings
-from django.utils import timezone
-from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-from django.core.validators import MinValueValidator, MaxValueValidator
-
-from sister.core.enums import MaxLength
-from sister.core.models import BaseModel, SimpleBaseModel
-
+from sister.core.models import BaseModel
 
 __all__ = [
     # 'Sekolah',
@@ -75,7 +67,7 @@ class MataPelajaran(BaseModel):
     kode = models.CharField(max_length=25)
     nama = models.CharField(max_length=225)
     mulok = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return "%s: %s" % (self.kode, self.nama)
 

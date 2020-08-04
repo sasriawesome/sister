@@ -42,42 +42,12 @@
     <div id="changelist">
       <div id="toolbar">
         <form id="" method="get">
-        <div><!-- DIV needed for valid HTML -->
-          <label>Semester:
-            <select name="semester" required="">
-              <option value="">---------</option>
-              <option value="1">Semester 1</option>
-              <option value="2">Semester 2</option>
-            </select>
-          </label>
-          <label>Bulan:
-            <select name="bulan" required="">
-              <option value="">---------</option>
-              <option value="7">Juli</option>
-              <option value="8">Agustus</option>
-              <option value="9">September</option>
-              <option value="10">Oktober</option>
-              <option value="11">November</option>
-              <option value="12">Desember</option>
-              <option value="1">Januari</option>
-              <option value="2">Februari</option>
-              <option value="3">Maret</option>
-              <option value="4">April</option>
-              <option value="5">Mei</option>
-              <option value="6">Juni</option>
-            </select>
-          </label>
-          <label>Format:
-            <select name="tipe" required="">
-              <option value="" selected="">---------</option>
-              <option value="matrix">Matrix</option>
-              <option value="tabular">Tabular</option>
-            </select>
-          </label>
-          <input type="submit" title="Filter" name="submit_action" value="Filter">
-          <input type="submit" title="Reset" name="submit_action" value="Reset">
-          <input type="submit" title="Download" name="submit_action" value="Download">
-        </div>
+          <div><!-- DIV needed for valid HTML -->
+            {{ filter_form }}
+            <input type="submit" title="Filter" name="submit_action" value="Filter">
+            <input type="submit" title="Reset" name="submit_action" value="Reset">
+            <input type="submit" title="Download" name="submit_action" value="Download">
+          </div>
         </form>
       </div>
     </div>
@@ -136,7 +106,7 @@
 
     {% if tipe == 'tabular' %}
     <h2 class="subhead">Daftar Presensi Bulan Juli</h2>
-    {% if instance.presensi.count %}
+    {% if object_list.count %}
     <div class="table-responsive">
       <table class="model">
         <thead>
@@ -153,7 +123,7 @@
         </tr>
         </thead>
         <tbody>
-          {% for item in instance.presensi.all %}
+          {% for item in object_list %}
           <tr>
             <td><strong>{{ item.tanggal }}</strong></td>
             <td>{{ item.hari }}</td>

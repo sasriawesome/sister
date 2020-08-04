@@ -27,7 +27,11 @@ class KelasManager(models.Manager):
                 'siswa__person__full_name': 'nama_siswa'
             }
         )
-        siswa_kelas_df = siswa_kelas_df.set_index(['id', 'no', 'nama_siswa'])
+        columns = ['id', 'no', 'nama_siswa']
+
+        if not siswa_kelas_df.empty:
+            siswa_kelas_df = siswa_kelas_df.set_index(columns)
+
         return siswa_kelas_df
 
     def get_presensi_siswa_df(self, kelas, semester, bulan):
@@ -48,6 +52,11 @@ class KelasManager(models.Manager):
 
     def get_matrix_presensi(self, kelas, semester, bulan):
         matrix = self.get_siswa_kelas_df(kelas)
+
+        # Jika tidak ada siswa berhenti disini
+        if matrix.empty:
+            return matrix
+
         presensi_df = self.get_presensi_siswa_df(kelas, semester, bulan)
         days = calendar.monthrange(2020, bulan)[1]
 
