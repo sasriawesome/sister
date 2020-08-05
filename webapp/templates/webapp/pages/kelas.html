@@ -1,0 +1,38 @@
+{% extends 'webapp/layout.html' %}
+
+
+{% block header_main %}
+    {% include 'webapp/blocks/appbar.html' %}
+{% endblock %}
+
+{% block header_bottom %}
+    {% include 'webapp/blocks/apptab.html' with active='kelas' %}
+{% endblock %}
+
+{% block content_main %}
+<div class="content-main">
+    <div class="container">
+        <div class="section">
+            <div class="section__header">
+                <div class="section__search-form">
+                    {% include 'webapp/blocks/appbar_search.html' %}
+                </div>
+            </div>
+            <div class="card-list">
+                {% for item in object_list %}
+                <div class="col-md-6 mb-3">
+                    {% include 'webapp/blocks/card_list_item _kelas.html' with item=item %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="card-list__loader">
+                <span class="btn btn-light">
+                    <i class="fa fa-load"></i>
+                    Tampilkan lebih
+                </span>
+            </div>
+        </div>
+
+    </div>    
+</div>
+{% endblock %}

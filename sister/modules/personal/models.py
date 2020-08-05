@@ -186,7 +186,8 @@ class PersonContact(ContactAbstract):
         verbose_name_plural = _('Person addresses')
 
     person = models.OneToOneField(
-        Person, on_delete=models.CASCADE)
+        Person, on_delete=models.CASCADE,
+        related_name='contact')
 
 
 class PersonAddress(AddressAbstract):

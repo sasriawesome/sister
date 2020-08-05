@@ -5,18 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js",
-    "watch": "webpack --watch --progress",
-    "start": "webpack-dev-server"
+    "build": "webpack --config webapp_webpack.config.js",
+    "watch": "webpack --watch --progress --config webapp_webpack.config.js",
+    "start": "webpack-dev-server --config webapp_webpack.config.js"
   },
   "author": "Rizki Sasri Dwitama",
   "license": "ISC",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0",
     "@material/icon-button": "^6.0.0",
     "@mdi/font": "^5.2.45",
     "@popperjs/core": "^2.4.0",
     "bootstrap": "^4.5.0",
     "jquery": "^3.5.1",
+    "moment": "^2.27.0",
     "popper.js": "^1.16.1"
   },
   "devDependencies": {

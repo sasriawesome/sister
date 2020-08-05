@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     # app where tenant model resides in
     'sister.auth',
     'sister.admin',
+    'webapp',
 
     # Apps dependecies
 

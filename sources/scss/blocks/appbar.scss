@@ -1,0 +1,166 @@
+.appbar {
+    background: $white;
+    box-sizing: border-box;
+    position: fixed;
+    box-shadow: 0 0 3px #e6e6e6;
+    width: 100%;
+    left: 0;
+    z-index: 1000;
+    &__title {
+        font-size: 2.2rem;
+        font-weight: bold;
+        margin: 0;
+        @include media-breakpoint-down(sm) {
+            font-size: 1.8rem;
+        }
+    }
+    &.appbar-bottom {
+        bottom: 0;
+    }
+    &.appbar-top {
+        top: 0;
+    }
+    &.dark {
+        color: white;
+        background: $dark;
+    }
+    &.light {
+        color: $primary;
+        background: $white;
+    }
+}
+
+.appbar-search {
+    padding: 0 0 1rem;
+}
+
+.apptab {
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1rem 1rem .8rem;
+        text-decoration: none;
+        border-bottom: 3px solid transparent;
+        &:hover {
+            text-decoration: none;
+            background: #ececec;
+        }
+        &__icon {
+            margin-bottom: .25rem;
+            font-size: 1.6rem !important;
+        }
+        &.active {
+            border-color: $primary;
+            color: $primary;
+        }
+    }
+}
+
+
+.account-header {
+    text-align: center;
+    // display: flex;
+    padding: 2rem 0;
+    // align-items: center;
+    // flex-direction: column;
+    &__avatar {
+        border-radius: 50%;
+        overflow: hidden;
+        width: 10rem;
+        height: auto;
+        img {
+            width: 10rem;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+    }
+    &__username a {
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 2rem;
+    }
+}
+
+// Cards
+.card-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+    .card {
+        min-height: 106px;
+    }
+}
+.card-list__loader {
+    text-align: center;
+}
+.card-list-item,
+.card-body {
+    &__header {
+        padding-bottom: 1rem;
+    }
+    &__icon {
+        font-size: 1.8rem;
+        margin: 0 1.5rem 0 .5rem;
+        color: $pink;
+    }
+    &__title {
+        font-size: 1.2rem;
+        margin: 0;
+        font-weight: bold;
+    }
+    &__meta {
+        color: $body-color;
+        font-size: .85rem;
+        span {
+            padding: 0 .5rem;
+            border-right: 1px solid $border-color;
+        }
+        span:first-child {
+            padding-left: 0;
+        }
+        span:last-child {
+            padding-right: 0;
+            border-right: none;
+        }
+    }
+    &__list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    &__list-item {
+        margin-bottom: .5rem;
+        padding-bottom: .5rem;
+        border-bottom: 1px solid $border-color;
+    }
+    &__list-item:first-child {
+        padding-top: .5rem;
+        border-top: 1px solid $border-color;;
+    }
+    &__list-item:last-child {
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+    &__list-title {
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 0;
+    }
+    .scroll-wrapper,
+    .scroll-wrapper-sm {
+        height: 240px;
+        overflow-y: auto;
+    }
+    .scroll-wrapper-md {
+        height: 350px;
+        overflow-y: auto;    
+    }
+    .scroll-wrapper-lg {
+        height: 500px;
+        overflow-y: auto;
+    }
+}

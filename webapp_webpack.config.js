@@ -10,10 +10,10 @@ module.exports = [{
   entry: './sources/index.js',
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'sister/static/js')
+    path: path.resolve(__dirname, 'webapp/static/webapp/js')
   },
   devServer: {
-    contentBase: path.join(__dirname, 'sister'),
+    contentBase: path.join(__dirname, 'webapp/templates/design'),
     compress: true,
     writeToDisk: true,
     port: 9000
@@ -49,7 +49,7 @@ module.exports = [{
   },
   plugins: [
     new clean.CleanWebpackPlugin({
-      root: path.join(__dirname, 'sister/static'),
+      root: path.join(__dirname, 'webapp/static/webapp'),
       verbose: true
     }),
     new MiniCssExtractPlugin({
@@ -58,7 +58,8 @@ module.exports = [{
     }),
     new webpack.ProvidePlugin({
         $: 'jquery',
-        jQuery: 'jquery'
+        jQuery: 'jquery',
+        moment: 'moment'
     })
   ]
 }];

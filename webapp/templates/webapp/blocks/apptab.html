@@ -1,0 +1,22 @@
+<div class="apptab row">
+    <a href="{% url 'webapp_index' %}" class="col apptab__item{% if active == 'index' %} active{% endif %}"
+       data-toggle="tooltip" data-placement="bottom" title="Home">
+        <i class="apptab__item__icon fa fa-igloo"></i>
+    </a>
+    <a href="{% url 'webapp_kelas' %}" class="col apptab__item{% if active == 'kelas' %} active{% endif %}"
+       data-toggle="tooltip" data-placement="bottom" title="Kelas">
+        <i class="apptab__item__icon fa fa-chalkboard"></i>
+    </a>
+    <a href="{% url 'webapp_mapel' %}" class="col apptab__item{% if active == 'mapel' %} active{% endif %}"
+       data-toggle="tooltip" data-placement="bottom" title="Mata Pelajaran">
+        <i class="apptab__item__icon fa fa-book-reader"></i>
+    </a>
+    <a href="" class="col apptab__item"
+       data-toggle="tooltip" data-placement="bottom" title="Laporan">
+        <i class="apptab__item__icon fa fa-book"></i>
+    </a>
+    <a href="{% url 'webapp_profil' %}" class="col apptab__item{% if active == 'profil' %} active{% endif %}"
+       data-toggle="tooltip" data-placement="bottom" title="Profile">
+        <i class="apptab__item__icon fa fa-user-circle"></i>
+    </a>
+</div>

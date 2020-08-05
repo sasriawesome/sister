@@ -1,0 +1,6 @@
+{% extends 'webapp/blocks/card_list_item.html' %}
+{% block card_icon_name %}chalkboard{% endblock %}
+{% block card_item_title %}{{ item.nama }}{% endblock %}
+{% block card_item_badge %}
+    <span>{{ item.guru_kelas }}</span><span>{{ item.tahun_ajaran }}</span><span>{{ item.get_status_display }}</span>
+{% endblock %}

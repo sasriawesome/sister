@@ -1,0 +1,37 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Sister Website">
+    <meta name="author" content="Rizki Sasri Dwitama">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}">
+    <title>{{ title }}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'webapp/css/main.bundle.css' %}" rel="stylesheet">
+    {% block extrastyle %}{% endblock %}
+  </head>
+
+  <body class="{% block body_class %}{% endblock %}">
+    
+    {% block message %}
+      {% if messages %}
+        {% include 'webapp/block/message.html' %}
+      {% endif %}
+    {% endblock %}
+
+    {% block content %}
+      {{ content }}
+    {% endblock %}
+
+    <script src="{% static 'webapp/js/main.bundle.js' %}"></script>
+    {% block extrascripts %}{% endblock %}
+    <script>
+      $(function(){
+        console.log('Hi im works');
+      })
+    </script>
+  </body>
+</html>

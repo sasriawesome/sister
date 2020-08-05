@@ -1,0 +1,34 @@
+@import "./scss/bootstrap";
+@import "./scss/vendor/bootstrap-datepicker";
+@import './fontawesome/css/all.css';
+
+@import './scss/blocks/appbar.scss';
+
+body {
+    background-color: #f9f9f9;
+}
+
+h1, h2, h3, h4, h5 {
+    letter-spacing: -.05rem;
+}
+
+.header-container {
+    margin-bottom: 3rem;
+    @include media-breakpoint-down(sm) {
+        margin-bottom: 2rem;
+      }
+}
+
+.body-container {
+    margin-top: 160px;
+}
+
+.section {
+    padding-bottom: 3rem;
+    &__header {
+        margin-bottom: 1.5rem;
+    }
+    &__title {
+        font-size: 1.8rem;
+    }
+}

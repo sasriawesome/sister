@@ -4,7 +4,6 @@ from decimal import Decimal
 from django import template
 from django.conf import settings
 from django.utils.formats import number_format
-from django.contrib import admin
 from sister.utils.text import number_to_text_id
 
 register = template.Library()
@@ -63,6 +62,14 @@ def point(value):
     For example, 3000 becomes '3,000' and 45000 becomes '45,000'.
     """
     return "{:20,.2f}".format(value)
+
+
+@register.filter(is_safe=True)
+def noblank(value):
+    """
+    Convert None to '-'
+    """
+    return '-' if not value else value
 
 
 @register.simple_tag(name='sum')

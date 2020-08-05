@@ -6,16 +6,10 @@ from django.conf import settings
 from django.urls import path, include
 
 from sister.admin.sites import tenant_admin
-
-
-def index_view(request):
-    from django.shortcuts import render
-
-    return render(request, 'web/index.html')
-
+from webapp.sites import website
 
 urlpatterns = [
-    path('', index_view),
+    path('', include(website.get_urls())),
     path('admin/', include((tenant_admin.get_urls(), 'admin'))),
 ]
 
