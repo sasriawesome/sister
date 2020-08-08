@@ -37,6 +37,7 @@ django-tenants = "*"
 django-tenant-users = "*"
 django-extensions = "*"
 pandas = "*"
+django-avatar = "*"
 
 [requires]
 python_version = "3.8"

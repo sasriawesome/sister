@@ -1,6 +1,6 @@
 .jumbotron {
   padding: $jumbotron-padding;
-  margin-bottom: $jumbotron-padding;
+  margin-bottom:0;
   color: $jumbotron-color;
   background-color: $jumbotron-bg;
   @include border-radius($border-radius-lg);

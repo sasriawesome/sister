@@ -2,7 +2,6 @@
     background: $white;
     box-sizing: border-box;
     position: fixed;
-    box-shadow: 0 0 3px #e6e6e6;
     width: 100%;
     left: 0;
     z-index: 1000;
@@ -10,7 +9,7 @@
         font-size: 2.2rem;
         font-weight: bold;
         margin: 0;
-        @include media-breakpoint-down(sm) {
+        @include media-breakpoint-down(md) {
             font-size: 1.8rem;
         }
     }
@@ -20,13 +19,17 @@
     &.appbar-top {
         top: 0;
     }
-    &.dark {
+    &.appbar-dark {
         color: white;
-        background: $dark;
+        a {
+            color: white;
+        }
     }
-    &.light {
+    &.appbar-light {
         color: $primary;
-        background: $white;
+        a {
+            color: $link-color;
+        }
     }
 }
 
@@ -35,6 +38,11 @@
 }
 
 .apptab {
+    display: none;
+    background: white;
+    @include media-breakpoint-down(md) {
+        display: flex;
+    }
     &__item {
         display: flex;
         flex-direction: column;
@@ -54,6 +62,31 @@
         &.active {
             border-color: $primary;
             color: $primary;
+        }
+    }
+}
+
+
+.sidenav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 900;
+    width: 130px;
+    height: 100vh;
+    padding: 4.7rem 0 1rem;
+    background-color: white;
+    box-shadow: 0 0 3px #e6e6e6;
+    box-sizing: border-box;
+    @include media-breakpoint-down(md) {
+        display: none;
+      }
+    .apptab__item {
+        border-bottom: none;
+        box-sizing: border-box;
+        border-right: 3px solid transparent;
+        &.active {
+            border-right: 3px solid $primary;
         }
     }
 }
@@ -83,7 +116,16 @@
     }
 }
 
+
 // Cards
+
+.card-header {
+    padding: 1rem 1.25rem .75rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
 .card-list {
     display: flex;
     flex-wrap: wrap;
@@ -101,18 +143,19 @@
     &__header {
         padding-bottom: 1rem;
     }
-    &__icon {
+    &__icon,
+    &__avatar  {
         font-size: 1.8rem;
         margin: 0 1.5rem 0 .5rem;
         color: $pink;
     }
     &__title {
-        font-size: 1.2rem;
-        margin: 0;
+        font-size: 1rem;
+        margin: 0 0 .3rem 0;
         font-weight: bold;
     }
     &__meta {
-        color: $body-color;
+        color: lighten($color: $body-color, $amount: 20);
         font-size: .85rem;
         span {
             padding: 0 .5rem;
@@ -138,7 +181,7 @@
     }
     &__list-item:first-child {
         padding-top: .5rem;
-        border-top: 1px solid $border-color;;
+        border-top: none;
     }
     &__list-item:last-child {
         margin: 0;
@@ -147,20 +190,68 @@
     }
     &__list-title {
         font-size: 1rem;
-        font-weight: 800;
-        margin-bottom: 0;
+        margin-bottom: .24rem;
     }
-    .scroll-wrapper,
-    .scroll-wrapper-sm {
-        height: 240px;
+    .scroll-wrapper {
         overflow-y: auto;
+        &.scroll-wrapper-sm {
+            height: 180px;
+        }
+        &.scroll-wrapper-md {
+            height: 360px; 
+        }
+        &.scroll-wrapper-lg {
+            height: 540px;
+        }
     }
-    .scroll-wrapper-md {
-        height: 350px;
-        overflow-y: auto;    
+}
+
+.range-card {
+    padding: 1rem;
+    text-align: center;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    &__alpha {
+        font-size: 2.5rem;
+        font-weight: bold;
+        line-height: 2.5rem;
+        letter-spacing: 0;
     }
-    .scroll-wrapper-lg {
-        height: 500px;
-        overflow-y: auto;
+    &__scores {
+        font-size: 1rem;
     }
+}
+
+ul.timeline {
+    list-style-type: none;
+    position: relative;
+    padding-left: 15px;
+}
+ul.timeline:before {
+    content: ' ';
+    background: #d4d9df;
+    display: inline-block;
+    position: absolute;
+    left: 15px;
+    width: 2px;
+    height: 100%;
+    z-index: 400;
+}
+ul.timeline > li {
+    margin: 20px 0;
+    padding-left: 20px;
+}
+ul.timeline > li:before {
+    content: ' ';
+    background: white;
+    display: inline-block;
+    position: absolute;
+    border-radius: 50%;
+    border: 7px solid #5f9ea0;
+    margin-top: 16px;
+    left: 7px;
+    width: 20px;
+    height: 20px;
+    z-index: 400;
 }

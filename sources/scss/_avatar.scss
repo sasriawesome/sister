@@ -1,0 +1,28 @@
+.avatar {
+    border-radius: 50%;
+    overflow: hidden;
+    &.avatar-sm{
+        width: 50px;
+        height: 50px;
+        img {
+            width: 50px;
+            height: 50px;
+        }
+    }
+    &.avatar-md{
+        width: 72px;
+        height: 72px;
+        img {
+            width: 72px;
+            height: 72px;
+        }
+    }
+    &.avatar-lg{
+        width: 124px;
+        height: 124px;
+        img {
+            width: 124px;
+            height: 124px;
+        }
+    }
+}

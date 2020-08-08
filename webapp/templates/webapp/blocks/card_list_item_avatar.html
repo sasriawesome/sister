@@ -1,8 +1,10 @@
+{% load static %}
+
 <a href="{% block card_item_url %}#{% endblock %}" class="card-list-item">
     <div class="card shadow-sm border-0">
         <div class="card-body d-flex align-items-center">
-            <div class="icon">
-                <i class="card-list-item__icon fa fa-{% block card_icon_name %}star{% endblock %}"></i>
+            <div class="card-list-item__avatar">
+                <img class="avatar avatar-sm" src="{% block card_item_avatar %}{% static 'webapp/img/avatar_female.png' %}{% endblock %}" alt="Sri Anisah"/>
             </div>
             <div>
                 <h2 class="card-list-item__title">{% block card_item_title %}Card Title{% endblock %}</h2>

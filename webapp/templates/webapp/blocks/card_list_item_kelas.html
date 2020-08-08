@@ -1,4 +1,8 @@
 {% extends 'webapp/blocks/card_list_item.html' %}
+
+{% block card_item_url %}
+    {% url 'webapp_kelas' object_id=item.id %}
+{% endblock %}
 {% block card_icon_name %}chalkboard{% endblock %}
 {% block card_item_title %}{{ item.nama }}{% endblock %}
 {% block card_item_badge %}

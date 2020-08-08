@@ -1,38 +1,135 @@
 {% extends 'webapp/layout.html' %}
 
+{% load sister_core_tags %}
 
 {% block header_main %}
     {% include 'webapp/blocks/appbar.html' %}
 {% endblock %}
 
-{% block header_bottom %}
-    {% include 'webapp/blocks/apptab.html' with active='kelas' %}
-{% endblock %}
-
 {% block content_main %}
 <div class="content-main">
-    <div class="container">
-        <div class="section">
-            <div class="section__header">
-                <div class="section__search-form">
-                    {% include 'webapp/blocks/appbar_search.html' %}
+
+    <section class="section bg-primary text-white pt-5 pb-5 mb-4">
+        <div class="container">
+            <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-md mr-3">
+                    <img src="/static/webapp/img/avatar_female.png" alt="Sri Anisah">
+                </div>
+                <div>
+                    <h4 class="mb-0"><strong>{{ instance.guru_kelas.person }}</strong></h4>
+                    <span>NIP: {{ instance.guru_kelas.nip }}</span>
                 </div>
             </div>
-            <div class="card-list">
-                {% for item in object_list %}
-                <div class="col-md-6 mb-3">
-                    {% include 'webapp/blocks/card_list_item _kelas.html' with item=item %}
-                </div>
-                {% endfor %}
-            </div>
-            <div class="card-list__loader">
-                <span class="btn btn-light">
-                    <i class="fa fa-load"></i>
-                    Tampilkan lebih
-                </span>
+            <div>
+                <span class="badge badge-light">Tahun Ajaran {{ instance.tahun_ajaran }}</span>
+                <span class="badge badge-light">Kurikulum {{ instance.kurikulum }}</span>
+                <span class="badge badge-light">Jumlah Siswa {{ instance.jumlah_siswa }} orang</span>
+                <span class="badge badge-light">Ruang {{ instance.ruang }}</span>
+                <span class="badge badge-warning">Status {{ instance.get_status_display }}</span>
             </div>
         </div>
+    </section>
 
+    <div class="container">
+
+        <ul class="nav nav-tabs justify-content-center mb-4" id="kelasTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link{% if page_mode == 'siswa' or page_mode == None %} active{% endif %}" href="?page_mode=siswa#kelasTab"
+                   data-toggle="tooltip" data-placement="top" title="Siswa">
+                  <i class="fa fa-user-graduate mr-md-2"></i>
+                  <span class="d-none d-md-inline">Siswa</span>
+                </a>
+              </li>
+            <li class="nav-item">
+                <a class="nav-link{% if page_mode == 'mapel' %} active{% endif %}" href="?page_mode=mapel#kelasTab"
+                   data-toggle="tooltip" data-placement="top" title="Mata Pelajaran">
+                    <i class="fa fa-book mr-md-2"></i>  
+                    <span class="d-none d-md-inline">Pelajaran</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if page_mode == 'jadwal' %} active{% endif %}" href="?page_mode=jadwal#kelasTab"
+                    data-toggle="tooltip" data-placement="top" title="Jadwal Pelajaran">
+                  <i class="fa fa-calendar-alt mr-md-2"></i>  
+                  <span class="d-none d-md-inline">Jadwal</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if page_mode == 'piket' %} active{% endif %}" href="?page_mode=piket#kelasTab" 
+                   data-toggle="tooltip" data-placement="top" title="Piket Kelas">
+                  <i class="fa fa-quidditch mr-md-2"></i>
+                  <span class="d-none d-md-inline">Piket</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if page_mode == 'absensi' %} active{% endif %}" href="?page_mode=absensi#kelasTab"
+                data-toggle="tooltip" data-placement="top" title="Absensi Siswa">
+                    <i class="fa fa-hand-sparkles mr-md-2"></i>
+                    <span class="d-none d-md-inline">Absensi</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if page_mode == 'rentang' %} active{% endif %}" href="?page_mode=rentang#kelasTab"
+                   data-toggle="tooltip" data-placement="top" title="Rentang Nilai">
+                    <i class="fa fa-percentage mr-md-2"></i>
+                    <span class="d-none d-md-inline">Rentang Nilai</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if page_mode == 'laporan' %} active{% endif %}" href="?page_mode=laporan"
+                   data-toggle="tooltip" data-placement="top" title="Laporan">
+                    <i class="fa fa-print mr-md-2"></i>
+                    <span class="d-none d-md-inline">Laporan</span>
+                </a>
+            </li>
+          </ul>
+
+          <div class="section">
+            {% if page_mode == 'absensi' %}
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        {% include 'webapp/pages/kelas_panels/absensi.html' with item=item %}
+                        <div class="text-center">
+                            <button class="btn"><i class="fa fa-history"></i> Tampilkan lagi</button>
+                        </div>
+                    </div>
+                </div>
+            {% elif page_mode == 'mapel' %}
+                <div class="card-list">
+                    {% for item in instance.mata_pelajaran %}
+                    <div class="col-md-6 mb-4">
+                        {% include 'webapp/blocks/card_list_item_mapel.html' with item=item %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% elif page_mode == 'rentang' %}
+                {% include 'webapp/pages/kelas_panels/rentang.html' with item=item %}
+            {% elif page_mode == 'jadwal' %}
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        {% include 'webapp/blocks/card_jadwal.html' with item=item %}
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        {% include 'webapp/blocks/card_jadwal.html' with item=item %}
+                    </div>
+                </div>
+            {% elif page_mode == 'piket' %}
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        {% include 'webapp/blocks/card_piket.html' with item=item %}        
+                    </div>
+                </div>
+            {% else %}
+                <div class="card-list">
+                    {% for item in instance.siswa %}
+                    <div class="col-md-4 mb-3">
+                        {% include 'webapp/blocks/card_list_item_siswa.html' with item=item %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            </section>
+          </div>
     </div>    
 </div>
 {% endblock %}

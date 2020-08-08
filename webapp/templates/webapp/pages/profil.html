@@ -1,15 +1,6 @@
 {% extends 'webapp/layout.html' %}
-
 {% load sister_core_tags %}
 
-
-{% block header_main %}
-    {% include 'webapp/blocks/appbar.html' %}
-{% endblock %}
-
-{% block header_bottom %}
-    {% include 'webapp/blocks/apptab.html' with active='profil' %}
-{% endblock %}
 
 {% block content_main %}
 <div class="content-main">
@@ -19,17 +10,17 @@
     <div class="container">
         <div class="section">
             <div class="row">
-                <div class="col-md-12 mb-3">
+                <div class="col-md-12 mb-4">
                     <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="card-body__header d-flex">
-                                <div>
-                                    <h2 class="card-body__title">Informasi Diri</h2>
-                                    <div class="card-body__meta">
-                                        <span>Mohon data diri diisi dengan lengkap dan akurat.</span>
-                                    </div>
+                        <div class="card-header d-flex">
+                            <div>
+                                <h2 class="card-body__title">Informasi Diri</h2>
+                                <div class="card-body__meta">
+                                    <span>Mohon data diri diisi dengan lengkap dan akurat.</span>
                                 </div>
                             </div>
+                        </div>
+                        <div class="card-body">
                             <div class="scroll-wrapper-md">
                                 <ul class="card-body__list">
                                     <li class="card-body__list-item">
@@ -72,7 +63,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <a class="btn btn-sm btn-primary text-white">
+                            <a class="btn btn-sm">
                                 <i class="fa fa-edit"></i>
                                 Perbaharui Informasi Diri
                             </a>
@@ -80,17 +71,17 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 mb-4">
                     <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="card-body__header d-flex">
-                                <div>
-                                    <h2 class="card-body__title">Contact Person</h2>
-                                    <div class="card-body__meta">
-                                        <span>Mohon contact diisi dengan lengkap dan akurat.</span>
-                                    </div>
+                        <div class="card-header d-flex">
+                            <div>
+                                <h2 class="card-body__title">Contact Person</h2>
+                                <div class="card-body__meta">
+                                    <span>Mohon contact diisi dengan lengkap dan akurat.</span>
                                 </div>
                             </div>
+                        </div>
+                        <div class="card-body">
                             <div class="scroll-wrapper-sm">
                                 <ul class="card-body__list">
                                     <li class="card-body__list-item">
@@ -127,7 +118,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <a class="btn btn-sm btn-primary text-white">
+                            <a class="btn btn-sm">
                                 <i class="fa fa-edit"></i>
                                 Perbaharui Contact Person
                             </a>
@@ -135,17 +126,17 @@
                     </div>
                 </div>
                 
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 mb-4">
                     <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="card-body__header d-flex">
-                                <div>
-                                    <h2 class="card-body__title">Alamat / Tempat Tinggal</h2>
-                                    <div class="card-body__meta">
-                                        <span>Mohon alamat diisi dengan lengkap dan akurat.</span>
-                                    </div>
+                        <div class="card-header d-flex">
+                            <div>
+                                <h2 class="card-body__title">Alamat / Tempat Tinggal</h2>
+                                <div class="card-body__meta">
+                                    <span>Mohon alamat diisi dengan lengkap dan akurat.</span>
                                 </div>
                             </div>
+                        </div>
+                        <div class="card-body">
                             <div class="scroll-wrapper-sm">
                                 <ul class="card-body__list">
                                     <li class="card-body__list-item">
@@ -182,7 +173,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <a class="btn btn-sm btn-primary text-white">
+                            <a class="btn btn-sm">
                                 <i class="fa fa-edit"></i>
                                 Perbaharui Alamat
                             </a>

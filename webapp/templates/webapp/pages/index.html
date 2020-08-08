@@ -1,69 +1,76 @@
 {% extends 'webapp/layout.html' %}
 
-
-{% block header_main %}
-    {% include 'webapp/blocks/appbar.html' %}
-{% endblock %}
-
-{% block header_bottom %}
-    {% include 'webapp/blocks/apptab.html' with active='index' %}
-{% endblock %}
-
 {% block content_main %}
 <div class="content-main">
 
     <div class="container">
-        <div class="jumbotron">
-            <h2>Apa kabar, Ibu Sri Anisah, S.Pd ?</h2>
-            <p>Untuk mempermudah mengelola pekerjaan anda beberapa fitur aplikasi ini telah diperbaharui.
-                Silahkan baca panduan pengguna untuk mempelajarai lebih lanjut.</p>
-            <a href="" class="btn btn-sm btn-info">Baca Panduan</a>
-        </div>
+
+        <section class="section">
+            <div class="jumbotron">
+                <h2>Apa kabar, Ibu Sri Anisah, S.Pd ?</h2>
+                <p>Untuk mempermudah mengelola pekerjaan anda beberapa fitur aplikasi ini telah diperbaharui.
+                    Silahkan baca panduan pengguna untuk mempelajarai lebih lanjut.</p>
+                <a href="" class="btn btn-sm btn-info">Baca Panduan</a>
+            </div>
+        </section>
+
         <div class="section">
             <div class="row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 mb-4">
                     <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="card-body__header d-flex">
-                                <div>
-                                    <h2 class="card-body__title">Jadwal Hari Ini</h2>
-                                    <div class="card-body__meta">
-                                        <span>Selasa</span><span>20 Agustus 2021</span><span>4 Mata Pelajaran</span>
-                                    </div>
+                        <div class="card-header d-flex">
+                            <div>
+                                <h2 class="card-body__title">
+                                    <i class="fa fa-calendar mr-1"></i>
+                                    Jadwal Hari Ini</h2>
+                                <div class="card-body__meta">
+                                    <span>Selasa</span><span>20 Agustus 2021</span><span>4 Mata Pelajaran</span>
                                 </div>
                             </div>
-                            <div class="scroll-wrapper">
+                        </div>
+                        <div class="card-body">
+                            <div class="scroll-wrapper scroll-wrapper-sm">
                                 <ul class="card-body__list">
                                     <li class="card-body__list-item">
-                                        <h3 class="card-body__list-title">Pendidikan Jasmani, Olahraga dan Kesehatan</h3>
+                                        <h3 class="card-body__list-title">
+                                            <i class="fa fa-book mr-1"></i>
+                                            Pendidikan Jasmani, Olahraga dan Kesehatan</h3>
                                         <div class="card-body__meta">
                                             <span>1A 2020/2021</span>
                                             <span>07:00 - 08:30</span>
                                         </div>
                                     </li>
                                     <li class="card-body__list-item">
-                                        <h3 class="card-body__list-title">Bahasa Indonesia</h3>
+                                        <h3 class="card-body__list-title">
+                                            <i class="fa fa-book mr-1"></i>
+                                            Bahasa Indonesia</h3>
                                         <div class="card-body__meta">
                                             <span>1A 2020/2021</span>
                                             <span>07:00 - 08:30</span>
                                         </div>
                                     </li>
                                     <li class="card-body__list-item">
-                                        <h3 class="card-body__list-title">Pendidikan Agama Islam</h3>
+                                        <h3 class="card-body__list-title">
+                                            <i class="fa fa-book mr-1"></i>
+                                            Pendidikan Agama Islam</h3>
                                         <div class="card-body__meta">
                                             <span>1A 2020/2021</span>
                                             <span>07:00 - 08:30</span>
                                         </div>
                                     </li>
                                     <li class="card-body__list-item">
-                                        <h3 class="card-body__list-title">Pendidikan Pancasila dan Kewarganegaraan</h3>
+                                        <h3 class="card-body__list-title">
+                                            <i class="fa fa-book mr-1"></i>
+                                            Pendidikan Pancasila dan Kewarganegaraan</h3>
                                         <div class="card-body__meta">
                                             <span>1A 2020/2021</span>
                                             <span>07:00 - 08:30</span>
                                         </div>
                                     </li>
                                     <li class="card-body__list-item">
-                                        <h3 class="card-body__list-title"><a href="">Ilmu Pengetahuan Alam</a></h3>
+                                        <h3 class="card-body__list-title">
+                                            <i class="fa fa-book mr-1"></i>
+                                            Ilmu Pengetahuan Alam</h3>
                                         <div class="card-body__meta">
                                             <span>1A 2020/2021</span>
                                             <span>07:00 - 08:30</span>
@@ -81,21 +88,23 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6">
                     <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="card-body__header d-flex">
-                                <div>
-                                    <h2 class="card-body__title">Aktifitas terbaru saya</h2>
-                                    <div class="card-body__meta">
-                                        <span>5 Aktifitas</span>
-                                    </div>
+                        <div class="card-header d-flex">
+                            <div>
+                                <h2 class="card-body__title">Aktifitas terbaru saya</h2>
+                                <div class="card-body__meta">
+                                    <span>5 Aktifitas</span>
                                 </div>
                             </div>
-                            <div class="scroll-wrapper">
+                        </div>
+                        <div class="card-body">
+                            <div class="scroll-wrapper scroll-wrapper-sm">
                                 <ul class="card-body__list">
                                     <li class="card-body__list-item">
-                                        <h3 class="card-body__list-title">Pendidikan Jasmani, Olahraga dan Kesehatan</h3>
+                                        <h3 class="card-body__list-title">
+                                            <i class="fa fa-plus mr-1"></i>
+                                            Menambahkan nilai harian <a href="">Rendi Wijaya</a></h3>
                                         <div class="card-body__meta">
                                             <span>1A 2020/2021</span>
                                             <span>07:00 - 08:30</span>
@@ -145,16 +154,31 @@
 
         <div class="section">
             <div class="section__header">
-                <h1 class="section__title">Daftar kelas saya ..</h1>
+                <h2 class="section__title">
+                    Kelas Saya
+                </h2>
             </div>
             <div class="card-list">
-                {% with '12345678' as kelas_list %}
-                    {% for item in kelas_list %}
+                {% for item in kelas %}
+                <div class="col-md-6 mb-3">
+                    {% include 'webapp/blocks/card_list_item_kelas.html' with item=item %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section__header">
+                <h2 class="section__title">
+                    Mata Pelajaran Saya
+                </h2>
+            </div>
+            <div class="card-list">
+                {% for item in mapel %}
                     <div class="col-md-6 mb-3">
-                        {% include 'webapp/blocks/card_list_item.html' %}
+                        {% include 'webapp/blocks/card_list_item_mapel.html' with item=item %}
                     </div>
-                    {% endfor %}
-                {% endwith %}
+                {% endfor %}
             </div>
             <div class="card-list__loader">
                 <span class="btn btn-light">
