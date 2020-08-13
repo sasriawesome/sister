@@ -1,4 +1,3 @@
-import enum
 from django.db import models
 from django.db.utils import cached_property
 from django.db.models.signals import post_save
@@ -7,99 +6,33 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone, translation
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from polymorphic.models import PolymorphicModel
-
 from sister.core.models import BaseModel
 from sister.core.enums import Weekday
 from sister.modules.ruang.models import Ruang
 from sister.modules.personal.models import Guru, Siswa
 from sister.modules.kurikulum.models import (
+    TahunAjaran,
     Kurikulum,
-    MataPelajaran,
-    EkstraKurikuler
+    MataPelajaran
 )
 
 from .managers import (
-    KelasManager,
-    PresensiKelasManager,
-    PresensiSiswaManager
+    KelasManager
 )
 
 
 __all__ = [
-    'TahunAjaran',
     'Kelas',
     'SiswaKelas',
     'MataPelajaranKelas',
     'RentangNilai',
     'JadwalPelajaran',
     'JadwalPiketSiswa',
-    'JadwalEkstraKurikuler',
-    'PresensiKelas',
-    'PresensiSiswa',
-    'NilaiSiswa',
-    'NilaiMataPelajaran',
-    'NilaiMataPelajaranKTSP',
-    'NilaiMataPelajaranK13',
+    'KesehatanSiswa',
+    'CatatanSiswa',
 ]
 
 _ = translation.ugettext_lazy
-
-
-class TahunAjaran(BaseModel):
-    class Meta:
-        verbose_name = 'Tahun Ajaran'
-        verbose_name_plural = 'Tahun Ajaran'
-
-    BULAN = (
-        (1, _('Januari')),
-        (2, _('Februari')),
-        (3, _('Maret')),
-        (4, _('April')),
-        (5, _('Mei')),
-        (6, _('Juni')),
-        (7, _('Juli')),
-        (8, _('Agustus')),
-        (9, _('September')),
-        (10, _('Oktober')),
-        (11, _('November')),
-        (12, _('Desember')),
-    )
-
-    kode = models.CharField(
-        max_length=10,
-        editable=False, unique=True
-    )
-    tahun_mulai = models.IntegerField(
-        validators=[
-            MinValueValidator(2000),
-            MaxValueValidator(3000),
-        ]
-    )
-    bulan_mulai = models.IntegerField(
-        choices=BULAN,
-        default=7
-    )
-    tahun_akhir = models.IntegerField(
-        validators=[
-            MinValueValidator(2000),
-            MaxValueValidator(3000),
-        ]
-    )
-    bulan_akhir = models.IntegerField(
-        choices=BULAN,
-        default=6
-    )
-
-    def __str__(self):
-        return self.kode
-
-    def generate_kode(self):
-        return "%s/%s" % (self.tahun_mulai, self.tahun_akhir)
-
-    def save(self, *args, **kwargs):
-        self.kode = self.generate_kode()
-        super().save(*args, **kwargs)
 
 
 class Kelas(BaseModel):
@@ -126,7 +59,7 @@ class Kelas(BaseModel):
         Guru,
         on_delete=models.CASCADE,
         related_name='kelas'
-        )
+    )
     ruang = models.ForeignKey(
         Ruang, null=True, blank=False,
         on_delete=models.PROTECT,
@@ -183,7 +116,7 @@ class Kelas(BaseModel):
         if self.kurikulum.kelas != self.kelas:
             raise ValidationError({
                 'kurikulum': 'Kelas pada kurikulum tidak sesuai'
-                })
+            })
 
 
 class SiswaKelas(BaseModel):
@@ -196,7 +129,7 @@ class SiswaKelas(BaseModel):
     kelas = models.ForeignKey(
         Kelas, related_name='siswa',
         on_delete=models.CASCADE
-        )
+    )
     no_urut = models.IntegerField(
         default=1,
         validators=[
@@ -208,7 +141,7 @@ class SiswaKelas(BaseModel):
         Siswa,
         related_name='kelas',
         on_delete=models.CASCADE
-        )
+    )
     status = models.IntegerField(
         choices=(
             (1, 'Baru'),
@@ -220,7 +153,7 @@ class SiswaKelas(BaseModel):
     status_lain = models.CharField(max_length=56, null=True, blank=True)
 
     def __str__(self):
-        return "%s %s" % (self.kelas, self.siswa)
+        return "%s %s" % (self.kelas.nama_kelas, self.siswa)
 
 
 class RentangNilai(BaseModel):
@@ -250,7 +183,7 @@ class RentangNilai(BaseModel):
     kelas = models.ForeignKey(
         Kelas, on_delete=models.CASCADE,
         related_name='rentang_nilai'
-        )
+    )
     nilai_minimum = models.IntegerField(
         validators=[
             MinValueValidator(0),
@@ -297,7 +230,7 @@ class MataPelajaranKelas(BaseModel):
         Guru,
         on_delete=models.CASCADE,
         related_name='mata_pelajaran_kelas'
-        )
+    )
     kkm = models.PositiveIntegerField(
         default=65,
         validators=[
@@ -379,7 +312,7 @@ class JadwalPelajaran(BaseModel):
     deskripsi = models.CharField(max_length=225, null=True, blank=True)
 
     def __str__(self):
-        return "%s %s" % (self.kelas, self.get_hari_display())
+        return "%s" % (self.mata_pelajaran)
 
 
 class JadwalPiketSiswa(BaseModel):
@@ -406,183 +339,24 @@ class JadwalPiketSiswa(BaseModel):
         on_delete=models.CASCADE)
 
     def __str__(self):
-        return "%s %s" % (self.kelas, self.get_hari_display())
+        return "%s" % (self.siswa_kelas)
 
 
-class JadwalEkstraKurikuler(BaseModel):
+class KesehatanSiswa(BaseModel):
     class Meta:
-        verbose_name = 'Jadwal Ekstra Kurikuler'
-        verbose_name_plural = 'Jadwal Ekstra Kurikuler'
-        unique_together = ('hari', 'semester', 'kelas', 'ekstra_kurikuler')
+        verbose_name = 'Kesehatan Siswa'
+        verbose_name_plural = 'Kesehatan Siswa'
+        unique_together = ('siswa_kelas', 'semester')
 
-    kelas = models.ForeignKey(
-        Kelas,
-        on_delete=models.CASCADE,
-        related_name='jadwal_ekskul'
-        )
-    semester = models.IntegerField(
-        choices=((1, 1), (2, 2),),
-        default=1
-    )
-    hari = models.IntegerField(
-        choices=Weekday.CHOICES.value,
-        default=Weekday.MONDAY.value
-    )
-    ekstra_kurikuler = models.ForeignKey(
-        EkstraKurikuler,
-        on_delete=models.CASCADE,
-        related_name='jadwal'
-    )
-    jam_mulai = models.TimeField(default=timezone.now)
-    jam_berakhir = models.TimeField(default=timezone.now)
-    deskripsi = models.CharField(max_length=225, null=True, blank=True)
-
-    def __str__(self):
-        return "%s" % self.ekstra_kurikuler
-
-
-class AktifitasPendidikan(enum.Enum):
-
-    AWAL_TAHUN_PELAJARAN = 1
-    HARI_SEKOLAH_EFEKTIF = 2
-    PENILAIAN_HARIAN = 3
-    PENILAIAN_TENGAH_SEMESTER = 4
-    PENILAIAN_AKHIR_SEMESTER = 5
-    UJIAN_AKHIR_SEKOLAH = 6
-    PENERIMAAN_RAPOR = 7
-    HARI_MINGGU = 8
-    HARI_LIBUR_UMUM = 9
-    HARI_LIBUR_SEMESTER = 10
-    HARI_LIBUR_PUASA = 11
-
-    LIBUR = (
-        HARI_MINGGU,
-        HARI_LIBUR_UMUM,
-        HARI_LIBUR_SEMESTER,
-        HARI_LIBUR_PUASA
-    )
-
-    CHOICES = (
-        (AWAL_TAHUN_PELAJARAN, 'Awal tahun pelajaran'),
-        (HARI_SEKOLAH_EFEKTIF, 'Hari sekolah efektif'),
-        (PENILAIAN_HARIAN, 'Penilaian harian'),
-        (PENILAIAN_TENGAH_SEMESTER, 'Penilaian tengah semester'),
-        (PENILAIAN_AKHIR_SEMESTER, 'Penilaian akhir semester'),
-        (UJIAN_AKHIR_SEKOLAH, 'Ujian akhir sekolah'),
-        (PENERIMAAN_RAPOR, 'Penerimaan rapor'),
-        (HARI_MINGGU, 'Hari minggu'),
-        (HARI_LIBUR_UMUM, 'Hari minggu'),
-        (HARI_LIBUR_SEMESTER, 'Hari libur semester'),
-        (HARI_LIBUR_PUASA, 'Hari libur semester')
-    )
-
-
-class PresensiKelas(BaseModel):
-    class Meta:
-        verbose_name = 'Presensi Kelas'
-        verbose_name_plural = 'Presensi Kelas'
-        ordering = ['-tanggal']
-        unique_together = ('kelas', 'tanggal')
-
-    objects = PresensiKelasManager()
-
-    kelas = models.ForeignKey(
-        Kelas, on_delete=models.CASCADE,
-        related_name='presensi'
-        )
-    semester = models.IntegerField(
-        choices=((1, 1), (2, 2),),
-        default=1
-        )
-    tanggal = models.DateField(default=timezone.now)
-    aktifitas = models.IntegerField(
-        choices=AktifitasPendidikan.CHOICES.value,
-        default=AktifitasPendidikan.HARI_SEKOLAH_EFEKTIF.value,
-        help_text=_('Alasan kelas diliburkan, atau catatan lain.')
-        )
-    deskripsi = models.CharField(
-        max_length=250,
-        null=True, blank=True,
-        help_text=_('Penjelasan aktifitas.')
-        )
-
-    @cached_property
-    def hari(self):
-        return Weekday.CHOICES.value[self.tanggal.weekday()][1]
-
-    @cached_property
-    def hadir(self):
-        return self.presensi_siswa.filter(status='H').count()
-
-    @cached_property
-    def sakit(self):
-        return self.presensi_siswa.filter(status='S').count()
-
-    @cached_property
-    def izin(self):
-        return self.presensi_siswa.filter(status='I').count()
-
-    @cached_property
-    def tanpa_keterangan(self):
-        return self.presensi_siswa.filter(status='A').count()
-
-    @cached_property
-    def total(self):
-        return self.presensi_siswa.count()
-
-    def __str__(self):
-        return "%s %s" % (self.kelas, self.tanggal)
-
-
-class PresensiSiswa(BaseModel):
-    class Meta:
-        verbose_name = 'Presensi Siswa'
-        verbose_name_plural = 'Presensi Siswa'
-        unique_together = ('presensi_kelas', 'siswa_kelas')
-
-    objects = PresensiSiswaManager()
-
-    presensi_kelas = models.ForeignKey(
-        PresensiKelas,
-        on_delete=models.CASCADE,
-        related_name='presensi_siswa'
-    )
     siswa_kelas = models.ForeignKey(
         SiswaKelas,
         on_delete=models.CASCADE,
-        related_name='presensi'
-    )
-    status = models.CharField(
-        max_length=3,
-        choices=(
-            ('H', 'Hadir'),
-            ('S', 'Sakit'),
-            ('I', 'Izin'),
-            ('A', 'Tanpa Keterangan'),
-        ),
-        default='H'
-    )
-
-    def __str__(self):
-        return "%s %s" % (self.presensi_kelas, self.siswa_kelas)
-
-
-class NilaiSiswa(BaseModel):
-    class Meta:
-        verbose_name = 'Nilai Siswa'
-        verbose_name_plural = 'Nilai Siswa'
-        unique_together = ('siswa', 'semester')
-
-    siswa = models.ForeignKey(
-        SiswaKelas,
-        on_delete=models.CASCADE,
-        related_name='nilai_siswa'
+        related_name='kesehatan_siswa'
     )
     semester = models.IntegerField(
         choices=((1, 1), (2, 2),),
         default=1
     )
-
     berat_badan = models.IntegerField(
         default=15,
         validators=[
@@ -598,104 +372,31 @@ class NilaiSiswa(BaseModel):
         ]
     )
 
-    nilai_spiritual = models.IntegerField(
-        default=0,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(100)
-        ]
-    )
-    predikat_spiritual = models.CharField(max_length=1, null=True, blank=True)
-    deskripsi_spiritual = models.TextField(null=True, blank=True)
-
-    nilai_sosial = models.IntegerField(
-        default=0,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(100)
-        ]
-    )
-    predikat_sosial = models.CharField(max_length=1, null=True, blank=True)
-    deskripsi_sosial = models.TextField(null=True, blank=True)
-
     def __str__(self):
-        return "Nilai siswa %s Semester %s" % (self.siswa, self.semester)
+        return "Kesehatan siswa %s Semester %s" % (
+            self.siswa_kelas, self.semester)
 
 
-class NilaiMataPelajaran(PolymorphicModel, BaseModel):
+class CatatanSiswa(BaseModel):
     class Meta:
-        verbose_name = 'Nilai Mata Pelajaran'
-        verbose_name_plural = 'Nilai Pelajaran'
-        unique_together = ('nilai_siswa', 'mata_pelajaran')
+        verbose_name = 'Catatan Siswa'
+        verbose_name_plural = 'Catatan Siswa'
+        unique_together = ('siswa_kelas', 'semester')
 
-    no_urut = models.IntegerField(
-        default=1,
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(100)
-        ]
-    )
-    nilai_siswa = models.ForeignKey(
-        NilaiSiswa,
+    siswa_kelas = models.ForeignKey(
+        SiswaKelas,
         on_delete=models.CASCADE,
-        related_name='nilai_mata_pelajaran'
+        related_name='catatan_siswa'
     )
-    mata_pelajaran = models.ForeignKey(
-        MataPelajaran,
-        on_delete=models.CASCADE,
-        related_name='nilai_siswa'
-    )
-    kkm = models.IntegerField(
-        default=65,
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(100)
-        ]
-    )
-
-
-class NilaiMataPelajaranKTSP(NilaiMataPelajaran):
-    class Meta:
-        verbose_name = 'Nilai Mata Pelajaran KTSP'
-        verbose_name_plural = 'Nilai Mata Pelajaran KTSP'
-
-    nilai = models.IntegerField(
-        default=0,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(100)
-        ]
+    semester = models.IntegerField(
+        choices=((1, 1), (2, 2),),
+        default=1
     )
     deskripsi = models.TextField()
 
-
-class NilaiMataPelajaranK13(NilaiMataPelajaran):
-    class Meta:
-        verbose_name = 'Nilai Mata Pelajaran K13'
-        verbose_name_plural = 'Nilai Mata Pelajaran K13'
-    nilai_pengetahuan = models.IntegerField(
-        default=0,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(100)
-        ]
-    )
-    predikat_pengetahuan = models.CharField(
-        max_length=1,
-        null=True, blank=True)
-    deskripsi_pengetahuan = models.TextField(
-        null=True, blank=True)
-    nilai_keterampilan = models.IntegerField(
-        default=0,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(100)
-        ])
-    predikat_keterampilan = models.CharField(
-        max_length=1,
-        null=True, blank=True)
-    deskripsi_keterampilan = models.TextField(
-        null=True, blank=True)
+    def __str__(self):
+        return "Catatan siswa %s Semester %s" % (
+            self.siswa_kelas, self.semester)
 
 
 @receiver(post_save, sender=Kelas)
@@ -751,35 +452,3 @@ def after_save_kelas(sender, **kwargs):
             )
         )
         RentangNilai.objects.bulk_create(rentang)
-
-
-@receiver(post_save, sender=SiswaKelas)
-def after_save_siswa_kelas(sender, **kwargs):
-    created = kwargs.pop('created', None)
-    instance = kwargs.pop('instance', None)
-    if created:
-        NilaiSiswa.objects.get_or_create(
-            siswa=instance,
-            semester=1,
-            defaults={
-                'siswa': instance,
-                'semester': 1
-            }
-        )
-
-
-@receiver(post_save, sender=PresensiKelas)
-def after_save_presensi_siswa(sender, **kwargs):
-    created = kwargs.pop('created', None)
-    instance = kwargs.pop('instance', None)
-    if created:
-        # add initial items
-        items = []
-        for siswa in instance.kelas.siswa.all():
-            items.append(
-                PresensiSiswa(
-                    siswa_kelas=siswa,
-                    presensi_kelas=instance
-                )
-            )
-        PresensiSiswa.objects.bulk_create(items)

@@ -1,0 +1,60 @@
+{% load sister_core_tags %}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header d-flex">
+        <div>
+            <h2 class="card-body__title">Informasi Diri</h2>
+            <div class="card-body__meta">
+                <span>Mohon data diri diisi dengan lengkap dan akurat.</span>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="scroll-wrapper-md">
+            <ul class="card-body__list">
+                <li class="card-body__list-item">
+                    <small>Nama panggilan</small> <span class="card-body__list-title">{% firstof instance.title '' %} {{ instance.short_name | noblank }}</span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Nomor KTP</small> <span class="card-body__list-title">{{ instance.pid | noblank }}</span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Jenis Kelamin</small> <span class="card-body__list-title">{{ instance.get_gender_display }}</span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Agama</small> <span class="card-body__list-title">{{ instance.religion | noblank }}</span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Tempat lahir</small>
+                    <span class="card-body__list-title">
+                        {{ instance.place_of_birth | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Tanggal lahir</small>
+                    <span class="card-body__list-title">
+                        {{ instance.date_of_birth | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Pekerjaan</small>
+                    <span class="card-body__list-title">
+                        {{ instance.job | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Pendapatan perbulan</small>
+                    <span class="card-body__list-title">
+                        Rp.{{ instance.income | money }}
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-sm">
+            <i class="fa fa-edit"></i>
+            Perbaharui Informasi Diri
+        </a>
+    </div>
+</div>

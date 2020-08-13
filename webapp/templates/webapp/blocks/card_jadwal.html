@@ -1,61 +1,39 @@
-<div class="card border-0 shadow-sm">
+{% load sister_core_tags %}
+
+<div class="card">
     <div class="card-header d-flex">
         <div>
             <h2 class="card-body__title">
-                <i class="fa fa-calendar mr-2"></i>Senin</h2>
+                <i class="fa fa-calendar mr-2"></i>{{ jadwal.grouper | weekday }}</h2>
             <div class="card-body__meta">
-                <span>Semester 1</span><span>5 Mata Pelajaran</span>
+                <span>Semester {{ semester }}</span><span>{{ jadwal.list | length }} Mata Pelajaran</span>
             </div>
         </div>
     </div>
     <div class="card-body">
         <div class="scroll-wrapper scroll-wrapper-sm">
             <ul class="card-body__list">
+                {% for item in jadwal.list %}
                 <li class="card-body__list-item">
+                    <div class="float-right">
+                        <a href="{% url 'webapp_kelas_jadwal_update' object_id=item.id %}" class="btn btn-xs" role="tooltip"
+                            data-placement="left" data-toggle="tooltip" title="Ubah">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a href="{% url 'webapp_kelas_jadwal_delete' object_id=item.id %}" class="btn btn-xs" role="tooltip"
+                            data-placement="left" data-toggle="tooltip" title="Hapus">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </div>
                     <h3 class="card-body__list-title">
                         <i class="fa fa-book mr-2"></i>
-                        Pendidikan Jasmani, Olahraga dan Kesehatan</h3>
+                        {{ item.mata_pelajaran.mata_pelajaran.nama }}</h3>
                     <div class="card-body__meta">
-                        <span>1A 2020/2021</span>
-                        <span>07:00 - 08:30</span>
+                        <span>{{ item.mata_pelajaran.kelas }}</span>
+                        <span>{{ item.jam_mulai }} - {{ item.jam_berakhir }}</span>
                     </div>
                 </li>
-                <li class="card-body__list-item">
-                    <h3 class="card-body__list-title">
-                        <i class="fa fa-book mr-2"></i>
-                        Bahasa Indonesia</h3>
-                    <div class="card-body__meta">
-                        <span>Sri Anisah, S.Pd</span>
-                        <span>07:00 - 08:30</span>
-                    </div>
-                </li>
-                <li class="card-body__list-item">
-                    <h3 class="card-body__list-title">
-                        <i class="fa fa-book mr-2"></i>
-                        Pendidikan Agama Islam</h3>
-                    <div class="card-body__meta">
-                        <span>1A 2020/2021</span>
-                        <span>07:00 - 08:30</span>
-                    </div>
-                </li>
-                <li class="card-body__list-item">
-                    <h3 class="card-body__list-title">
-                        <i class="fa fa-book mr-2"></i>
-                        Pendidikan Pancasila dan Kewarganegaraan</h3>
-                    <div class="card-body__meta">
-                        <span>1A 2020/2021</span>
-                        <span>07:00 - 08:30</span>
-                    </div>
-                </li>
-                <li class="card-body__list-item">
-                    <h3 class="card-body__list-title">
-                        <i class="fa fa-book mr-2"></i>
-                        Ilmu Pengetahuan Alam</h3>
-                    <div class="card-body__meta">
-                        <span>1A 2020/2021</span>
-                        <span>07:00 - 08:30</span>
-                    </div>
-                </li>
+                {% endfor %}
             </ul>
         </div>
     </div>

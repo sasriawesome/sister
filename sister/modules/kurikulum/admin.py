@@ -4,7 +4,7 @@ from sister.admin.sites import tenant_admin
 from sister.admin.admin import ModelAdmin
 
 from .models import (
-    EkstraKurikuler,
+    TahunAjaran,
     Kurikulum,
     MataPelajaran,
     MataPelajaranKurikulum,
@@ -14,8 +14,9 @@ from .models import (
 )
 
 
-# class SekolahAdmin(ModelAdmin):
-#     pass
+class TahunAjaranAdmin(ModelAdmin):
+    pass
+
 
 class EkstraKurikulerAdmin(ModelAdmin):
     pass
@@ -46,7 +47,7 @@ class TemaAdmin(ModelAdmin):
     pass
 
 
-tenant_admin.register(EkstraKurikuler, EkstraKurikulerAdmin)
+tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
 tenant_admin.register(Kurikulum, KurikulumAdmin)
 tenant_admin.register(MataPelajaran, MataPelajaranAdmin)
 tenant_admin.register(KompetensiInti, KompetensiIntiAdmin)

@@ -18,8 +18,7 @@ from sister.modules.pembelajaran.models import (
     PresensiKelas,
     JadwalPelajaran,
     JadwalPiketSiswa,
-    SiswaKelas,
-    NilaiSiswa
+    SiswaKelas
     )
 
 from .forms import (
@@ -490,15 +489,3 @@ class SiswaKelasDetail(SiswaDetailBase):
 
     def get_page_title(self):
         return "Siswa Kelas: %s" % str(self.object)
-
-
-@tenant_admin.register_view
-class SiswaKelasPenilaian(SiswaDetailBase):
-
-    model = NilaiSiswa
-    url_name = 'guruadmin_siswa_nilai'
-    url_path = 'siswakelas/<str:object_id>/nilai/'
-    template_name = 'admin/siswa_nilai.html'
-
-    def get_page_title(self):
-        return "Siswa: %s" % str(self.object)

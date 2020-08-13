@@ -12,13 +12,30 @@
     <!-- Bootstrap core CSS -->
     <link href="{% static 'webapp/css/main.bundle.css' %}" rel="stylesheet">
     {% block extrastyle %}{% endblock %}
+    <style>
+      .message-container {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 950;
+        width: 100%;
+      }
+    </style>
+    <script src="{% static 'webapp/js/main.bundle.js' %}"></script>
   </head>
 
   <body class="{% block body_class %}{% endblock %}">
     
     {% block message %}
       {% if messages %}
-        {% include 'webapp/block/message.html' %}
+      <div class="message-container">
+        <div class="container ph-3">
+        {% for message in messages %}
+            {% include 'webapp/blocks/message.html' %}
+        {% endfor %}
+      </div>
+    </div>
       {% endif %}
     {% endblock %}
 
@@ -26,11 +43,14 @@
       {{ content }}
     {% endblock %}
 
-    <script src="{% static 'webapp/js/main.bundle.js' %}"></script>
+    
     {% block extrascripts %}{% endblock %}
     <script>
       $(function(){
         console.log('Hi im works');
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.alert').alert();
+        
       })
     </script>
   </body>

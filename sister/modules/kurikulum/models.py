@@ -1,10 +1,10 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 from sister.core.models import BaseModel
 
 __all__ = [
     # 'Sekolah',
-    'EkstraKurikuler',
     'Kurikulum',
     'MataPelajaran',
     'MataPelajaranKurikulum',
@@ -24,6 +24,62 @@ __all__ = [
 
 #     def __str__(self):
 #         return self.nama_sekolah
+
+
+class TahunAjaran(BaseModel):
+    class Meta:
+        verbose_name = 'Tahun Ajaran'
+        verbose_name_plural = 'Tahun Ajaran'
+
+    BULAN = (
+        (1, _('Januari')),
+        (2, _('Februari')),
+        (3, _('Maret')),
+        (4, _('April')),
+        (5, _('Mei')),
+        (6, _('Juni')),
+        (7, _('Juli')),
+        (8, _('Agustus')),
+        (9, _('September')),
+        (10, _('Oktober')),
+        (11, _('November')),
+        (12, _('Desember')),
+    )
+
+    kode = models.CharField(
+        max_length=10,
+        editable=False, unique=True
+    )
+    tahun_mulai = models.IntegerField(
+        validators=[
+            MinValueValidator(2000),
+            MaxValueValidator(3000),
+        ]
+    )
+    bulan_mulai = models.IntegerField(
+        choices=BULAN,
+        default=7
+    )
+    tahun_akhir = models.IntegerField(
+        validators=[
+            MinValueValidator(2000),
+            MaxValueValidator(3000),
+        ]
+    )
+    bulan_akhir = models.IntegerField(
+        choices=BULAN,
+        default=6
+    )
+
+    def __str__(self):
+        return self.kode
+
+    def generate_kode(self):
+        return "%s/%s" % (self.tahun_mulai, self.tahun_akhir)
+
+    def save(self, *args, **kwargs):
+        self.kode = self.generate_kode()
+        super().save(*args, **kwargs)
 
 
 class Kurikulum(BaseModel):
@@ -86,20 +142,6 @@ class MataPelajaranKurikulum(BaseModel):
 
     def __str__(self):
         return "%s.%s" % (self.kurikulum, self.mata_pelajaran)
-
-
-class EkstraKurikuler(BaseModel):
-    class Meta:
-        verbose_name = 'Ekstra Kurikuler'
-        verbose_name_plural = 'Ekstra Kurikuler'
-
-    nama = models.CharField(
-        max_length=225,
-        verbose_name=_('nama')
-    )
-
-    def __str__(self):
-        return self.nama
 
 
 class KompetensiInti(BaseModel):

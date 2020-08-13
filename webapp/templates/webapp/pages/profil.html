@@ -1,184 +1,46 @@
 {% extends 'webapp/layout.html' %}
 {% load sister_core_tags %}
 
-
 {% block content_main %}
 <div class="content-main">
 
-    {% include 'webapp/blocks/account_header.html' %}
+    <section class="section bg-primary text-white pt-5 pb-5">
+        <div class="container ph-3">
+            <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-sm mr-3">
+                    <img src="/static/webapp/img/avatar_female.png" alt="Sri Anisah">
+                </div>
+                <div>
+                    <h4 class="mb-0"><strong>{{ instance }}</strong></h4>
+                    {% if instance.siswa %}
+                        <small>NIS: {{ instance.siswa.nis }}</small> <small>NISN: {{ instance.siswa.nis }}</small>
+                    {% endif %}
+                    {% if instance.guru %}
+                        <small>NIP: {{ instance.guru.nip }}</small>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <span class="badge badge-light">Guru</span>
+                <span class="badge badge-light">Wali</span>
+                <span class="badge badge-light">Siswa</span>
+            </div>
+        </div>
+    </section>
 
-    <div class="container">
+    <div class="container ph-3">
         <div class="section">
             <div class="row">
                 <div class="col-md-12 mb-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header d-flex">
-                            <div>
-                                <h2 class="card-body__title">Informasi Diri</h2>
-                                <div class="card-body__meta">
-                                    <span>Mohon data diri diisi dengan lengkap dan akurat.</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="scroll-wrapper-md">
-                                <ul class="card-body__list">
-                                    <li class="card-body__list-item">
-                                        <small>Nama panggilan</small> <span class="card-body__list-title">{% firstof instance.person.title '' %} {{ instance.person.short_name }}</span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Nomor KTP</small> <span class="card-body__list-title">{{ instance.person.pid }}</span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Jenis Kelamin</small> <span class="card-body__list-title">{{ instance.person.get_gender_display }}</span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Agama</small> <span class="card-body__list-title">{{ instance.person.religion }}</span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Tempat lahir</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.place_of_birth }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Tanggal lahir</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.date_of_birth }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Pekerjaan</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.job }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Pendapatan perbulan</small>
-                                        <span class="card-body__list-title">
-                                            Rp.{{ instance.person.income | money }}
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <a class="btn btn-sm">
-                                <i class="fa fa-edit"></i>
-                                Perbaharui Informasi Diri
-                            </a>
-                        </div>
-                    </div>
+                    {% include 'webapp/blocks/profile_personal.html' with instance=instance %}
                 </div>
 
                 <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header d-flex">
-                            <div>
-                                <h2 class="card-body__title">Contact Person</h2>
-                                <div class="card-body__meta">
-                                    <span>Mohon contact diisi dengan lengkap dan akurat.</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="scroll-wrapper-sm">
-                                <ul class="card-body__list">
-                                    <li class="card-body__list-item">
-                                        <small>No. HP / Telpon</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.contact.phone }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Whatsapp</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.contact.whatsapp | noblank }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Email</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.contact.email | noblank }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Website</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.contact.website | noblank }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Fax</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.contact.fax | noblank }}
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <a class="btn btn-sm">
-                                <i class="fa fa-edit"></i>
-                                Perbaharui Contact Person
-                            </a>
-                        </div>
-                    </div>
+                    {% include 'webapp/blocks/profile_address.html' with instance=instance. %}
                 </div>
                 
                 <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header d-flex">
-                            <div>
-                                <h2 class="card-body__title">Alamat / Tempat Tinggal</h2>
-                                <div class="card-body__meta">
-                                    <span>Mohon alamat diisi dengan lengkap dan akurat.</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="scroll-wrapper-sm">
-                                <ul class="card-body__list">
-                                    <li class="card-body__list-item">
-                                        <small>Alamat</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.address.street }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Kabupaten / Kota</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.address.city | noblank }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Provinsi</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.contact.province | noblank }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Negara</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.contact.country | noblank }}
-                                        </span>
-                                    </li>
-                                    <li class="card-body__list-item">
-                                        <small>Kode Pos</small>
-                                        <span class="card-body__list-title">
-                                            {{ instance.person.contact.zipcode | noblank }}
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <a class="btn btn-sm">
-                                <i class="fa fa-edit"></i>
-                                Perbaharui Alamat
-                            </a>
-                        </div>
-                    </div>
+                    {% include 'webapp/blocks/profile_contact.html' with instance=instance %}
                 </div>
 
             </div>

@@ -1,10 +1,10 @@
 {% extends 'webapp/blocks/card_list_item_avatar.html' %}
 
 {% block card_item_url %}
-    {% url 'webapp_kelas' object_id=item.id %}
+    {% url 'webapp_profile' %}?profile_id={{ item.siswa.person.id }}
 {% endblock %}
 {% block card_icon_name %}chalkboard{% endblock %}
 {% block card_item_title %}{{ item.siswa.person.full_name }}{% endblock %}
 {% block card_item_badge %}
-    <span>{{ item.no_urut }}</span><span>{{ item.siswa.nis }}</span><span>{{ item.siswa.nisn }}</span>
+    <span>{{ item.no_urut }}</span><span>NIS.{{ item.siswa.nis }}</span><span>NISN.{{ item.siswa.nisn }}</span>
 {% endblock %}

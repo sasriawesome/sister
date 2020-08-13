@@ -23,11 +23,4 @@ window.jQuery = $;
 window.$ = $;
 window.moment = moment;
 
-$(function() {
-    $('[data-toggle="tooltip"]').tooltip();
-    
-    // Bootstrap Datepicker
-    $('.datetimepicker').datetimepicker();
-    // $('.datepicker').datepicker();
-    // $('.timepicker').timepicker();
-});
+$(function() {});

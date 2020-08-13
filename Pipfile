@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 jupyter = "*"
 flake8 = "*"
+locust = "*"
 
 [packages]
 django = "==3.0.8"
@@ -38,6 +39,8 @@ django-tenant-users = "*"
 django-extensions = "*"
 pandas = "*"
 django-avatar = "*"
+django-widget-tweaks = "*"
+django-tempus-dominus = "*"
 
 [requires]
 python_version = "3.8"

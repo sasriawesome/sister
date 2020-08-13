@@ -1,25 +1,40 @@
-<div class="card border-0 shadow-sm">
+{% load sister_core_tags %}
+
+<div class="card">
     <div class="card-header d-flex">
         <div>
             <h2 class="card-body__title">
-                <i class="fa fa-quidditch mr-1"></i>
-                Senin</h2>
+                <i class="fa fa-calendar mr-2"></i>{{ piket.grouper | weekday }}</h2>
             <div class="card-body__meta">
-                <span>Semester 1</span><span>4 Siswa</span>
+                <span>Semester {{ semester }}</span><span>{{ piket.list | length }} Siswa</span>
             </div>
         </div>
     </div>
     <div class="card-body">
         <div class="scroll-wrapper scroll-wrapper-sm">
             <ul class="card-body__list">
+                {% for item in piket.list %}
                 <li class="card-body__list-item">
+                    <div class="float-right">
+                        <a href="{% url 'webapp_kelas_piket_update' object_id=item.id %}" class="btn btn-xs" role="tooltip"
+                            data-placement="left" data-toggle="tooltip" title="Ubah">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a href="{% url 'webapp_kelas_piket_delete' object_id=item.id %}" class="btn btn-xs" role="tooltip"
+                            data-placement="left" data-toggle="tooltip" title="Hapus">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </div>
                     <h3 class="card-body__list-title">
-                        <i class="fa fa-user-graduate mr-2"></i> Mahathir Muhammad</h3>
+                        <i class="fa fa-user-graduate mr-2"></i> {{ item.siswa_kelas.siswa }}</h3>
                     <div class="card-body__meta">
-                        <span>1</span>
-                        <span>NIS: 11111111</span>
+                    <div class="card-body__meta">
+                        <span>{{ item.siswa_kelas.no_urut }}</span>
+                        <span>NIS.{{ item.siswa_kelas.siswa.nis }}</span>
+                        <span>NISN.{{ item.siswa_kelas.siswa.nisn }}</span>
                     </div>
                 </li>
+                {% endfor %}
             </ul>
         </div>
     </div>

@@ -1,0 +1,54 @@
+{% load sister_core_tags %}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header d-flex">
+        <div>
+            <h2 class="card-body__title">Alamat / Tempat Tinggal</h2>
+            <div class="card-body__meta">
+                <span>Mohon alamat diisi dengan lengkap dan akurat.</span>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="scroll-wrapper-sm">
+            <ul class="card-body__list">
+                <li class="card-body__list-item">
+                    <small>Alamat</small>
+                    <span class="card-body__list-title">
+                        {{ instance.address.street }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Kabupaten / Kota</small>
+                    <span class="card-body__list-title">
+                        {{ instance.address.city | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Provinsi</small>
+                    <span class="card-body__list-title">
+                        {{ instance.contact.province | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Negara</small>
+                    <span class="card-body__list-title">
+                        {{ instance.contact.country | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Kode Pos</small>
+                    <span class="card-body__list-title">
+                        {{ instance.contact.zipcode | noblank }}
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-sm">
+            <i class="fa fa-edit"></i>
+            Perbaharui Alamat
+        </a>
+    </div>
+</div>

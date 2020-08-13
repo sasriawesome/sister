@@ -6,3 +6,4 @@ class AppConfig(BaseAppConfig):
 
     def ready(self):
         import webapp.hooks
+        import webapp.views

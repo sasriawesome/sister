@@ -1,0 +1,54 @@
+{% load sister_core_tags %}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header d-flex">
+        <div>
+            <h2 class="card-body__title">Contact Person</h2>
+            <div class="card-body__meta">
+                <span>Mohon contact diisi dengan lengkap dan akurat.</span>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="scroll-wrapper-sm">
+            <ul class="card-body__list">
+                <li class="card-body__list-item">
+                    <small>No. HP / Telpon</small>
+                    <span class="card-body__list-title">
+                        {{ instance.contact.phone | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Whatsapp</small>
+                    <span class="card-body__list-title">
+                        {{ instance.contact.whatsapp | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Email</small>
+                    <span class="card-body__list-title">
+                        {{ instance.contact.email | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Website</small>
+                    <span class="card-body__list-title">
+                        {{ instance.contact.website | noblank }}
+                    </span>
+                </li>
+                <li class="card-body__list-item">
+                    <small>Fax</small>
+                    <span class="card-body__list-title">
+                        {{ instance.contact.fax | noblank }}
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-sm">
+            <i class="fa fa-edit"></i>
+            Perbaharui Contact Person
+        </a>
+    </div>
+</div>

@@ -1,24 +1,16 @@
 from django.contrib import admin
-from django.shortcuts import reverse
-from django.utils.translation import ugettext_lazy as _
-from django.utils.html import format_html
 
 # from sister.core import hooks
 from sister.admin.sites import tenant_admin
 from sister.admin.admin import ModelAdmin
 
 from .models import (
-    TahunAjaran,
     Kelas,
-    NilaiSiswa,
-    PresensiKelas,
     MataPelajaranKelas,
-    PresensiSiswa,
     JadwalPelajaran,
     JadwalPiketSiswa,
     SiswaKelas,
-    RentangNilai,
-    NilaiMataPelajaranK13
+    RentangNilai
 )
 
 
@@ -71,17 +63,6 @@ class KelasAdmin(ModelAdmin):
         SiswaKelasInline,
         ]
 
-    def get_list_display(self, request):
-        list_display = super().get_list_display(request)
-        return [*list_display, 'view_link']
-
-    def view_link(self, obj):
-        template = "<a class='viewlink' href='%s' title='%s'></a>"
-        url = reverse('admin:guruadmin_kelas_detail', args=(obj.id,))
-        return format_html(template % (url, _('inspect').title()))
-
-    view_link.short_description = ''
-
 
 class RentangNilaiAdmin(ModelAdmin):
     list_display = [
@@ -93,56 +74,7 @@ class RentangNilaiAdmin(ModelAdmin):
         ]
 
 
-class NilaiMataPelajaranK13Inline(admin.StackedInline):
-    extra = 0
-    model = NilaiMataPelajaranK13
-
-
-class NilaiSiswaAdmin(ModelAdmin):
-    inlines = [
-        NilaiMataPelajaranK13Inline
-        ]
-
-
-class NilaiSiswaKTSPAdmin(ModelAdmin):
-    list_display = [
-        'siswa',
-        'mata_pelajaran',
-        'nilai',
-        'deskripsi',
-        ]
-
-
-class NilaiSiswaK13Admin(ModelAdmin):
-    list_display = [
-        'siswa',
-        'mata_pelajaran',
-        'nilai_spiritual',
-        'nilai_sosial',
-        'nilai_pengetahuan',
-        'nilai_keterampilan'
-        ]
-
-
-class PresensiSiswa(admin.TabularInline):
-    extra = 0
-    model = PresensiSiswa
-
-
-class PresensiKelasAdmin(ModelAdmin):
-    list_filter = ['kelas']
-    inlines = [PresensiSiswa]
-
-    def get_inlines(self, request, obj):
-        if obj:
-            return self.inlines
-        return []
-
-
-tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
 tenant_admin.register(Kelas, KelasAdmin)
-tenant_admin.register(NilaiSiswa, NilaiSiswaAdmin)
-tenant_admin.register(PresensiKelas, PresensiKelasAdmin)
 
 
 # class PersonalModelMenuGroup(ModelMenuGroup):
