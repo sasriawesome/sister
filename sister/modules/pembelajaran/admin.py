@@ -20,7 +20,6 @@ class TahunAjaranAdmin(ModelAdmin):
 
 class MataPelajaranKelasInline(admin.TabularInline):
     extra = 1
-    exclude = ['kkm', 'tugas', 'ph', 'pts', 'pas']
     model = MataPelajaranKelas
 
 
@@ -54,10 +53,9 @@ class KelasAdmin(ModelAdmin):
     list_display = [
         'nama_kelas',
         'guru_kelas',
-        'tahun_ajaran',
-        'kurikulum'
+        'tahun_ajaran'
         ]
-    list_select_related = ['guru_kelas', 'tahun_ajaran', 'kurikulum']
+    list_select_related = ['guru_kelas', 'tahun_ajaran']
     inlines = [
         MataPelajaranKelasInline,
         SiswaKelasInline,

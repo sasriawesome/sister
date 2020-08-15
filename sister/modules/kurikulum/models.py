@@ -2,28 +2,15 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 from sister.core.models import BaseModel
+from .enums import KompetensiInti, KOMPETENSI_INTI_CHOICES
+
 
 __all__ = [
-    # 'Sekolah',
     'Kurikulum',
     'MataPelajaran',
-    'MataPelajaranKurikulum',
-    'KompetensiInti',
     'KompetensiDasar',
     'Tema',
 ]
-
-# class Sekolah(BaseModel):
-#     class Meta:
-#         verbose_name = 'Sekolah'
-#         verbose_name_plural = 'Sekolah'
-
-#     npsn = models.CharField(max_length=25)
-#     nss = models.CharField(max_length=25)
-#     nama_sekolah = models.CharField(max_length=225)
-
-#     def __str__(self):
-#         return self.nama_sekolah
 
 
 class TahunAjaran(BaseModel):
@@ -128,32 +115,23 @@ class MataPelajaran(BaseModel):
         return "%s: %s" % (self.kode, self.nama)
 
 
-class MataPelajaranKurikulum(BaseModel):
+class KurikulumMataPelajaran(BaseModel):
     class Meta:
-        verbose_name = 'Mata Pelajaran Kurikulum'
-        verbose_name_plural = 'Mata Pelajaran Kurikulum'
+        verbose_name = 'Kurikulum Mata Pelajaran'
+        verbose_name_plural = 'Kurikulum Mata Pelajaran'
+        unique_together = ('kurikulum', 'mata_pelajaran')
 
-    mata_pelajaran = models.ForeignKey(
-        MataPelajaran,
-        on_delete=models.CASCADE)
     kurikulum = models.ForeignKey(
         Kurikulum,
+        related_name='mata_pelajaran',
+        on_delete=models.CASCADE)
+    mata_pelajaran = models.ForeignKey(
+        MataPelajaran,
+        related_name='kurikulum',
         on_delete=models.CASCADE)
 
     def __str__(self):
-        return "%s.%s" % (self.kurikulum, self.mata_pelajaran)
-
-
-class KompetensiInti(BaseModel):
-    class Meta:
-        verbose_name = 'Kompetensi Inti'
-        verbose_name_plural = 'Kompetensi Inti'
-
-    nomor = models.IntegerField()
-    deskripsi = models.CharField(max_length=225, null=True, blank=True)
-
-    def __str__(self):
-        return "%s. %s" % (self.nomor, self.deskripsi)
+        return "%s %s" % (self.kurikulum, self.mata_pelajaran)
 
 
 class KompetensiDasar(BaseModel):
@@ -161,43 +139,41 @@ class KompetensiDasar(BaseModel):
         verbose_name = 'Kompetensi Dasar'
         verbose_name_plural = 'Kompetensi Dasar'
         unique_together = (
-            'mata_pelajaran_kurikulum',
-            'kompetensi_inti',
-            'nomor'
+            'kurikulum_mapel', 'ki', 'kd'
         )
 
-    mata_pelajaran_kurikulum = models.ForeignKey(
-        MataPelajaranKurikulum,
+    kurikulum_mapel = models.ForeignKey(
+        KurikulumMataPelajaran,
         on_delete=models.CASCADE)
-    kompetensi_inti = models.ForeignKey(
-        KompetensiInti,
-        on_delete=models.CASCADE
-    )
-    nomor = models.IntegerField()
-    semester = models.IntegerField(
-        choices=((1, 1), (2, 2),),
-        default=1
+    ki = models.IntegerField(
+        default=KompetensiInti.PENGETAHUAN.value,
+        choices=KOMPETENSI_INTI_CHOICES,
+        verbose_name='KI')
+    kd = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name='KD'
     )
     keyword = models.CharField(
         max_length=255,
-        verbose_name=_('Kata kunci')
+        verbose_name=_('Keyword'),
+        help_text="""
+            Kata kunci menunjukkan kompetensi
+            Contoh:'Mempraktekkan membaca Surat Al-Fatihah'.
+            """
         )
     deskripsi = models.TextField(
-        verbose_name=_('Kata kunci')
+        null=True, blank=True,
+        verbose_name=_('Deskripsi')
         )
-    ph = models.BooleanField(default=True)
-    pts = models.BooleanField(default=False)
-    pas = models.BooleanField(default=True)
 
     @property
     def kode(self):
-        return "%s.%s" % (self.kompetensi_inti.nomor, self.nomor)
+        return "%s %s.%s" % (
+            self.kurikulum_mapel, self.ki, self.kd)
 
     def __str__(self):
-        return "%s KD %s" % (
-            self.mata_pelajaran_kurikulum,
-            self.kode
-        )
+        return self.kode
 
 
 class Tema(BaseModel):
@@ -209,7 +185,7 @@ class Tema(BaseModel):
     judul = models.CharField(max_length=225)
     deskripsi = models.TextField(null=True, blank=True)
     mata_pelajaran_kurikulum = models.ForeignKey(
-        MataPelajaranKurikulum,
+        MataPelajaran,
         on_delete=models.CASCADE
     )
 

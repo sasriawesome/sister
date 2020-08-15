@@ -7,7 +7,7 @@ const clean = require('clean-webpack-plugin');
 module.exports = [{
   mode: 'development',
   watch: true,
-  entry: './sources/index.js',
+  entry: './webapp/sources/index.js',
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'webapp/static/webapp/js')

@@ -13,6 +13,7 @@ from sister.modules.personal.models import Guru, Siswa
 from sister.modules.kurikulum.models import (
     TahunAjaran,
     Kurikulum,
+    KurikulumMataPelajaran,
     MataPelajaran
 )
 
@@ -111,11 +112,11 @@ class Kelas(BaseModel):
 
     def clean(self):
         if not getattr(self, 'kurikulum', False):
-            raise ValidationError({'kurikulum': 'silahkan pilih kurikulum'})
+            raise ValidationError({'kurikulum': 'Silahkan pilih kurikulum'})
 
         if self.kurikulum.kelas != self.kelas:
             raise ValidationError({
-                'kurikulum': 'Kelas pada kurikulum tidak sesuai'
+                'kurikulum': 'Kurikulum tidak sesuai dengan kelas.'
             })
 
 
@@ -217,6 +218,13 @@ class MataPelajaranKelas(BaseModel):
         verbose_name_plural = 'Guru Mata Pelajaran'
         unique_together = ('kelas', 'mata_pelajaran')
 
+    METODE_RATA_RATA = 0
+    METODE_TERBOBOT = 1
+    METODE_PENILAIAN = (
+            (0, 'Metode Rata Rata'),
+            (1, 'Metode Terbobot'),
+        )
+
     kelas = models.ForeignKey(
         Kelas,
         on_delete=models.CASCADE,
@@ -226,11 +234,23 @@ class MataPelajaranKelas(BaseModel):
         on_delete=models.CASCADE,
         related_name='mata_pelajaran_kelas'
     )
+    kurikulum_mapel = models.ForeignKey(
+        KurikulumMataPelajaran,
+        editable=False,
+        on_delete=models.CASCADE,
+        related_name='mata_pelajaran_kelas'
+    )
     guru = models.ForeignKey(
         Guru,
         on_delete=models.CASCADE,
         related_name='mata_pelajaran_kelas'
     )
+
+    metode_penilaian = models.IntegerField(
+        choices=METODE_PENILAIAN,
+        default=METODE_RATA_RATA
+    )
+
     kkm = models.PositiveIntegerField(
         default=65,
         validators=[
@@ -239,7 +259,9 @@ class MataPelajaranKelas(BaseModel):
         ],
         help_text='Kriteria Ketuntasan Minimal'
     )
-    tugas = models.PositiveIntegerField(
+
+    # Bobot Penilaian
+    bobot_tugas = models.PositiveIntegerField(
         default=10,
         validators=[
             MinValueValidator(1),
@@ -247,7 +269,7 @@ class MataPelajaranKelas(BaseModel):
         ],
         help_text='Tugas dan Pekerjaan Rumah'
     )
-    ph = models.PositiveIntegerField(
+    bobot_ph = models.PositiveIntegerField(
         default=20,
         validators=[
             MinValueValidator(1),
@@ -255,7 +277,7 @@ class MataPelajaranKelas(BaseModel):
         ],
         help_text='Penilaian Harian'
     )
-    pts = models.PositiveIntegerField(
+    bobot_pts = models.PositiveIntegerField(
         default=30,
         validators=[
             MinValueValidator(1),
@@ -263,7 +285,7 @@ class MataPelajaranKelas(BaseModel):
         ],
         help_text='Penilaian Tengah Semester'
     )
-    pas = models.PositiveIntegerField(
+    bobot_pas = models.PositiveIntegerField(
         default=40,
         validators=[
             MinValueValidator(1),
@@ -273,13 +295,27 @@ class MataPelajaranKelas(BaseModel):
     )
 
     @property
-    def total(self):
+    def total_bobot(self):
         total_bobot = (
-            self.tugas
-            + self.ph
-            + self.pts
-            + self.pas)
+            self.bobot_tugas
+            + self.bobot_ph
+            + self.bobot_pts
+            + self.bobot_pas)
         return total_bobot
+
+    def clean(self):
+        # Validasi Kurikulum Mata Pelajaran
+        if getattr(self, 'mata_pelajaran', None):
+            mapel = self.mata_pelajaran
+            try:
+                kmp_qs = mapel.kurikulum
+                kmp = kmp_qs.get(kurikulum=self.kelas.kurikulum)
+                self.kurikulum_mapel = kmp
+            except KurikulumMataPelajaran.DoesNotExist:
+                msg = 'Kurikulum "%s" Mata Pelajaran "%s" tidak ada.' % (
+                        self.kelas.kurikulum, mapel.kode
+                    )
+                raise ValidationError({'mata_pelajaran': msg})
 
     def __str__(self):
         return "%s %s" % (self.kelas, self.mata_pelajaran)

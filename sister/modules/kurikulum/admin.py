@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from sister.admin.sites import tenant_admin
 from sister.admin.admin import ModelAdmin
 
@@ -7,9 +6,8 @@ from .models import (
     TahunAjaran,
     Kurikulum,
     MataPelajaran,
-    MataPelajaranKurikulum,
-    KompetensiInti,
     KompetensiDasar,
+    KurikulumMataPelajaran,
     Tema
 )
 
@@ -22,13 +20,13 @@ class EkstraKurikulerAdmin(ModelAdmin):
     pass
 
 
-class MataPelajaranKurikulumInline(admin.TabularInline):
-    extra = 1
-    model = MataPelajaranKurikulum
+class KurikulumMapelInline(admin.TabularInline):
+    extra = 0
+    model = KurikulumMataPelajaran
 
 
 class KurikulumAdmin(ModelAdmin):
-    inlines = [MataPelajaranKurikulumInline]
+    inlines = [KurikulumMapelInline]
 
 
 class MataPelajaranAdmin(ModelAdmin):
@@ -39,7 +37,7 @@ class KompetensiIntiAdmin(ModelAdmin):
     pass
 
 
-class KompetensiDasarAdmin(ModelAdmin):
+class KompetensiAdmin(ModelAdmin):
     pass
 
 
@@ -50,6 +48,5 @@ class TemaAdmin(ModelAdmin):
 tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
 tenant_admin.register(Kurikulum, KurikulumAdmin)
 tenant_admin.register(MataPelajaran, MataPelajaranAdmin)
-tenant_admin.register(KompetensiInti, KompetensiIntiAdmin)
-tenant_admin.register(KompetensiDasar, KompetensiDasarAdmin)
+tenant_admin.register(KompetensiDasar, KompetensiAdmin)
 tenant_admin.register(Tema, TemaAdmin)

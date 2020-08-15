@@ -1,6 +1,22 @@
 import enum
 
 
+def snake_to_lower(text):
+    return text.replace('_', ' ').lower()
+
+
+class JenisKurikulum(enum.Enum):
+    KTSP = 1
+    K13 = 2
+
+
+class KompetensiInti(enum.Enum):
+    SIKAP_SPIRITUAL = 1
+    SIKAP_SOSIAL = 2
+    PENGETAHUAN = 3
+    KETERAMPILAN = 4
+
+
 class AktifitasPendidikan(enum.Enum):
 
     AWAL_TAHUN_PELAJARAN = 1
@@ -16,35 +32,19 @@ class AktifitasPendidikan(enum.Enum):
     HARI_LIBUR_PUASA = 11
 
 
-HARI_LIBUR = (
-    AktifitasPendidikan.HARI_MINGGU,
-    AktifitasPendidikan.HARI_LIBUR_UMUM,
-    AktifitasPendidikan.HARI_LIBUR_SEMESTER,
-    AktifitasPendidikan.HARI_LIBUR_PUASA
-)
+SEMESTER_CHOICES = ((1, 1), (2, 2),)
+JENIS_KURIKULUM_CHOICES = (
+    (x.value, snake_to_lower(x.name).title()) for x in JenisKurikulum)
+KOMPETENSI_INTI_CHOICES = (
+    (x.value, snake_to_lower(x.name).title()) for x in KompetensiInti)
 
+HARI_LIBUR = (
+    AktifitasPendidikan.HARI_MINGGU.value,
+    AktifitasPendidikan.HARI_LIBUR_UMUM.value,
+    AktifitasPendidikan.HARI_LIBUR_SEMESTER.value,
+    AktifitasPendidikan.HARI_LIBUR_PUASA.value
+)
 
 AKTIFITAS_CHOICES = (
-    (AktifitasPendidikan.AWAL_TAHUN_PELAJARAN.value,
-        'Awal tahun pelajaran'),
-    (AktifitasPendidikan.HARI_SEKOLAH_EFEKTIF.value,
-        'Hari sekolah efektif'),
-    (AktifitasPendidikan.PENILAIAN_HARIAN.value,
-        'Penilaian harian'),
-    (AktifitasPendidikan.PENILAIAN_TENGAH_SEMESTER.value,
-        'Penilaian tengah semester'),
-    (AktifitasPendidikan.PENILAIAN_AKHIR_SEMESTER.value,
-        'Penilaian akhir semester'),
-    (AktifitasPendidikan.UJIAN_AKHIR_SEKOLAH.value,
-        'Ujian akhir sekolah'),
-    (AktifitasPendidikan.PENERIMAAN_RAPOR.value,
-        'Penerimaan rapor'),
-    (AktifitasPendidikan.HARI_MINGGU.value,
-        'Hari minggu'),
-    (AktifitasPendidikan.HARI_LIBUR_UMUM.value,
-        'Hari libur umum'),
-    (AktifitasPendidikan.HARI_LIBUR_SEMESTER.value,
-        'Hari libur semester'),
-    (AktifitasPendidikan.HARI_LIBUR_PUASA.value,
-        'Hari libur puasa')
-)
+    (x.value, snake_to_lower(x.name).title()) for x in AktifitasPendidikan
+    )

@@ -1,10 +1,7 @@
 from django.db import models
-from django.utils import timezone
-
-from polymorphic.managers import PolymorphicManager
 
 
-class PenilaianPembelajaranManager(PolymorphicManager):
+class PenilaianPembelajaranManager(models.Manager):
 
     def get_queryset(self):
         qs = super().get_queryset()

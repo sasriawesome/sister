@@ -37,8 +37,6 @@ class ItemPenilaianAkhirSemesterInline(admin.TabularInline):
 
 
 class PenilaianPembelajaranAdmin(ModelAdmin):
-    fields = ['siswa', 'mata_pelajaran', 'semester', 'nilai']
-    readonly_fields = ['nilai']
     list_display = [
         'siswa',
         'mata_pelajaran',
@@ -47,9 +45,8 @@ class PenilaianPembelajaranAdmin(ModelAdmin):
         # 'nilai_ph',
         # 'nilai_pts',
         # 'nilai_pas',
-        'nilai',
+        # 'nilai',
         # 'predikat'
-        'kd_list'
         ]
     inlines = [
         ItemPenilaianTugasInline,
@@ -60,11 +57,6 @@ class PenilaianPembelajaranAdmin(ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request)
-
-    def kd_list(self, obj):
-        print("KD List disini")
-        print(obj.get_weighted_kd_scores())
-        return 0
 
 
 class PenilaianEkstraKurikulerAdmin(ModelAdmin):
