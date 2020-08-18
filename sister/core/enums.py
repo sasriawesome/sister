@@ -12,7 +12,6 @@ class MaxLength(enum.Enum):
 
 
 class Weekday(enum.Enum):
-    
     MONDAY = 0
     TUESDAY = 1
     WEDNESDAY = 2
@@ -20,25 +19,27 @@ class Weekday(enum.Enum):
     FREEDAY = 4
     SATURDAY = 5
     SUNDAY = 6
-    
-    CHOICES = (
-        (0, _('Monday')),
-        (1, _('Tuesday')),
-        (2, _('Wednesday')),
-        (3, _('Thursday')),
-        (4, _('Freeday')),
-        (5, _('Saturday')),
-        (6, _('Sunday')),
+
+
+WEEKDAY_CHOICES = (
+        (0, _('Senin')),
+        (1, _('Selasa')),
+        (2, _('Rabu')),
+        (3, _('Kamis')),
+        (4, _('Jumat')),
+        (5, _('Sabtu')),
+        (6, _('Minggu')),
     )
+
 
 class ActiveStatus(enum.Enum):
     ACTIVE = 'ACT'
     INACTIVE = 'INC'
 
-    CHOICES = (
-        (ACTIVE, _("active")),
-        (INACTIVE, _("inactive")),
-    )
+
+ACTIVE_STATUS_CHOICES = (
+    (x.value, x.name) for x in ActiveStatus
+)
 
 
 class PrivacyStatus(enum.Enum):
@@ -51,19 +52,13 @@ class PrivacyStatus(enum.Enum):
     MANAGERS = 7
     ANYONE = 99
 
-    CHOICES = (
-        (ME, _('Only me')),
-        (USERS, _('All users')),
-        (FRIENDS, _('All friends')),
-        (STUDENTS, _('All students')),
-        (TEACHERS, _('All teachers')),
-        (EMPLOYEES, _('All employees')),
-        (MANAGERS, _('All managers')),
-        (ANYONE, _("Anyone"))
-    )
+
+PRIVACY_STATUS_CHOICES = (
+    (x.value, x.name) for x in PrivacyStatus
+)
 
 
-class Status(enum.Enum):
+class ProcessStatus(enum.Enum):
     TRASH = 'TRS'
     DRAFT = 'DRF'
     VALID = 'VLD'
@@ -78,18 +73,7 @@ class Status(enum.Enum):
     CLOSED = 'CLS'
     POSTED = 'PST'
 
-    CHOICES = (
-        (TRASH, _('Trash')),
-        (DRAFT, _('Draft')),
-        (VALID, _('Valid')),
-        (APPROVED, _('Approved')),
-        (REJECTED, _('Rejected')),
-        (PROCESSED, _('Processed')),
-        (COMPLETE, _('Complete')),
-        (INVOICED, _('Invoiced')),
-        (PENDING, _('Pending')),
-        (UNPAID, _('Un Paid')),
-        (PAID, _('Paid')),
-        (CLOSED, _('Closed')),
-        (POSTED, _('Posted')),
+
+PRIVACY_STATUS_CHOICES = (
+        (x.value, x.name) for x in ProcessStatus
     )

@@ -1,0 +1,65 @@
+{% if penilaian.data.transpose.to_dict.items %}
+<table class="table table-hover table-sm mb-0">
+    <thead>
+        <tr>
+            <th colspan="2">Hasil Penilaian</th>
+        </tr>
+    </thead>
+    <tbody class="small">
+        {% if penilaian.kompetensi%}
+        <tr>
+            <td>Kompetensi</td>
+            <td>{{ penilaian.kompetensi }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Score</td>
+            <td>{{ penilaian.score }}</td>
+        </tr>
+        <tr>
+            <td>Mutu / Predikat</td>
+            <td>{{ penilaian.predikat.mutu }} ({{ penilaian.predikat.predikat | title }})</td>
+        </tr>
+        <tr>
+            <td>Deskripsi</td>
+            <td>{{ penilaian.deskripsi | capfirst }}</td>
+        </tr>
+        <tr>
+            <td>Rekomendasi</td>
+            <td>{{ penilaian.rekomendasi | capfirst }}</td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-hover table-sm mb-0">
+    <thead>
+        <tr>
+            <th class="text-center">KD</th>
+            <th class="text-center">Tugas</th>
+            <th class="text-center">PH</th>
+            <th class="text-center">PTS</th>
+            <th class="text-center">PAS</th>
+            <th class="text-center">TOTAL</th>
+            <th class="text-center">Mutu</th>
+            <th width="170">Predikat</th>
+            <th>Deskripsi</th>
+        </tr>
+    </thead>
+    <tbody class="small">
+            {% for key, item in penilaian.data.transpose.to_dict.items %}
+                <tr>
+                    <td class="text-center">{{ item.ki }}.{{ item.kd }}</td>
+                    <td class="text-center">{{ item.v_tg }}</td>
+                    <td class="text-center">{{ item.v_ph }}</td>
+                    <td class="text-center">{{ item.v_pts }}</td>
+                    <td class="text-center">{{ item.v_pas }}</td>
+                    <td class="text-center">{{ item.total }}</td>
+                    <td class="text-center">{{ item.mutu }}</td>
+                    <td>{{ item.predikat | title }}</td>
+                    <td>{{ item.deskripsi | capfirst }}</td>
+                </tr>
+            {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>Belum ada penilaian.</p>
+{% endif %}

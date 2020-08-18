@@ -7,14 +7,15 @@ from django.utils import timezone, translation
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from sister.core.models import BaseModel
-from sister.core.enums import Weekday
+from sister.core.enums import Weekday, WEEKDAY_CHOICES
 from sister.modules.ruang.models import Ruang
 from sister.modules.personal.models import Guru, Siswa
 from sister.modules.kurikulum.models import (
     TahunAjaran,
     Kurikulum,
     KurikulumMataPelajaran,
-    MataPelajaran
+    MataPelajaran,
+    KompetensiDasar
 )
 
 from .managers import (
@@ -26,6 +27,7 @@ __all__ = [
     'Kelas',
     'SiswaKelas',
     'MataPelajaranKelas',
+    'KompetensiPenilaian',
     'RentangNilai',
     'JadwalPelajaran',
     'JadwalPiketSiswa',
@@ -174,11 +176,13 @@ class RentangNilai(BaseModel):
     PERTAHANKAN = 'pertahankan'
     TINGKATKAN = 'tingkatkan'
     PERLU_BIMBINGAN = 'perlu_bimbingan'
+    SANGAT_PERLU_BIMBINGAN = 'sangat_perlu_bimbingan'
 
     AKSI = (
         (PERTAHANKAN, 'pertahankan'),
-        (TINGKATKAN, 'tingkatkan'),
+        (TINGKATKAN, 'perlu peningkatan'),
         (PERLU_BIMBINGAN, 'perlu bimbingan'),
+        (SANGAT_PERLU_BIMBINGAN, 'sangat perlu bimbingan'),
     )
 
     kelas = models.ForeignKey(
@@ -214,8 +218,8 @@ class RentangNilai(BaseModel):
 
 class MataPelajaranKelas(BaseModel):
     class Meta:
-        verbose_name = 'Guru Mata Pelajaran'
-        verbose_name_plural = 'Guru Mata Pelajaran'
+        verbose_name = 'Mata Pelajaran Kelas'
+        verbose_name_plural = 'Mata Pelajaran Kelas'
         unique_together = ('kelas', 'mata_pelajaran')
 
     METODE_RATA_RATA = 0
@@ -321,6 +325,43 @@ class MataPelajaranKelas(BaseModel):
         return "%s %s" % (self.kelas, self.mata_pelajaran)
 
 
+class KompetensiPenilaian(BaseModel):
+    class Meta:
+        verbose_name = 'Kompetensi Penilaian'
+        verbose_name_plural = 'Kompetensi Penilaian'
+        ordering = ['kompetensi__ki', 'kompetensi__kd']
+        unique_together = ('mata_pelajaran', 'kompetensi')
+
+    mata_pelajaran = models.ForeignKey(
+        MataPelajaranKelas,
+        on_delete=models.CASCADE,
+        related_name='kompetensi_penilaian',
+        verbose_name='Penilaian'
+    )
+    kompetensi = models.ForeignKey(
+        KompetensiDasar,
+        on_delete=models.CASCADE,
+        related_name='kompetensi_penilaian',
+        verbose_name='Kompetensi Dasar'
+    )
+    tgs = models.BooleanField(
+        default=False,
+        verbose_name='TGS'
+        )
+    ph = models.BooleanField(
+        default=False,
+        verbose_name='PH'
+        )
+    pts = models.BooleanField(
+        default=False,
+        verbose_name='PTS'
+        )
+    pas = models.BooleanField(
+        default=False,
+        verbose_name='PAS'
+        )
+
+
 class JadwalPelajaran(BaseModel):
     class Meta:
         verbose_name = 'Jadwal Kelas'
@@ -335,7 +376,7 @@ class JadwalPelajaran(BaseModel):
         default=1
     )
     hari = models.IntegerField(
-        choices=Weekday.CHOICES.value,
+        choices=WEEKDAY_CHOICES,
         default=Weekday.MONDAY.value
     )
     mata_pelajaran = models.ForeignKey(
@@ -365,7 +406,7 @@ class JadwalPiketSiswa(BaseModel):
         default=1
     )
     hari = models.IntegerField(
-        choices=Weekday.CHOICES.value,
+        choices=WEEKDAY_CHOICES,
         default=Weekday.MONDAY.value
     )
     siswa_kelas = models.ForeignKey(
@@ -484,7 +525,7 @@ def after_save_kelas(sender, **kwargs):
                 predikat='E',
                 nilai_minimum=0,
                 nilai_maximum=40,
-                aksi=RentangNilai.PERLU_BIMBINGAN,
+                aksi=RentangNilai.SANGAT_PERLU_BIMBINGAN,
             )
         )
         RentangNilai.objects.bulk_create(rentang)

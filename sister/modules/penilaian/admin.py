@@ -5,35 +5,13 @@ from sister.admin.sites import tenant_admin
 
 from .models import (
     PenilaianPembelajaran,
-    ItemPenilaianTugas,
-    ItemPenilaianHarian,
-    ItemPenilaianTengahSemester,
-    ItemPenilaianAkhirSemester
+    ItemPenilaian
 )
 
 
-class MataPelajaranKelasAdmin(ModelAdmin):
-    list_display = ['kelas', 'mata_pelajaran', 'guru']
-
-
-class ItemPenilaianTugasInline(admin.TabularInline):
+class ItemPenilaianInline(admin.TabularInline):
     extra = 0
-    model = ItemPenilaianTugas
-
-
-class ItemPenilaianHarianInline(admin.TabularInline):
-    extra = 0
-    model = ItemPenilaianHarian
-
-
-class ItemPenilaianTengahSemesterInline(admin.TabularInline):
-    extra = 0
-    model = ItemPenilaianTengahSemester
-
-
-class ItemPenilaianAkhirSemesterInline(admin.TabularInline):
-    extra = 0
-    model = ItemPenilaianAkhirSemester
+    model = ItemPenilaian
 
 
 class PenilaianPembelajaranAdmin(ModelAdmin):
@@ -47,27 +25,13 @@ class PenilaianPembelajaranAdmin(ModelAdmin):
         # 'nilai_pas',
         # 'nilai',
         # 'predikat'
-        ]
+    ]
     inlines = [
-        ItemPenilaianTugasInline,
-        ItemPenilaianHarianInline,
-        ItemPenilaianTengahSemesterInline,
-        ItemPenilaianAkhirSemesterInline
-        ]
+        ItemPenilaianInline
+    ]
 
     def get_queryset(self, request):
         return super().get_queryset(request)
-
-
-class PenilaianEkstraKurikulerAdmin(ModelAdmin):
-    fields = ['siswa', 'ekskul', 'semester', 'nilai']
-    list_display = [
-        'siswa',
-        'ekskul',
-        'semester',
-        'nilai',
-        # 'predikat'
-        ]
 
 
 tenant_admin.register(PenilaianPembelajaran, PenilaianPembelajaranAdmin)

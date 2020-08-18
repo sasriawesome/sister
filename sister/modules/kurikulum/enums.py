@@ -1,8 +1,5 @@
 import enum
-
-
-def snake_to_lower(text):
-    return text.replace('_', ' ').lower()
+from sister.core.helpers import snake_to_lower
 
 
 class JenisKurikulum(enum.Enum):

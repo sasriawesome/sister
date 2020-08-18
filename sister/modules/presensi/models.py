@@ -6,11 +6,8 @@ from django.dispatch import receiver
 from sister.core.enums import Weekday
 from sister.core.models import BaseModel
 from sister.modules.pembelajaran.models import Kelas, SiswaKelas
-from sister.modules.kurikulum.enums import (
-    AktifitasPendidikan,
-    AKTIFITAS_CHOICES
-    )
 
+from .enums import PresensiStatus, PRESENSI_STATUS_CHOICES
 from .managers import PresensiKelasManager, PresensiSiswaManager
 
 
@@ -32,15 +29,11 @@ class PresensiKelas(BaseModel):
         default=1
     )
     tanggal = models.DateField(default=timezone.now)
-    aktifitas = models.IntegerField(
-        choices=AKTIFITAS_CHOICES,
-        default=AktifitasPendidikan.HARI_SEKOLAH_EFEKTIF.value,
-        help_text='Alasan kelas diliburkan, atau catatan lain.'
-    )
+    hari_libur = models.BooleanField(default=False)
     deskripsi = models.CharField(
         max_length=250,
         null=True, blank=True,
-        help_text='Penjelasan aktifitas.'
+        help_text='Keterangan hari diliburkan, misal: Cuti bersama.'
     )
 
     @cached_property
@@ -49,19 +42,33 @@ class PresensiKelas(BaseModel):
 
     @cached_property
     def hadir(self):
-        return self.presensi_siswa.filter(status='H').count()
+        return self.presensi_siswa.filter(
+                status=PresensiStatus.HADIR.value
+            ).count()
 
     @cached_property
     def sakit(self):
-        return self.presensi_siswa.filter(status='S').count()
+        return self.presensi_siswa.filter(
+                status=PresensiStatus.SAKIT.value
+            ).count()
 
     @cached_property
     def izin(self):
-        return self.presensi_siswa.filter(status='I').count()
+        return self.presensi_siswa.filter(
+                status=PresensiStatus.IZIN.value
+            ).count()
 
     @cached_property
-    def tanpa_keterangan(self):
-        return self.presensi_siswa.filter(status='A').count()
+    def alfa(self):
+        return self.presensi_siswa.filter(
+                status=PresensiStatus.ALFA.value
+            ).count()
+    
+    @cached_property
+    def libur(self):
+        return self.presensi_siswa.filter(
+                status=PresensiStatus.LIBUR.value
+            ).count()
 
     @cached_property
     def total(self):
@@ -91,13 +98,8 @@ class PresensiSiswa(BaseModel):
     )
     status = models.CharField(
         max_length=3,
-        choices=(
-            ('H', 'Hadir'),
-            ('S', 'Sakit'),
-            ('I', 'Izin'),
-            ('A', 'Alfa'),
-        ),
-        default='H'
+        choices=PRESENSI_STATUS_CHOICES,
+        default=PresensiStatus.HADIR.value
     )
 
     def __str__(self):
@@ -108,6 +110,10 @@ class PresensiSiswa(BaseModel):
 def after_save_presensi_siswa(sender, **kwargs):
     created = kwargs.pop('created', None)
     instance = kwargs.pop('instance', None)
+    if instance.hari_libur:
+        status = PresensiStatus.LIBUR.value
+    else:
+        status = PresensiStatus.HADIR.value
     if created:
         # add initial items
         items = []
@@ -115,7 +121,10 @@ def after_save_presensi_siswa(sender, **kwargs):
             items.append(
                 PresensiSiswa(
                     siswa_kelas=siswa,
-                    presensi_kelas=instance
+                    presensi_kelas=instance,
+                    status=status
                 )
             )
         PresensiSiswa.objects.bulk_create(items)
+    else:
+        instance.presensi_siswa.update(status=status)

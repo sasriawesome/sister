@@ -10,12 +10,18 @@ from .models import (
     JadwalPelajaran,
     JadwalPiketSiswa,
     SiswaKelas,
-    RentangNilai
+    RentangNilai,
+    KompetensiPenilaian
 )
 
 
 class TahunAjaranAdmin(ModelAdmin):
     pass
+
+
+class KompetensiPenilaianInline(admin.TabularInline):
+    extra = 0
+    model = KompetensiPenilaian
 
 
 class MataPelajaranKelasInline(admin.TabularInline):
@@ -72,8 +78,13 @@ class RentangNilaiAdmin(ModelAdmin):
         ]
 
 
-tenant_admin.register(Kelas, KelasAdmin)
+class MataPelajaranKelasAdmin(ModelAdmin):
+    list_display = ['kelas', 'mata_pelajaran', 'guru']
+    inlines = [KompetensiPenilaianInline]
 
+
+tenant_admin.register(Kelas, KelasAdmin)
+tenant_admin.register(MataPelajaranKelas, MataPelajaranKelasAdmin)
 
 # class PersonalModelMenuGroup(ModelMenuGroup):
 #     adminsite = admin.site

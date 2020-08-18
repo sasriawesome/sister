@@ -138,6 +138,8 @@ class KompetensiDasar(BaseModel):
     class Meta:
         verbose_name = 'Kompetensi Dasar'
         verbose_name_plural = 'Kompetensi Dasar'
+        ordering = ['kurikulum_mapel', 'ki', 'kd']
+        index_together = ['kurikulum_mapel', 'ki', 'kd']
         unique_together = (
             'kurikulum_mapel', 'ki', 'kd'
         )

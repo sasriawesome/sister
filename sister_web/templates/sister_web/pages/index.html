@@ -1,0 +1,57 @@
+{% extends 'sister_web/layout.html' %}
+
+{% block content_main %}
+<div class="content-main">
+
+    <div class="container ph-3">
+
+        <section class="section pt-3">
+            <div class="jumbotron">
+                <h2>Apa kabar, Ibu Sri Anisah, S.Pd ?</h2>
+                <p>Untuk mempermudah mengelola pekerjaan anda beberapa fitur aplikasi ini telah diperbaharui.
+                    Silahkan baca panduan pengguna untuk mempelajarai lebih lanjut.</p>
+                <a href="" class="btn btn-sm btn-info">Baca Panduan</a>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section__header">
+                <h2 class="section__title">
+                    Kelas Saya
+                </h2>
+            </div>
+            <div class="card-list">
+                {% for item in kelas %}
+                <div class="col-md-6 mb-1">
+                    {% include 'sister_web/blocks/card_list_item_kelas.html' with item=item %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section__header">
+                <h2 class="section__title">
+                    Mata Pelajaran Saya
+                </h2>
+            </div>
+            <div class="card-list">
+                {% for item in mapel %}
+                    <div class="col-md-6 mb-1">
+                        {% include 'sister_web/blocks/card_list_item_mapel.html' with item=item origin='index' %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="card-list__loader">
+                <span class="btn btn-light">
+                    <i class="fa fa-load"></i>
+                    Tampilkan lebih
+                </span>
+            </div>
+        </section>
+
+    </div>    
+</div>
+{% endblock %}
+
+{% block appbar_bottom %}{% endblock %}

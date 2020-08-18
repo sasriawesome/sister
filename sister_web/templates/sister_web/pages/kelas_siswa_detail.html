@@ -1,0 +1,39 @@
+{% extends 'sister_web/layout.html' %}
+
+{% load sister_core_tags %}
+
+{% block header_main %}
+    {% include 'sister_web/blocks/appbar.html' %}
+{% endblock %}
+
+{% block content_main %}
+<div class="content-main">
+
+    <section class="section bg-primary text-white pt-5 pb-5">
+        <div class="container ph-3">
+            <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-sm mr-3">
+                    <img src="/static/sister_web/img/avatar_female.png" alt="Sri Anisah">
+                </div>
+                <div>
+                    <h4 class="mb-0"><strong>{{ instance.siswa.person }}</strong></h4>
+                      <small>No.Absen: {{ instance.no_urut }}</small>
+                      <small>NIS: {{ instance.siswa.nis }}</small>
+                      <small>NISN: {{ instance.siswa.nis }}</small>
+                </div>
+            </div>
+            <div>
+                <span class="badge badge-light">Kelas {{ instance.kelas }}</span>
+                <span class="badge badge-light">Guru Kelas {{ instance.kelas.guru_kelas }}</span>
+                <span class="badge badge-light">Tahun Ajaran {{ instance.kelas.tahun_ajaran }}</span>
+                <span class="badge badge-warning">Status {{ instance.get_status_display }}</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="container ph-3">
+          <div class="section">
+          </div>
+    </div>
+</div>
+{% endblock %}

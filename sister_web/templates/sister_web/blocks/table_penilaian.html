@@ -1,0 +1,26 @@
+<table class="table table-hover table-sm mb-0">
+  <thead>
+    <tr>
+      <th scope="col" class="border-0">Kompetensi</th>
+      <th width="40px" class="text-center border-0" scope="col">Nilai</th>
+      <th width="80px" class="text-center border-0" scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in object_list %}
+    <tr>
+      <td>{{ item.kompetensi.ki }}.{{ item.kompetensi.kd }}</td>
+      <td class="text-center">{{ item.nilai }}</td>
+      <td>
+          <a href="{% url 'sister_web_kelas_absensi_delete' object_id=item.id %}" class="btn btn-xs float-right">
+              <i class="fa fa-trash"></i>
+          </a>
+          <a href="{% url 'sister_web_kelas_absensi_update' object_id=item.id %}"
+            class="btn btn-xs float-right">
+              <i class="fa fa-edit"></i>
+          </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

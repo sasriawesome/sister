@@ -1,0 +1,13 @@
+<div class="container ph-3">
+    <div class="d-flex align-items-center justify-content-between pb-3 pt-3">
+        {% if backurl %}
+        <a href="{{ backurl }}">
+            <i class="fa fa-arrow-left fa-2x"></i>
+        </a>
+        {% endif %}
+        <h1 class="appbar__title">{% firstof page_title 'Website Name' %}</h1>
+        <a href="{% url 'sister_web_profile' %}">
+            <i class="fa fa-user-circle fa-2x"></i>
+        </a>
+    </div>
+</div>

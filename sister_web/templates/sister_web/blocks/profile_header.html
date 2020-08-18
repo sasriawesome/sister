@@ -1,0 +1,16 @@
+{% load static %}
+<div class="account-header">
+    <div class="container align-items-center container d-flex flex-column">
+        <div class="account-header__avatar">
+            <img src="{% static 'sister_web/img/avatar_female.png' %}" alt="Sri Anisah"/>
+        </div>
+        <div class="account-header__username">
+            <a href="#">{{ instance.full_name }}</a>
+        </div>
+        <div class="account-header__badge">
+            <span class="badge badge-secondary">Guru Kelas</span>
+            <span class="badge badge-info">Guru Mata Pelajaran</span>
+            <span class="badge badge-warning">Wali Siswa</span>
+        </div>
+    </div>
+</div>

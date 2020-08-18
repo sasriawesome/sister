@@ -1,0 +1,112 @@
+{% extends 'sister_web/layout.html' %}
+
+{% load static sister_core_tags sister_web_tags %}
+
+{% block header_main %}
+    {% include 'sister_web/blocks/appbar.html' %}
+{% endblock %}
+
+{% block content_main %}
+<div class="content-main">
+
+    <section class="section bg-primary text-white pt-5 pb-5">
+        <div class="container ph-3">
+            <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-sm mr-3">
+                    <img src="/static/sister_web/img/avatar_female.png" alt="Sri Anisah">
+                </div>
+                <div>
+                    <h4 class="mb-0"><strong>{{ instance.siswa }}</strong></h4>
+                    <span>{{ instance.mata_pelajaran }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container ph-3">
+        <section class="section pt-3">
+            <div class="card-list">
+                {% regroup instance.get_nilai_qs by jenis_penilaian as nilai_list %}
+                {% for nilai in nilai_list %}
+                <div class="col-md-6 mb-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="btn btn-xs btn-primary float-right" href="">Tambah</a>
+                            <h2 class="card-body__title">Penilaian {{ nilai.grouper | jenis_penilaian_display }}</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive scroll-wrapper scroll-wrapper-sm">
+                                {% if nilai.list %}
+                                    {% include 'sister_web/blocks/table_penilaian.html' with object_list=nilai.list %}
+                                {% else %}
+                                    <p>Tidak ada nilai {{ nilai.grouper | jenis_penilaian_display }} untuk ditampilkan.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="section pt-3">
+            <div class="card-list">
+                {% if instance.nilai_spiritual.data.transpose.to_dict.items %}
+                <div class="col-md-12 mb-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-body__title">Penilaian Sikap Spiritual</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive scroll-wrapper scroll-wrapper-sm">
+                                {% include 'sister_web/blocks/table_penilaian_kompetensi.html' with penilaian=instance.nilai_spiritual %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if instance.nilai_sosial.data.transpose.to_dict.items %}
+                <div class="col-md-12 mb-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-body__title">Penilaian Sikap Sosial</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive scroll-wrapper scroll-wrapper-sm">
+                                {% include 'sister_web/blocks/table_penilaian_kompetensi.html' with penilaian=instance.nilai_sosial %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="col-md-12 mb-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-body__title">Penilaian Pengetahuan</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive scroll-wrapper scroll-wrapper-sm">
+                                {% include 'sister_web/blocks/table_penilaian_kompetensi.html' with penilaian=instance.nilai_pengetahuan %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-body__title">Penilaian Keterampilan</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive scroll-wrapper scroll-wrapper-sm">
+                                {% include 'sister_web/blocks/table_penilaian_kompetensi.html' with penilaian=instance.nilai_keterampilan %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+{% endblock %}
