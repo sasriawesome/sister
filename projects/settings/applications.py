@@ -4,24 +4,23 @@
 INSTALLED_APPS = (
 
     # app where tenant model resides in
+    # 'sister.admin',
+    # 'sister_web',
     'sister.auth',
-    'sister.admin',
     'sister.api',
-    'sister_web',
 
     # Apps dependecies
 
     'django_extensions',
 
-    'widget_tweaks',
-    'polymorphic',
-    'import_export',
-    'rest_framework',
-    'drf_yasg',
-    'djoser',
-    'django_rq',
+    'django_cleanup.apps.CleanupConfig',
+    'graphene_django',
     'django_filters',
-    'tempus_dominus',
+    # 'django_rq',
+    # 'polymorphic',
+    # 'import_export',
+    # 'widget_tweaks',
+    # 'tempus_dominus',
 
     # The following Django contrib apps are optional
     'django.contrib.contenttypes',
@@ -40,7 +39,12 @@ INSTALLED_APPS = (
     'sister.modules.pembelajaran',
     'sister.modules.presensi',
     'sister.modules.penilaian',
+    'sister.modules.ekskul',
 
     # admin app
     # 'sister.modules.adminguru',
+    # 'sister.api',
+    # 'rest_framework',
+    # 'drf_yasg',
+    # 'djoser',
 )

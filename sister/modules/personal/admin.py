@@ -1,15 +1,22 @@
 from django.contrib import admin
-from sister.admin.sites import tenant_admin
-from sister.admin.admin import ModelAdmin
+from django.contrib.admin import ModelAdmin
+from sister.core.admin import admin_site
+
 
 from .models import (
     PersonContact,
     PersonAddress,
+    PhotoProfile,
     Person,
     Wali,
     Guru,
     Siswa
 )
+
+
+class PhotoInline(admin.TabularInline):
+    extra = 0
+    model = PhotoProfile
 
 
 class ContactInline(admin.StackedInline):
@@ -24,7 +31,7 @@ class AddressInline(admin.StackedInline):
 class PersonAdmin(ModelAdmin):
     list_display = ['full_name', 'gender', 'date_of_birth']
     list_select_related = ['user']
-    inlines = [ContactInline, AddressInline]
+    inlines = [PhotoInline, ContactInline, AddressInline]
 
 
 class GuruAdmin(ModelAdmin):
@@ -49,6 +56,6 @@ class SiswaAdmin(ModelAdmin):
         return obj.person.full_name
 
 
-tenant_admin.register(Person, PersonAdmin)
-tenant_admin.register(Guru, GuruAdmin)
-tenant_admin.register(Siswa, SiswaAdmin)
+admin_site.register(Person, PersonAdmin)
+admin_site.register(Guru, GuruAdmin)
+admin_site.register(Siswa, SiswaAdmin)

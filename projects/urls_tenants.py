@@ -5,13 +5,13 @@ Sister Tenant URL Configuration
 from django.conf import settings
 from django.urls import path, include
 
-from sister.admin.sites import tenant_admin
-from sister_web.sites import website
+from sister.core.admin import admin_site
+# from sister_web.sites import website
 
 urlpatterns = [
-    path('', include(website.get_urls())),
-    path('api/', include('sister.api.urls')),
-    path('admin/', include((tenant_admin.get_urls(), 'admin'))),
+    # path('', include(website.get_urls())),
+    path('api/', include('sister.api.urls_tenant')),
+    path('admin/', include((admin_site.get_urls(), 'admin'))),
 ]
 
 if settings.DEBUG:
@@ -27,7 +27,7 @@ if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT
-        )
+    )
 
 
 urlpatterns = urlpatterns + [

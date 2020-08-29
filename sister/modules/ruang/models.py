@@ -1,9 +1,8 @@
 from django.db import models
-from django.db.utils import cached_property
-from django.utils import timezone, translation
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from sister.core.models import BaseModel
+
 
 class Ruang(BaseModel):
     class Meta:

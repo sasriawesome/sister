@@ -146,6 +146,7 @@ class KompetensiDasar(BaseModel):
 
     kurikulum_mapel = models.ForeignKey(
         KurikulumMataPelajaran,
+        related_name='kompetensi_dasar',
         on_delete=models.CASCADE)
     ki = models.IntegerField(
         default=KompetensiInti.PENGETAHUAN.value,

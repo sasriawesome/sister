@@ -1,12 +1,16 @@
-from sister.admin.admin import ModelAdmin
+from django.contrib.admin import ModelAdmin
+from sister.core.admin import admin_site
 
+from .models import (
+    EkstraKurikuler,
+    TahunAngkatan,
+    PesertaEkstraKurikuler,
+    PenilaianEkstraKurikuler,
+    JadwalEkstraKurikuler
+)
 
-class PenilaianEkstraKurikulerAdmin(ModelAdmin):
-    fields = ['siswa', 'ekskul', 'semester', 'nilai']
-    list_display = [
-        'siswa',
-        'ekskul',
-        'semester',
-        'nilai',
-        # 'predikat'
-        ]
+admin_site.register(EkstraKurikuler, ModelAdmin)
+admin_site.register(TahunAngkatan, ModelAdmin)
+admin_site.register(PesertaEkstraKurikuler, ModelAdmin)
+admin_site.register(PenilaianEkstraKurikuler, ModelAdmin)
+admin_site.register(JadwalEkstraKurikuler, ModelAdmin)

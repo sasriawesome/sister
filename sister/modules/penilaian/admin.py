@@ -1,7 +1,7 @@
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin
 
-from sister.admin.admin import ModelAdmin
-from sister.admin.sites import tenant_admin
+from sister.core.admin import admin_site
 
 from .models import (
     PenilaianPembelajaran,
@@ -34,4 +34,4 @@ class PenilaianPembelajaranAdmin(ModelAdmin):
         return super().get_queryset(request)
 
 
-tenant_admin.register(PenilaianPembelajaran, PenilaianPembelajaranAdmin)
+admin_site.register(PenilaianPembelajaran, PenilaianPembelajaranAdmin)

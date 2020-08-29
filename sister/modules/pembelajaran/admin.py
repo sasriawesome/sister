@@ -1,8 +1,7 @@
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin
 
-# from sister.core import hooks
-from sister.admin.sites import tenant_admin
-from sister.admin.admin import ModelAdmin
+from sister.core.admin import admin_site
 
 from .models import (
     Kelas,
@@ -55,17 +54,17 @@ class KelasAdmin(ModelAdmin):
         'nama_kelas',
         'guru_kelas__nip',
         'guru_kelas__person__full_name'
-        ]
+    ]
     list_display = [
         'nama_kelas',
         'guru_kelas',
         'tahun_ajaran'
-        ]
+    ]
     list_select_related = ['guru_kelas', 'tahun_ajaran']
     inlines = [
         MataPelajaranKelasInline,
         SiswaKelasInline,
-        ]
+    ]
 
 
 class RentangNilaiAdmin(ModelAdmin):
@@ -75,7 +74,7 @@ class RentangNilaiAdmin(ModelAdmin):
         'nilai_maximum',
         'predikat',
         'aksi'
-        ]
+    ]
 
 
 class MataPelajaranKelasAdmin(ModelAdmin):
@@ -83,63 +82,5 @@ class MataPelajaranKelasAdmin(ModelAdmin):
     inlines = [KompetensiPenilaianInline]
 
 
-tenant_admin.register(Kelas, KelasAdmin)
-tenant_admin.register(MataPelajaranKelas, MataPelajaranKelasAdmin)
-
-# class PersonalModelMenuGroup(ModelMenuGroup):
-#     adminsite = admin.site
-#     menu_label = _('Personals')
-#     menu_icon = 'account'
-#     items = [
-#         (Person, PersonAdmin),
-#         (Siswa, SiswaAdmin),
-#         (Wali, WaliAdmin),
-#         (Guru, GuruAdmin),
-#         (Kelas, PersonAdmin),
-#     ]
-
-
-# class KelasModelMenuGroup(ModelMenuGroup):
-#     adminsite = admin.site
-#     menu_label = _('Classrooms')
-#     menu_icon = 'teach'
-#     items = [
-#         (JadwalPelajaran, JadwalPelajaranAdmin),
-#         (RentangNilai, RentangNilaiAdmin),
-#         (PresensiSiswa , PresensiSiswaAdmin),
-#         (PenilaianMataPelajaran , PenilaianMataPelajaranAdmin),
-#         (PenilaianEkstraKurikuler , PenilaianEkstraKurikulerAdmin),
-#     ]
-
-
-# class KurikulumModelMenuGroup(ModelMenuGroup):
-#     adminsite = admin.site
-#     menu_label = _('Curriculum')
-#     menu_icon = 'book'
-#     items = [
-#         (Tema, TemaAdmin),
-#         (Sekolah, SekolahAdmin),
-#         (TahunAjaran, TahunAjaranAdmin),
-#         (Kurikulum, KurikulumAdmin),
-#         (MataPelajaran, MataPelajaranAdmin),
-#         (KompetensiInti, KompetensiIntiAdmin),
-#         (KompetensiDasar, KompetensiDasarAdmin),
-#     ]
-
-
-# @hooks.register('admin_menu_item')
-# def register_kurikulum_menu(request):
-#     group = KurikulumModelMenuGroup()
-#     return group.get_menu_item(request)
-
-
-# @hooks.register('admin_menu_item')
-# def register_personal_menu(request):
-#     group = PersonalModelMenuGroup()
-#     return group.get_menu_item(request)
-
-
-# @hooks.register('admin_menu_item')
-# def register_kelas_menu(request):
-#     group = KelasModelMenuGroup()
-#     return group.get_menu_item(request)
+admin_site.register(Kelas, KelasAdmin)
+admin_site.register(MataPelajaranKelas, MataPelajaranKelasAdmin)

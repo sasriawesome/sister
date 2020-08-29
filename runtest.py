@@ -5,7 +5,7 @@ from django.core.management import execute_from_command_line
 
 
 def runtests():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "simpellab.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sister.settings.dev")
     argv = sys.argv[:1] + ['test'] + sys.argv[1:]
     execute_from_command_line(argv)
 

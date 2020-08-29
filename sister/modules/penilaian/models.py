@@ -149,10 +149,12 @@ class MetodePenilaian:
         return 'Ananda ' + rekomendasi
 
     def build_final_report(self, kompetensi_inti):
+        predikat = self.build_final_predicate(kompetensi_inti)
         return {
                 'data': self.get_dataframe(kompetensi_inti),
                 'score': self.build_final_score(kompetensi_inti),
-                'predikat': self.build_final_predicate(kompetensi_inti),
+                'mutu': predikat['mutu'],
+                'predikat': predikat['predikat'],
                 'deskripsi': self.build_final_desc(kompetensi_inti),
                 'rekomendasi': self.build_final_recomendation(kompetensi_inti)
             }

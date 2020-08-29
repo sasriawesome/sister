@@ -103,6 +103,30 @@ class Person(BaseModel):
         return self.full_name
 
 
+class PhotoProfile(BaseModel):
+    class Meta:
+        verbose_name = _('Photo Profile')
+        verbose_name_plural = _('Photo Profile')
+
+    person = models.ForeignKey(
+        Person, on_delete=models.CASCADE,
+        related_name='photo_set',
+    )
+    photo = models.ImageField(verbose_name='photo', upload_to='profiles')
+    primary = models.BooleanField(default=False, editable=False)
+
+    def set_primary(self):
+        all_photo = PhotoProfile.objects.filter(person=self.person)
+        all_photo.update(primary=False)
+        self.primary = True
+        self.save()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self._state.adding:
+            self.set_primary()
+
+
 class ContactAbstract(BaseModel):
     class Meta:
         abstract = True
@@ -176,7 +200,7 @@ class AddressAbstract(BaseModel):
             self.province,
             self.country,
             self.zipcode
-            ]
+        ]
         return ", ".join(map(str, address))
 
 
@@ -220,14 +244,14 @@ class Guru(BaseModel):
         from sister.modules.pembelajaran.models import ItemJadwalPelajaran
         mapel = self.mata_pelajaran.all()
         filters = {
-                'mata_pelajaran_kelas__in': [x.id for x in mapel],
-            }
+            'mata_pelajaran_kelas__in': [x.id for x in mapel],
+        }
         if current_day:
             filters['hari'] = timezone.now().weekday()
         return ItemJadwalPelajaran.objects.annotate(
-                kelas=models.F('jadwal_kelas__kelas'),
-                hari=models.F('jadwal_kelas__hari')
-            ).filter(**filters)
+            kelas=models.F('jadwal_kelas__kelas'),
+            hari=models.F('jadwal_kelas__hari')
+        ).filter(**filters)
 
 
 class Siswa(BaseModel):

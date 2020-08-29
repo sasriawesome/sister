@@ -1,6 +1,6 @@
 from django.contrib import admin
-from sister.admin.sites import tenant_admin
-from sister.admin.admin import ModelAdmin
+from django.contrib.admin import ModelAdmin
+from sister.core.admin import admin_site
 
 from .models import (
     TahunAjaran,
@@ -45,8 +45,8 @@ class TemaAdmin(ModelAdmin):
     pass
 
 
-tenant_admin.register(TahunAjaran, TahunAjaranAdmin)
-tenant_admin.register(Kurikulum, KurikulumAdmin)
-tenant_admin.register(MataPelajaran, MataPelajaranAdmin)
-tenant_admin.register(KompetensiDasar, KompetensiAdmin)
-tenant_admin.register(Tema, TemaAdmin)
+admin_site.register(TahunAjaran, TahunAjaranAdmin)
+admin_site.register(Kurikulum, KurikulumAdmin)
+admin_site.register(MataPelajaran, MataPelajaranAdmin)
+admin_site.register(KompetensiDasar, KompetensiAdmin)
+admin_site.register(Tema, TemaAdmin)

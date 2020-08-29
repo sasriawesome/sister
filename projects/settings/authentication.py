@@ -4,8 +4,8 @@
 AUTH_USER_MODEL = 'sister_auth.User'
 
 AUTHENTICATION_BACKENDS = (
+    'graphql_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'rest_framework_simplejwt.authentication.JWTAuthentication'
 )
 
 DJANGO_VALIDATOR = 'django.contrib.auth.password_validation.'

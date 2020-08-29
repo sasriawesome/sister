@@ -18,17 +18,17 @@ class ShortUrl(BaseModel):
     name = models.CharField(
         max_length=MaxLength.MEDIUM.value,
         verbose_name=_('Name')
-        )    
+    )
     description = models.TextField(
         max_length=MaxLength.TEXT.value,
         null=True, blank=True,
         verbose_name=_('Description')
-        )
+    )
     hashed_url = models.CharField(
         unique=True, editable=False,
         max_length=MaxLength.SHORT.value,
         verbose_name=_('Hashed url')
-        )
+    )
     original_url = models.URLField(
         unique=True,
         verbose_name='Original Url'

@@ -63,7 +63,7 @@ class PresensiKelas(BaseModel):
         return self.presensi_siswa.filter(
                 status=PresensiStatus.ALFA.value
             ).count()
-    
+
     @cached_property
     def libur(self):
         return self.presensi_siswa.filter(

@@ -1,7 +1,6 @@
 from django.contrib import admin
-
-from sister.admin.admin import ModelAdmin
-from sister.admin.sites import tenant_admin
+from django.contrib.admin import ModelAdmin
+from sister.core.admin import admin_site
 
 from .models import (
     PresensiKelas,
@@ -24,4 +23,4 @@ class PresensiKelasAdmin(ModelAdmin):
         return []
 
 
-tenant_admin.register(PresensiKelas, PresensiKelasAdmin)
+admin_site.register(PresensiKelas, PresensiKelasAdmin)
