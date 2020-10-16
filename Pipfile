@@ -30,13 +30,17 @@ django-avatar = "*"
 graphene-django = "*"
 django-cleanup = "*"
 django-graphql-jwt = "*"
-httpx = "*"
+
+django-polymorphic = "*"
+# For Web
+
+django-widget-tweaks = "*"
+django-tempus-dominus = "*"
 
 [requires]
 python_version = "3.8"
 
-# django-widget-tweaks = "*"
-# django-tempus-dominus = "*"
+# httpx = "*"
 # django-polymorphic = "*"
 # django-import-export = "*"
 # django-heroku = "*"

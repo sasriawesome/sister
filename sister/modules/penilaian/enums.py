@@ -1,5 +1,5 @@
 import enum
-from sister.core.helpers import snake_to_lower
+from sister.helpers import snake_to_lower
 
 
 class JenisPenilaian(enum.Enum):

@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxLengthValidator, MinLengthValidator
-from sister.core.models import BaseModel
-from sister.core.enums import Weekday, WEEKDAY_CHOICES
+from sister.modules.core.models import BaseModel
+from sister.modules.core.enums import Weekday, WEEKDAY_CHOICES
 from sister.modules.kurikulum.models import TahunAjaran
 from sister.modules.personal.models import Siswa, Guru
 

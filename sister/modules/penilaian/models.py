@@ -5,7 +5,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from sister.core.models import BaseModel
+from sister.modules.core.models import BaseModel
 from sister.modules.kurikulum.models import KompetensiDasar
 from sister.modules.kurikulum.enums import KompetensiInti
 from sister.modules.pembelajaran.models import (

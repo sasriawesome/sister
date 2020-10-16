@@ -7,8 +7,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_personals.enums import AddressName
 
-from sister.core.enums import MaxLength
-from sister.core.models import BaseModel
+from sister.modules.core.enums import MaxLength
+from sister.modules.core.models import BaseModel
 from sister.modules.personal.managers import PersonManager
 
 

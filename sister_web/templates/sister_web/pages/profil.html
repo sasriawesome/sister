@@ -1,0 +1,53 @@
+{% extends 'sister_web/layout.html' %}
+{% load sister_core_tags %}
+
+{% block content_main %}
+<div class="content-main">
+
+    <section class="section bg-primary text-white pt-5 pb-5">
+        <div class="container ph-3">
+            <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-sm mr-3">
+                    <img src="/static/sister_web/img/avatar_female.png" alt="Sri Anisah">
+                </div>
+                <div>
+                    <h4 class="mb-0"><strong>{{ instance }}</strong></h4>
+                    {% if instance.siswa %}
+                        <small>NIS: {{ instance.siswa.nis }}</small> <small>NISN: {{ instance.siswa.nis }}</small>
+                    {% endif %}
+                    {% if instance.guru %}
+                        <small>NIP: {{ instance.guru.nip }}</small>
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <span class="badge badge-light">Guru</span>
+                <span class="badge badge-light">Wali</span>
+                <span class="badge badge-light">Siswa</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="container ph-3">
+        <div class="section pt-3">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    {% include 'sister_web/blocks/profile_personal.html' with instance=instance %}
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    {% include 'sister_web/blocks/profile_address.html' with instance=instance. %}
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    {% include 'sister_web/blocks/profile_contact.html' with instance=instance %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block appbar_bottom %}{% endblock %}

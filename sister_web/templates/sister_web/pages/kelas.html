@@ -1,0 +1,44 @@
+{% extends 'sister_web/layout.html' %}
+{% load sister_core_tags %}
+
+{% block content_main %}
+<div class="content-main">
+    <section class="section bg-primary text-white pt-5 pb-5 mb-3">
+        <div class="container ph-3">
+            <div class="d-flex align-items-center mb-3">
+                <div class="avatar avatar-sm mr-3">
+                    <img src="/static/sister_web/img/avatar_female.png" alt="Sri Anisah">
+                </div>
+                <div>
+                    <h4 class="mb-0"><strong>{{ data.kelas.guruKelas.person.fullName }}</strong></h4>
+                    <small>NIP: {{ instance.guru_kelas.nip }}</small>
+                </div>
+            </div>
+            <div>
+                <span class="badge badge-light">Tahun Ajaran {{ instance.tahun_ajaran }}</span>
+                <span class="badge badge-light">Kurikulum {{ instance.kurikulum }}</span>
+                <span class="badge badge-light">Jumlah Siswa {{ instance.jumlah_siswa }} orang</span>
+                <span class="badge badge-light">Ruang {{ instance.ruang }}</span>
+                <span class="badge badge-warning">Status {{ instance.get_status_display }}</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="container ph-3">
+        <section class="section">
+            <div class="section__header">
+                <h2 class="section__title">
+                    Kelas Saya
+                </h2>
+            </div>
+            <div class="card-list">
+                {% for item in object_list %}
+                <div class="col-md-6 mb-1">
+                    {% include 'sister_web/blocks/card_list_item_kelas.html' with item=item %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

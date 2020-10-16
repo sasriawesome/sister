@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin
-from sister.core.admin import admin_site
+from sister.contrib.admin import admin_site
 
 from .models import (
     EkstraKurikuler,

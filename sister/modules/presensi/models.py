@@ -3,8 +3,8 @@ from django.db.models.signals import post_save
 from django.db.utils import cached_property
 from django.utils import timezone
 from django.dispatch import receiver
-from sister.core.enums import Weekday
-from sister.core.models import BaseModel
+from sister.modules.core.enums import Weekday
+from sister.modules.core.models import BaseModel
 from sister.modules.pembelajaran.models import Kelas, SiswaKelas
 
 from .enums import PresensiStatus, PRESENSI_STATUS_CHOICES

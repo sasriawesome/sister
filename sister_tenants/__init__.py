@@ -1,0 +1,1 @@
+default_app_config = 'sister.modules.tenants.apps.AppConfig'

@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
-from sister.core.models import BaseModel
+from sister.modules.core.models import BaseModel
 from .enums import KompetensiInti, KOMPETENSI_INTI_CHOICES
 
 

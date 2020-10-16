@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from sister.core.models import BaseModel
+from sister.modules.core.models import BaseModel
 
 
 class Ruang(BaseModel):

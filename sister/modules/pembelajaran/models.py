@@ -6,8 +6,8 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone, translation
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from sister.core.models import BaseModel
-from sister.core.enums import Weekday, WEEKDAY_CHOICES
+from sister.modules.core.models import BaseModel
+from sister.modules.core.enums import Weekday, WEEKDAY_CHOICES
 from sister.modules.ruang.models import Ruang
 from sister.modules.personal.models import Guru, Siswa
 from sister.modules.kurikulum.models import (
